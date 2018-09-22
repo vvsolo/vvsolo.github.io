@@ -34,11 +34,6 @@
             <strong>标头设置</strong>
           </div>
           <div class="input-group mb-2">
-            <div class="input-group-prepend">
-              <div class="input-group-text">标题</div>
-            </div>
-            <input type="text" class="form-control" id="inputTitle" placeholder="标题名称">
-          </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
               <div class="input-group-text">作者</div>
@@ -51,114 +46,90 @@
             </div>
             <input type="text" class="form-control" id="inputSite" placeholder="首发站点">
           </div>
+          <div class="input-group mb-2">
+            <button type="button" class="btn btn-primary" id="SaveConfig">保存设置</button>
+          </div>
           <div class="alert alert-primary" role="alert">
             <strong>格式设置</strong>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1">
-              <label class="form-check-label" for="gridCheck1">
-          转换变体字母
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_0">
+              <label class="form-check-label" for="Check_0">HTML字符实体转换</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1">
-              <label class="form-check-label" for="gridCheck1">
-          转换变体序号
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_1">
+              <label class="form-check-label" for="Check_1">Unicode转换</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1">
-              <label class="form-check-label" for="gridCheck1">
-          去乱码、广告
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_2">
+              <label class="form-check-label" for="Check_2">转换变体字母</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1">
-              <label class="form-check-label" for="gridCheck1">
-          Unicode转换
-        </label>
-            </div>
-          </div>
-          <div class="input-group mb-2">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          HTML字符实体转换
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_3">
+              <label class="form-check-label" for="Check_3">转换变体序号</label>
             </div>
           </div>
           <hr />
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          修正章节标题
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_4" checked>
+              <label class="form-check-label" for="Check_4">半角所有字母数字</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          去除汉字间的空格
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_5" checked>
+              <label class="form-check-label" for="Check_5">全角所有标点符号</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          修正分隔符号
-        </label>
-            </div>
-          </div>
-          <hr />
-          <div class="input-group mb-2">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          全角所有标点符号
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_6" checked>
+              <label class="form-check-label" for="Check_6">修正章节标题</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          半角所有字母数字
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_7" checked>
+              <label class="form-check-label" for="Check_7">去除汉字间的空格</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck1" checked>
-              <label class="form-check-label" for="gridCheck1">
-          英文首字大写
-        </label>
+              <input class="form-check-input" type="checkbox" id="Check_8" checked>
+              <label class="form-check-label" for="Check_8">修正分隔符号</label>
             </div>
           </div>
-          <hr />
           <div class="input-group mb-2">
-            <button type="button" class="btn btn-primary" id="SaveConfig">保存设置</button>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="Check_9" checked>
+              <label class="form-check-label" for="Check_9">修正引号</label>
+            </div>
+          </div>
+          <div class="input-group mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="Check_10" checked>
+              <label class="form-check-label" for="Check_10">英文首字大写</label>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-10">
         <div class="container-fluid" style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
-            <span><strong id="AlertMsg" data-doc="">填写作者等相关信息后，点击“一键排版”.</strong></span>
+            <span><strong id="AlertMsg" data-doc="">填写作者等相关信息后，“一键排整理”后再点击“排版输出”.</strong></span>
             <div class="float-right"><strong id="CountMsg">0</strong> 字节</div>
           </div>
           <div class="float-left">
             <button type="button" class="btn btn-success" id="onCleanUp">一键整理</button>
-            <button type="button" class="btn btn-success" id="onTypeSet">一键排版</button>
+            <button type="button" class="btn btn-success" id="onTypeSet">排版输出</button>
             <button type="button" class="btn btn-secondary" id="onCopy">复制到剪贴板</button>
             <button type="button" class="btn btn-secondary" id="toSimp">简体</button>
             <button type="button" class="btn btn-secondary" id="toTrad">繁体</button>
@@ -189,11 +160,9 @@
   <script>
     $(function() {
       // 设置
-      $('#inputTitle').val($.cookie('inputTitle') || '');
       $('#inputAuthor').val($.cookie('inputAuthor') || '');
       $('#inputSite').val($.cookie('inputSite') || '');
       $('#SaveConfig').click(function() {
-        $.cookie('inputTitle', $('#inputTitle').val());
         $.cookie('inputAuthor', $('#inputAuthor').val());
         $.cookie('inputSite', $('#inputSite').val());
         $('#AlertMsg').hide().html('设置已保存！').show(300);
