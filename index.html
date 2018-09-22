@@ -178,7 +178,7 @@
         tEditor.val(Traditionalized(tEditor.val()));
       })
       // 实时统计字符
-      tEditor.on('keyup keydown change', function() {
+      tEditor.on('keyup keydown change focus', function() {
         $('#CountMsg').html(tEditor.val().length)
       })
       // 清空文档
