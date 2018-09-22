@@ -699,37 +699,37 @@ function getCleanUp(str) {
 	// 排版初始化，去空格空行
 	str = str.replaceInit()
 	// HTML 字符实体转换
-	if ($('#Check_0:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.converHtmlEntity()
 	// Unicode转换
-	if ($('#Check_1:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.converUnicode()
 	// 转换变体字母
-	if ($('#Check_2:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.convertVariant()
 	// 转换变体序号
-	if ($('#Check_3:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.convertSerialNumber()
 	// 半角字母数字
-	if ($('#Check_4:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.convertNumberLetter()
 	// 全角标点符号
-	if ($('#Check_5:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.convertPunctuation()
 	// 修正章节标题
-	if ($('#Check_6:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.replaceTitle()
 	// 去除汉字间的空格
-	if ($('#Check_7:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.replaceSpace()
 	// 修正分隔符号
-	if ($('#Check_8:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.replaceSeparator()
 	// 修正引号
-	if ($('#Check_9:checked'))
+	if ($('#Check_9').attr('checked'))
 		str = str.replaceQuotes('‘’“”'.split(''))
 	// 英文首字大写
-	if ($('#Check_10:checked'))
+	if ($('#Check_').attr('checked'))
 		str = str.convertInitial()
 	// 结束
 	return str.replaceEnd()
