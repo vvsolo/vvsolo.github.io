@@ -35,12 +35,6 @@
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
-              <div class="input-group-text">标题</div>
-            </div>
-            <input type="text" class="form-control" id="inputTitle" placeholder="标题名称">
-          </div>
-          <div class="input-group mb-2">
-            <div class="input-group-prepend">
               <div class="input-group-text">作者</div>
             </div>
             <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
@@ -189,11 +183,9 @@
   <script>
     $(function() {
       // 设置
-      $('#inputTitle').val($.cookie('inputTitle') || '');
       $('#inputAuthor').val($.cookie('inputAuthor') || '');
       $('#inputSite').val($.cookie('inputSite') || '');
       $('#SaveConfig').click(function() {
-        $.cookie('inputTitle', $('#inputTitle').val());
         $.cookie('inputAuthor', $('#inputAuthor').val());
         $.cookie('inputSite', $('#inputSite').val());
         $('#AlertMsg').hide().html('设置已保存！').show(300);
