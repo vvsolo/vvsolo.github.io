@@ -256,7 +256,6 @@
           tEditor.select();
           document.execCommand('Copy');
           tEditor.blur();
-          tEditor.moveStart('character',0);
           $('#AlertMsg').hide().html('文档已复制到剪贴板！').show(300);
         }
       });
