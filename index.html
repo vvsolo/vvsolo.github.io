@@ -188,6 +188,7 @@
       // 读取保存的设置
       $('#inputBookName').val($.cookie('inputBookName') || '')
       $('#inputChapter').val($.cookie('inputChapter') || '')
+      $('#TitleMsg').html(getTitle())
       $('#inputAuthor').val($.cookie('inputAuthor') || '')
       $('#inputSite').val($.cookie('inputSite') || '')
       for (var i = 0; i < 4; i++) {
