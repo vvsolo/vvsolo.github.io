@@ -762,5 +762,5 @@ function getTitle(){
 		if(inputChapter.length > 0)
 			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
-	return inputBookInfo
+	return inputBookInfo.length > 0 ? inputBookInfo : '此处标题'
 }
