@@ -17,6 +17,11 @@
       font-size: 12px;
       background-color: #fafafa;
     }
+    .float-hidden {
+      width:0;
+      height:0;
+      display: none;
+    }
   </style>
 </head>
 
@@ -136,7 +141,11 @@
       <div class="col-10">
         <div class="container-fluid" style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
-	        <h5 class="alert-heading" id="TitleMsg">此处标题</h5>
+	        <h5 class="alert-heading">
+		      <span id="TitleMsg">此处标题</span>
+		      <sup title="点击可复制到剪贴板" class="badge badge-secondary" id="copyTitle">复制</sup>
+		    </h5>
+	        <input type="text" style="position: absolute; left: -1000px;" id="TitleContent" value="">
 	        <hr />
               <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
               <span class="float-right"><strong id="CountMsg">0</strong> 字节</span>
@@ -298,7 +307,17 @@
           tEditor.insertContent(tmp)
         })
       })
-      // 复制到剪贴板
+      // 复制标题到剪贴板
+      $('#copyTitle').click(function() {
+        var sVal = $('#TitleMsg').text()
+        if (sVal.length > 0) {
+	      $('#TitleContent').val(sVal)
+	      $('#TitleContent').select()
+          document.execCommand('Copy')
+          $('#AlertMsg').html('标题已复制到剪贴板！')
+        }
+      })
+      // 复制文章到剪贴板
       $('#onCopy').click(function() {
         var sVal = tEditor.val()
         if (sVal.length > 0) {

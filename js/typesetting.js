@@ -758,9 +758,9 @@ function getTitle(){
 		inputChapter = $('#inputChapter').val(),
 		inputBookInfo = ''
 	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
+		inputBookInfo = '【' + inputBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
 		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
+			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
 	return inputBookInfo.length > 0 ? inputBookInfo : '此处标题'
 }
