@@ -33,6 +33,18 @@
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
+              <div class="input-group-text">书名</div>
+            </div>
+            <input type="text" class="form-control" id="inputBookName" placeholder="小说名称">
+          </div>
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text">章节</div>
+            </div>
+            <input type="text" class="form-control" id="inputChapter" placeholder="例：01-10、第01章">
+          </div>
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
               <div class="input-group-text">作者</div>
             </div>
             <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
@@ -140,6 +152,10 @@
                 <button type="button" class="btn btn-outline-secondary" title="下划线" data-ubb-f="[u]" data-ubb-e="[/u]"><strong>U</strong></button>
                 <button type="button" class="btn btn-outline-secondary" title="斜体" data-ubb-f="[i]" data-ubb-e="[/i]"><strong>I</strong></button>
               </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary" title="插入待续" data-insert="（待续）"><strong>待续</strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="插入全文完" data-insert="（全文完）"><strong>完结</strong></button>
+              </div>
             </div>
             <div class="float-right">
               <button type="button" class="btn btn-primary" id="SaveEditor">保存</button>
@@ -167,6 +183,8 @@
   <script>
     $(function() {
       // 读取保存的设置
+      $('#inputBookName').val($.cookie('inputBookName') || '')
+      $('#inputChapter').val($.cookie('inputChapter') || '')
       $('#inputAuthor').val($.cookie('inputAuthor') || '')
       $('#inputSite').val($.cookie('inputSite') || '')
       for (var i = 0; i < 4; i++) {
@@ -179,24 +197,20 @@
       }
       // 保存设置
       $('#SaveConfig').click(function() {
-        $.cookie('inputAuthor', $('#inputAuthor').val(), {
-          expires: 365
-        })
-        $.cookie('inputSite', $('#inputSite').val(), {
-          expires: 365
-        })
+        $.cookie('inputBookName', $('#inputBookName').val(), { expires: 365 })
+        $.cookie('inputChapter', $('#inputChapter').val(), { expires: 365 })
+        $.cookie('inputAuthor', $('#inputAuthor').val(), { expires: 365 })
+        $.cookie('inputSite', $('#inputSite').val(), { expires: 365 })
         for (var i = 0; i < 4; i++) {
           var tmp = 'Check_' + i;
           if ($('#' + tmp).is(':checked'))
-            $.cookie(tmp, 'checked', {
-              expires: 365
-            })
+            $.cookie(tmp, 'checked', { expires: 365 })
           else {
             $.removeCookie(tmp)
           }
 
         }
-        $('#AlertMsg').hide().html('设置已保存！').show(300)
+        $('#AlertMsg').html('设置已保存！')
       })
       // 按钮
       var tEditor = $('#TextareaEditor')
@@ -222,7 +236,7 @@
         var sEditor = tEditor.val()
         if (sEditor.length > 0) {
           $('#AlertMsg').data('doc', sEditor)
-          $('#AlertMsg').hide().html('存档已保存！').show()
+          $('#AlertMsg').html('存档已保存！')
         }
         tEditor.focus()
       });
@@ -231,9 +245,9 @@
         var sEditor = $('#AlertMsg').data('doc')
         if (sEditor.length > 0) {
           tEditor.val(sEditor)
-          $('#AlertMsg').hide().html('文档已还原！').show()
+          $('#AlertMsg').html('文档已还原！')
         } else {
-          $('#AlertMsg').hide().html('保存文档为空！').show()
+          $('#AlertMsg').html('保存文档为空！')
         }
         tEditor.focus()
       });
@@ -250,7 +264,7 @@
         var sVal = tEditor.val()
         if (sVal.length > 0) {
           $('#AlertMsg').data('doc', sVal)
-          $('#AlertMsg').hide().html('存档已保存！').show()
+          $('#AlertMsg').html('存档已保存！')
           tEditor.val(doTidy(sVal))
           tEditor.focus()
         }
@@ -262,10 +276,18 @@
 	      if(tEditor.selectionRange().length > 0){
             var tmp = $this.data('ubb-f') + tEditor.selectionRange() + $this.data('ubb-e')
             tEditor.insertContent(tmp)
-            $('#AlertMsg').hide().html('标题已' + $this.attr('title') + '！').show()
+            $('#AlertMsg').html('标题已' + $this.attr('title') + '！')
 	      }else{
-		    $('#AlertMsg').hide().html('未选中文字！').show()
+		    $('#AlertMsg').html('未选中文字！')
 	      }
+        })
+      })
+      // 插入待续完结
+      $('.btn[data-insert]').each(function() {
+        var $this = $(this)
+        $this.click(function() {
+          var tmp = $this.data('insert')
+          tEditor.insertContent(tmp)
         })
       })
       // 复制到剪贴板
@@ -275,7 +297,7 @@
           tEditor.focus().select()
           document.execCommand('Copy')
           tEditor.blur()
-          $('#AlertMsg').hide().html('文档已复制到剪贴板！').show()
+          $('#AlertMsg').html('文档已复制到剪贴板！')
         }
       });
     });

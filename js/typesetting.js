@@ -669,8 +669,8 @@ function doTidy(str) {
 	var spacecount = re.findCount(/[ 　\u2003\u200b\ue4c6\uf8f5\ue004\uf04a\s\uFEFF\xA0]/g)
 
 	var headVal = {
-		'writer': $('#inputAuthor').val(),
-		'bbsname': $('#inputSite').val(),
+		'writer': $('#inputAuthor').val().trim(),
+		'bbsname': $('#inputSite').val().trim(),
 		'dateStr': new Date().format("yyyy/MM/dd"),
 		'strNum': cc(slength - spacecount)
 	}
@@ -679,9 +679,24 @@ function doTidy(str) {
 {dateStr}发表于：{bbsname}\n\
 是否首发：是\n\
 字数：{strNum} 字\n\
-';
+'.format(headVal);
 
-	return headStr.format(headVal) + re;
+	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
+	var inputBookName = $('#inputBookName').val(),
+		inputChapter = $('#inputChapter').val(),
+		inputBookInfo = ''
+	if(inputBookName.length > 0){
+		inputBookInfo = '【' + inputBookName.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
+		if(inputChapter.length > 0)
+			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
+	}
+	if(inputBookInfo.length > 0)
+		inputBookInfo = inputBookInfo + '\n\n' + headStr
+	else
+		inputBookInfo = headStr
+
+
+	return inputBookInfo + re;
 }
 
 // 一键整理
