@@ -483,7 +483,6 @@ var doCenter = function(str, b1, b2, center) {
 	return fBreak + str + eBreak;
 };
 
-
 // 格式化时间
 if (typeof Date.prototype.format !== 'function') {
 	Date.prototype.format = function(fmt) {
@@ -545,7 +544,6 @@ if (typeof String.prototype.findCount !== 'function') {
 		return count;
 	}
 }
-
 
 // 截取分段
 function doSplit(str, sm, bm) {
@@ -621,14 +619,6 @@ function cc(s) {
 }
 
 function doTidy(str) {
-
-	// 分隔符样式
-	if (configs.Separator !== configs.outSeparator)
-		configs.Separator = configs.outSeparator;
-	// 章节间隔符样式
-	if (configs.Divide !== configs.outDivide)
-		configs.Divide = configs.outDivide;
-
 	// 引号替换
 	var others = [
 		[/“/g, '「'],
@@ -637,7 +627,7 @@ function doTidy(str) {
 		[/’/g, '』']
 	];
 	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
+	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
 
 	// 执行整理
 	var str = str
@@ -656,7 +646,7 @@ function doTidy(str) {
 	var count = words.length;
 
 	// 开始进行分隔
-	re = '';
+	var re = '';
 	for (var i = 0; i < count; i++)
 		re += doSplit(words[i].trim(), '\n', '\n\n');
 
@@ -733,4 +723,18 @@ function getCleanUp(str) {
 		str = str.convertInitial()
 	// 结束
 	return str.replaceEnd()
+}
+
+// 加粗标题
+function boldTitle(str) {
+	// 结尾的文字，编辑user.js文件
+	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
+	return str
+		.replaceTitle('[b]', '[/b]', true)
+		// 修正结尾
+		.replace(eStrs, function(m) {
+			return doCenter(m, '[b]', '[/b]', true);
+		})
+		.replace(/(\r|\r\n|\n\r)^\[\/b\]/gm, '[/b]\n')
+		.replace(/^\[b\]([　]+)/gm, '$1[b]')
 }

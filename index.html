@@ -5,9 +5,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="description" content="排版助手（在线版）">
+  <meta name="author" content="vsolo">
   <title>排版助手（在线版）</title>
 
   <!-- Bootstrap core CSS -->
@@ -18,7 +17,6 @@
       font-size: 12px;
     }
   </style>
-
 </head>
 
 <body>
@@ -44,9 +42,6 @@
               <div class="input-group-text">首发</div>
             </div>
             <input type="text" class="form-control" id="inputSite" placeholder="首发站点">
-          </div>
-          <div class="input-group mb-2">
-            <button type="button" class="btn btn-primary" id="SaveConfig">保存设置</button>
           </div>
           <div class="alert alert-primary" role="alert">
             <strong>格式设置</strong>
@@ -119,125 +114,171 @@
               <label class="form-check-label" for="Check_9">修正引号</label>
             </div>
           </div>
+          <hr />
+          <div class="input-group mb-2">
+            <button type="button" class="btn btn-primary" id="SaveConfig">保存设置</button>
+          </div>
         </div>
       </div>
       <div class="col-10">
         <div class="container-fluid" style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
-            <span><strong id="AlertMsg" data-doc="">填写作者等相关信息后，“一键排整理”后再点击“排版输出”.</strong></span>
+            <span><strong id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</strong></span>
             <div class="float-right"><strong id="CountMsg">0</strong> 字节</div>
           </div>
-          <div class="float-left">
-            <button type="button" class="btn btn-success" id="onCleanUp">一键整理</button>
-            <button type="button" class="btn btn-success" id="onTypeSet">排版输出</button>
-            <button type="button" class="btn btn-secondary" id="onCopy">复制到剪贴板</button>
-            <button type="button" class="btn btn-secondary" id="toSimp">简体</button>
-            <button type="button" class="btn btn-secondary" id="toTrad">繁体</button>
-          </div>
-          <div class="float-right">
-            <button type="button" class="btn btn-primary" id="SaveEditor">保存</button>
-            <button type="button" class="btn btn-info" id="RestoreEditor">还原</button>
-            <button type="button" class="btn btn-danger" id="ClearEditor">清空</button>
+          <div>
+            <div class="float-left">
+              <button type="button" class="btn btn-success" id="onCleanUp">一键整理</button>
+              <button type="button" class="btn btn-success" id="onTypeSet">排版输出</button>
+              <button type="button" class="btn btn-secondary" id="onCopy">复制到剪贴板</button>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary" id="toSimp">简</button>
+                <button type="button" class="btn btn-outline-secondary" id="toTrad">繁</button>
+              </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary" title="加粗" data-ubb-f="[b]" data-ubb-e="[/b]"><strong>B</strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="下划线" data-ubb-f="[u]" data-ubb-e="[/u]"><strong>U</strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="斜体" data-ubb-f="[i]" data-ubb-e="[/i]"><strong>I</strong></button>
+              </div>
+            </div>
+            <div class="float-right">
+              <button type="button" class="btn btn-primary" id="SaveEditor">保存</button>
+              <button type="button" class="btn btn-info" id="RestoreEditor">还原</button>
+              <button type="button" class="btn btn-danger" id="ClearEditor">清空</button>
+            </div>
           </div>
         </div>
         <div class="container-fluid">
-          <textarea class="form-control" id="TextareaEditor" style="min-height:500px;background-color: #fafafa;font-size: 14px;" placeholder="粘贴文本到此处"></textarea>
+          <textarea class="form-control" id="TextareaEditor" style="min-height:500px;background-color: #fafafa;font-size: 13px;" placeholder="粘贴文本到此处"></textarea>
         </div>
       </div>
     </div>
   </div>
   <!-- /.container -->
 
-  <!-- Bootstrap core JavaScript
-    ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
+  <!-- Bootstrap core JavaScript -->
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="js/jquery.shortcuts.js"></script>
 
   <script src="js/core.js"></script>
   <script src="js/typesetting.js"></script>
   <script src="js/language.js"></script>
   <script>
     $(function() {
-      // 设置
-      $('#inputAuthor').val($.cookie('inputAuthor') || '');
-      $('#inputSite').val($.cookie('inputSite') || '');
+      // 读取保存的设置
+      $('#inputAuthor').val($.cookie('inputAuthor') || '')
+      $('#inputSite').val($.cookie('inputSite') || '')
+      for (var i = 0; i < 4; i++) {
+        var tmp = 'Check_' + i;
+        if ($.cookie(tmp)) {
+          $('#' + tmp).removeAttr('checked').attr('checked', 'checked')
+        } else {
+          $('#' + tmp).removeAttr('checked')
+        }
+      }
+      // 保存设置
       $('#SaveConfig').click(function() {
-        $.cookie('inputAuthor', $('#inputAuthor').val());
-        $.cookie('inputSite', $('#inputSite').val());
-        $('#AlertMsg').hide().html('设置已保存！').show(300);
+        $.cookie('inputAuthor', $('#inputAuthor').val(), {
+          expires: 365
+        })
+        $.cookie('inputSite', $('#inputSite').val(), {
+          expires: 365
+        })
+        for (var i = 0; i < 4; i++) {
+          var tmp = 'Check_' + i;
+          if ($('#' + tmp).is(':checked'))
+            $.cookie(tmp, 'checked', {
+              expires: 365
+            })
+          else {
+            $.removeCookie(tmp)
+          }
+
+        }
+        $('#AlertMsg').hide().html('设置已保存！').show(300)
       })
       // 按钮
-      var tEditor = $('#TextareaEditor');
-      tEditor.focus();
+      var tEditor = $('#TextareaEditor')
+      tEditor.focus()
       // 转简体
       $('#toSimp').click(function() {
-        tEditor.val(Othered(Simplized(tEditor.val())));
+        tEditor.val(Othered(Simplized(tEditor.val())))
       })
       // 转繁体
       $('#toTrad').click(function() {
-        tEditor.val(Traditionalized(tEditor.val()));
+        tEditor.val(Traditionalized(tEditor.val()))
       })
       // 实时统计字符
       tEditor.on('keyup keydown change focus', function() {
         $('#CountMsg').html(tEditor.val().length)
       })
       // 清空文档
-      $('#ClearEditor').on('click', function() {
-        tEditor.val('').focus();
+      $('#ClearEditor').click(function() {
+        tEditor.val('').focus()
       });
       // 保存文档
-      $('#SaveEditor').on('click', function() {
-        var sEditor = tEditor.val();
+      $('#SaveEditor').click(function() {
+        var sEditor = tEditor.val()
         if (sEditor.length > 0) {
-          $('#AlertMsg').data('doc', sEditor);
-          $('#AlertMsg').hide().html('存档已保存！').show(300);
+          $('#AlertMsg').data('doc', sEditor)
+          $('#AlertMsg').hide().html('存档已保存！').show()
         }
-        tEditor.focus();
+        tEditor.focus()
       });
       // 还原文档
-      $('#RestoreEditor').on('click', function() {
-        var sEditor = $('#AlertMsg').data('doc');
+      $('#RestoreEditor').click(function() {
+        var sEditor = $('#AlertMsg').data('doc')
         if (sEditor.length > 0) {
-          tEditor.val(sEditor);
-          $('#AlertMsg').hide().html('文档已还原！').show(300);
+          tEditor.val(sEditor)
+          $('#AlertMsg').hide().html('文档已还原！').show()
         } else {
-          $('#AlertMsg').hide().html('保存文档为空！').show(300);
+          $('#AlertMsg').hide().html('保存文档为空！').show()
         }
-        tEditor.focus();
+        tEditor.focus()
       });
       // 一键整理
       $('#onCleanUp').click(function() {
-        var sVal = tEditor.val();
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          tEditor.val(getCleanUp(sVal));
-          tEditor.focus();
+          tEditor.val(getCleanUp(sVal))
+          tEditor.focus()
         }
-
       })
       // 一键排版
       $('#onTypeSet').click(function() {
-        var sVal = tEditor.val();
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          $('#AlertMsg').data('doc', sVal);
-          $('#AlertMsg').hide().html('存档已保存！').show(300);
-          tEditor.val(doTidy(sVal));
-          tEditor.focus();
+          $('#AlertMsg').data('doc', sVal)
+          $('#AlertMsg').hide().html('存档已保存！').show()
+          tEditor.val(doTidy(sVal))
+          tEditor.focus()
         }
+      })
+      // 简单UBB
+      $('.btn[data-ubb-f]').each(function() {
+        var $this = $(this)
+        $this.click(function() {
+	      if(tEditor.selectionRange().length > 0){
+            var tmp = $this.data('ubb-f') + tEditor.selectionRange() + $this.data('ubb-e')
+            tEditor.insertContent(tmp)
+            $('#AlertMsg').hide().html('标题已' + $this.attr('title') + '！').show()
+	      }else{
+		    $('#AlertMsg').hide().html('未选中文字！').show()
+	      }
+        })
       })
       // 复制到剪贴板
       $('#onCopy').click(function() {
-        var sVal = tEditor.val();
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          tEditor.focus();
-          tEditor.select();
-          document.execCommand('Copy');
-          tEditor.blur();
-          $('#AlertMsg').hide().html('文档已复制到剪贴板！').show(300);
+          tEditor.focus().select()
+          document.execCommand('Copy')
+          tEditor.blur()
+          $('#AlertMsg').hide().html('文档已复制到剪贴板！').show()
         }
       });
     });
-
   </script>
 </body>
 
