@@ -680,8 +680,7 @@ function doTidy(str) {
 是否首发：是\n\
 字数：{strNum} 字\n\
 '.format(headVal);
-
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
+	/**
 	var inputBookName = $('#inputBookName').val(),
 		inputChapter = $('#inputChapter').val(),
 		inputBookInfo = ''
@@ -694,9 +693,8 @@ function doTidy(str) {
 		inputBookInfo = inputBookInfo + '\n\n' + headStr
 	else
 		inputBookInfo = headStr
-
-
-	return inputBookInfo + re;
+	**/
+	return headStr + re;
 }
 
 // 一键整理
@@ -752,4 +750,17 @@ function boldTitle(str) {
 		})
 		.replace(/(\r|\r\n|\n\r)^\[\/b\]/gm, '[/b]\n')
 		.replace(/^\[b\]([　]+)/gm, '$1[b]')
+}
+
+// 组合文章标题
+function getTitle(){
+	var inputBookName = $('#inputBookName').val(),
+		inputChapter = $('#inputChapter').val(),
+		inputBookInfo = ''
+	if(inputBookName.length > 0){
+		inputBookInfo = '【' + inputBookName.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
+		if(inputChapter.length > 0)
+			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
+	}
+	return inputBookInfo
 }
