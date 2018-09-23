@@ -17,10 +17,9 @@
       font-size: 12px;
       background-color: #fafafa;
     }
-    .float-hidden {
-      width:0;
-      height:0;
-      display: none;
+    #copyTitle {
+      cursor: pointer;
+      font-weight: normal;
     }
   </style>
 </head>
@@ -141,28 +140,28 @@
       <div class="col-10">
         <div class="container-fluid" style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
-	        <h5 class="alert-heading">
-		      <span id="TitleMsg">此处标题</span>
-		      <sup title="点击可复制到剪贴板" class="badge badge-secondary" id="copyTitle">复制</sup>
-		    </h5>
-	        <input type="text" style="position: absolute; left: -1000px;" id="TitleContent" value="">
-	        <hr />
-              <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
-              <span class="float-right"><strong id="CountMsg">0</strong> 字节</span>
+            <h5 class="alert-heading">
+              <span id="TitleMsg">此处标题</span>
+              <span title="复制标题到剪贴板" class="badge badge-secondary" id="copyTitle">复制</span>
+            </h5>
+            <input type="text" style="position: absolute; left: -1000px;" id="TitleContent" value="">
+            <hr />
+            <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
+            <span class="float-right"><strong id="CountMsg">0</strong> 字节</span>
           </div>
           <div>
             <div class="float-left">
               <button type="button" class="btn btn-success" title="一键整理" id="onCleanUp">一键整理</button>
               <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet">排版输出</button>
-              <button type="button" class="btn btn-secondary" title="复制到剪贴板" id="onCopy">复制到剪贴板</button>
+              <button type="button" class="btn btn-secondary" title="复制文档到剪贴板" id="onCopy">复制文档</button>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary" title="转换简体" id="toSimp"><strong>简</strong></button>
                 <button type="button" class="btn btn-outline-secondary" title="转换繁体" id="toTrad"><strong>繁</strong></button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary" title="加粗" data-ubb-f="[b]" data-ubb-e="[/b]"><strong>B</strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="下划线" data-ubb-f="[u]" data-ubb-e="[/u]"><strong><u>U</u></strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="斜体" data-ubb-f="[i]" data-ubb-e="[/i]"><strong><em>I</em></strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="加粗" data-ubbcode="[b]{s}[/b]"><strong>B</strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="下划线" data-ubbcode="[u]{s}[/u]"><strong><u>U</u></strong></button>
+                <button type="button" class="btn btn-outline-secondary" title="斜体" data-ubbcode="[i]{s}[/i]"><strong><em>I</em></strong></button>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary" title="插入待续" data-insert="（待续）"><strong>续</strong></button>
@@ -221,7 +220,6 @@
           else {
             $.removeCookie(tmp)
           }
-
         }
         $('#AlertMsg').html('设置已保存！')
       })
@@ -253,7 +251,7 @@
         var sEditor = tEditor.val()
         if (sEditor.length > 0) {
           $('#AlertMsg').data('doc', sEditor)
-          $('#AlertMsg').html('存档已保存！')
+          $('#AlertMsg').html('文档已保存！')
         }
         tEditor.focus()
       });
@@ -263,8 +261,6 @@
         if (sEditor.length > 0) {
           tEditor.val(sEditor)
           $('#AlertMsg').html('文档已还原！')
-        } else {
-          $('#AlertMsg').html('保存文档为空！')
         }
         tEditor.focus()
       });
@@ -281,22 +277,22 @@
         var sVal = tEditor.val()
         if (sVal.length > 0) {
           $('#AlertMsg').data('doc', sVal)
-          $('#AlertMsg').html('存档已保存！')
+          $('#AlertMsg').html('排版成功！原格式文档已保存，若想重排请点击“还原”按钮！')
           tEditor.val(doTidy(sVal))
           tEditor.focus()
         }
       })
       // 简单UBB
-      $('.btn[data-ubb-f]').each(function() {
+      $('.btn[data-ubbcode]').each(function() {
         var $this = $(this)
         $this.click(function() {
-	      if(tEditor.selectionRange().length > 0){
-            var tmp = $this.data('ubb-f') + tEditor.selectionRange() + $this.data('ubb-e')
+          if (tEditor.selectionRange().length > 0) {
+            var tmp = $this.data('ubbcode').replace(/\{s\}/g, tEditor.selectionRange())
             tEditor.insertContent(tmp)
             $('#AlertMsg').html('标题已' + $this.attr('title') + '！')
-	      }else{
-		    $('#AlertMsg').html('未选中文字！')
-	      }
+          } else {
+            $('#AlertMsg').html('未选中文字！')
+          }
         })
       })
       // 插入待续完结
@@ -311,8 +307,8 @@
       $('#copyTitle').click(function() {
         var sVal = $('#TitleMsg').text()
         if (sVal.length > 0) {
-	      $('#TitleContent').val(sVal)
-	      $('#TitleContent').select()
+          $('#TitleContent').val(sVal)
+          $('#TitleContent').select()
           document.execCommand('Copy')
           $('#AlertMsg').html('标题已复制到剪贴板！')
         }
@@ -329,14 +325,15 @@
       });
     });
   </script>
-  <script>
+<script>
 var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?4e383017601b1ea13cab1d5efbae8584";
-  var s = document.getElementsByTagName("script")[0]; 
+  var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
 </body>
+
 </html>
