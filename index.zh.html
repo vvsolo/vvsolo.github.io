@@ -51,7 +51,7 @@
             <div class="input-group-prepend">
               <div class="input-group-text">章節</div>
             </div>
-            <input type="text" class="form-control" id="inputChapter" placeholder="例：01-10、第01章">
+            <input type="text" class="form-control" id="inputChapter" placeholder="更新章節">
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
@@ -71,38 +71,38 @@
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_0">
-              <label class="form-check-label" for="Check_0">HTML字元實體轉換</label>
+              <label class="form-check-label" for="Check_0">修正 HTML 字元實體</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_1">
-              <label class="form-check-label" for="Check_1">Unicode轉換</label>
+              <label class="form-check-label" for="Check_1">修正 Unicode</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_2">
-              <label class="form-check-label" for="Check_2">轉換變體字母</label>
+              <label class="form-check-label" for="Check_2">修正變體字母</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_3">
-              <label class="form-check-label" for="Check_3">轉換變體序號</label>
+              <label class="form-check-label" for="Check_3">修正變體序號</label>
             </div>
           </div>
           <hr />
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_5" checked>
-              <label class="form-check-label" for="Check_5">全形所有標點符號</label>
+              <label class="form-check-label" for="Check_5">全形標點符號</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_4" checked>
-              <label class="form-check-label" for="Check_4">半形所有字母數字</label>
+              <label class="form-check-label" for="Check_4">半形字母數字</label>
             </div>
           </div>
           <div class="input-group mb-2">
@@ -121,7 +121,7 @@
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_7" checked>
-              <label class="form-check-label" for="Check_7">去除漢字間的空格</label>
+              <label class="form-check-label" for="Check_7">修正漢字空格</label>
             </div>
           </div>
           <div class="input-group mb-2">
@@ -133,7 +133,7 @@
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_9" checked>
-              <label class="form-check-label" for="Check_9">修正引號</label>
+              <label class="form-check-label" for="Check_9">修正引用符號</label>
             </div>
           </div>
           <hr />
@@ -172,6 +172,9 @@
                 <button type="button" class="btn btn-outline-secondary" title="插入待續" data-insert="（待續）"><strong>續</strong></button>
                 <button type="button" class="btn btn-outline-secondary" title="插入全文完" data-insert="（全文完）"><strong>完</strong></button>
               </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary" title="顯隱輔助線" data-subline><strong>輔</strong></button>
+              </div>
             </div>
             <div class="float-right">
               <button type="button" class="btn btn-primary" title="臨時保存文件" id="SaveEditor">保存</button>
@@ -181,7 +184,9 @@
           </div>
         </div>
         <div class="container-fluid">
-          <textarea class="form-control" id="TextareaEditor" style="min-height:480px;background-color: #f2f2f2;font-family: '思源宋体', '新宋体', '宋体';font-size: 13px;" placeholder="黏貼文本到此處" data-lang=""></textarea>
+          <textarea class="form-control" id="TextareaEditor" style="min-height:480px;background-color: #f2f2f2;font-family: '新宋体', '宋体';font-size: 14px;font-weight: bold;" placeholder="黏貼文本到此處" data-lang=""></textarea>
+        </div>
+        <div id="subline" style="position: absolute;left: 538px;width:0px;border-right:2px dashed #B8DAFF;height:478px;">
         </div>
     </div>
   </div>
@@ -198,6 +203,7 @@
   <script src="js/conver.dic.js"></script>
   <script>
     $(function() {
+	  
       // 讀取保存的設置
       $('#inputBookName').val($.cookie('inputBookName') || '')
       $('#inputChapter').val($.cookie('inputChapter') || '')
@@ -231,6 +237,12 @@
       // 按鈕
       var tEditor = $('#TextareaEditor')
       tEditor.focus()
+      // 輔助線
+      var position = tEditor.position()
+      $('#subline').offset({ top: position.top + 63 })
+      $('[data-subline]').click(function() {
+        $('#subline').toggle()
+      })
       // 轉簡體
       $('#toSimp').click(function() {
         tEditor.val(Othered(Simplized(tEditor.val())))
