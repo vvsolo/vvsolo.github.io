@@ -146,11 +146,15 @@ function doTidy(str) {
 		'strNum': cc(slength - spacecount)
 	}
 
-	var headStr = '作者：{writer}\n\
+	var headStr = ($('html').attr('lang') == 'zh-CN') ? '作者：{writer}\n\
 {dateStr}发表于：{bbsname}\n\
 是否首发：是\n\
 字数：{strNum} 字\n\
-'.format(headVal);
+' : '作者：{writer}\n\
+{dateStr}發表於：{bbsname}\n\
+是否首發：是\n\
+字數：{strNum} 字\n\
+';
 	/**
 	var inputBookName = $('#inputBookName').val(),
 		inputChapter = $('#inputChapter').val(),
@@ -165,7 +169,7 @@ function doTidy(str) {
 	else
 		inputBookInfo = headStr
 	**/
-	return headStr + re;
+	return headStr.format(headVal) + re;
 }
 
 // 一键整理
@@ -224,7 +228,7 @@ function boldTitle(str) {
 }
 
 // 组合文章标题
-function getTitle(){
+function getTitle(r){
 	var inputBookName = $('#inputBookName').val(),
 		inputChapter = $('#inputChapter').val(),
 		inputBookInfo = ''
@@ -233,5 +237,5 @@ function getTitle(){
 		if(inputChapter.length > 0)
 			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
-	return inputBookInfo.length > 0 ? inputBookInfo : '此处标题'
+	return inputBookInfo.length > 0 ? inputBookInfo : r
 }
