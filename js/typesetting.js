@@ -3,8 +3,8 @@
  * 注意：修改后请切记压缩方可生效！
  */
 
-// 对象批量赋值
-Object.extend = function(a, b) {
+ // 对象批量赋值
+ Object.extend = function(a, b) {
 	for (var i in b)
 		a[i] = b[i];
 	return a;
@@ -28,12 +28,12 @@ Object.extend(String.prototype, {
 	},
 	// 取双字节与单字节混排时的真实字数
 	len: function() {
-		return this.replace(/[^\x00-\xff]/g, "**").length;
+		return this.replace(/[^\x00-\xff]/g, '**').length;
 	},
 	// 按真实字数进行分隔
-	realSubstring: function(start, len) {
+	realSubstring: function (start, len) {
 		var str = this || '';
-		if (str.length === 0) return str;
+		if(str.length === 0) return str;
 		start = start || 0;
 		len = len || str.len();
 		var byteL = 0;
@@ -48,11 +48,10 @@ Object.extend(String.prototype, {
 
 			if (
 				(len == str.len()) //取完
-				||
-				((len -= cl) >= 0) //取本字时不超过
+				|| ((len -= cl) >= 0) //取本字时不超过
 			) {
 				sub += String.fromCharCode(c);
-			} else { //取超了
+			} else {//取超了
 				break;
 			}
 		}
@@ -67,10 +66,10 @@ Object.extend(String.prototype, {
 		return this
 			// 转换所有空格样式为标准
 			.replace(configs.Space, ' ')
-			// 修正所有换行为 UNIX 标准
-			.replace(/(\r\n|\n\r|\r)/g, '\n')
 			// 去除首尾所有空格
 			.trim('\n')
+			// 修正所有换行为 UNIX 标准
+			.replace(/(\r\n|\n\r|\r)/g, '\n')
 			// 所有行尾加换行
 			.replace(/$/g, '\n')
 			// 英文间单引号替换
@@ -110,27 +109,27 @@ Object.extend(String.prototype, {
 			// 转换英文小写
 			.toLowerCase()
 			// 英文首写全大写
-			.replace(/\b([a-zA-Z])/g, function(m) {
+			.replace(/\b([a-zA-Z])/g, function(m){
 				return m.toUpperCase()
 			})
 			// 引用的全转小写
 			.replace(/[《“‘「『【\"（]([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\'\n]{2,})[》”’」】』\"）]/gm, function(m, m1) {
 				// 全是英文时全部首字大写
-				if ((m1.match(/[…！？。\!\?\.]$/g) || m1.match(/[，：；＆\,\:\;\&\']/g)) && m1.match(/\w/g)) {
+				if((m1.match(/[…！？。\!\?\.]$/g) || m1.match(/[，：；＆\,\:\;\&\']/g)) && m1.match(/\w/g)){
 					return m
-						.replace(/[，\, ][A-Z]/g, function(n) {
-							return n.toLowerCase();
-						})
-						.replaces(configs.halfSymbol)
-						.replace(/[\.\?\!\:\&][ ]?[a-z]/g, function(n) {
-							return n.toUpperCase();
-						})
+					.replace(/[，\, ][A-Z]/g, function(n){
+						return n.toLowerCase();
+					})
+					.replaces(configs.halfSymbol)
+					.replace(/[\.\?\!\:\&][ ]?[a-z]/g, function(n){
+						return n.toUpperCase();
+					})
 				}
 				return m
 			})
 			// 独占一行的全英文
 			.replace(/^([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\']{2,})$/gm, function(m, m1) {
-				return m.replace(/[， ][A-Z]/g, function(n) {
+				return m.replace(/[， ][A-Z]/g, function(n){
 					return n.toLowerCase()
 				})
 			})
@@ -157,13 +156,13 @@ Object.extend(String.prototype, {
 			.replace(/([0-9a-zA-Z]+)[。\.]([0-9a-zA-Z—\-_]+)[。\.](com|net|org|gov)/gi, function(m) {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
-
+			
 		// 处理专用缩写
 		//for(var item in allInitial)
 		//	re = re.replace(new RegExp('\\b(' + allInitial[item] + ')\\b', 'gi'), allInitial[item].toUpperCase())
 		// 处理常用英语书写
 		var pWord = configs.pWord.split('|');
-		for (var i = 0; i < pWord.length; i++)
+		for(var i = 0; i < pWord.length; i++)
 			re = re.replace(new RegExp('\\b(' + pWord[i] + ')([0-9]*)\\b', 'gi'), pWord[i] + '$2')
 		return re
 	},
@@ -229,23 +228,23 @@ Object.extend(String.prototype, {
 			.replace(/([＆&]#(\d+)[;；])/gi, function(m) {
 				return String.fromCharCode(m.replace(/[＆&#;；]/g, ''))
 			})
-		//.replace(/(%[\da-zA-Z]{2})/g, function(m) {
-		//	return decodeURIComponent(m);
-		//})
+			//.replace(/(%[\da-zA-Z]{2})/g, function(m) {
+			//	return decodeURIComponent(m);
+			//})
 	},
 	// html转义符转换
 	converHtmlEntity: function() {
-		return this.replace(configs.regHtmlEntity, function(m, m1) {
-			return (configs.sHtmlEntity[m1]) ? configs.sHtmlEntity[m1] : m
-		})
+		return this.replace(configs.regHtmlEntity, function(m, m1){
+				return (configs.sHtmlEntity[m1]) ? configs.sHtmlEntity[m1] : m
+			})
 	},
 	// 转换变体字母
 	convertVariant: function() {
-		return this.replaces(configs.sVariant);
+		return this.replaces(configs.sVariant)
 	},
 	// 转换变体序号
 	convertSerialNumber: function() {
-		return this.replaces(configs.sSerialNumber);
+		return this.replaces(configs.sSerialNumber)
 	},
 	// 全角标点符号
 	convertPunctuation: function() {
@@ -253,7 +252,7 @@ Object.extend(String.prototype, {
 			// 标点符号修正
 			.replaces(configs.punSymbol)
 			// 修正所有数字和英文字母间的标点和空格
-			.replaces(configs.nwSymbol);
+			.replaces(configs.nwSymbol)
 	},
 	// 去除汉字间的空格
 	replaceSpace: function() {
@@ -270,45 +269,31 @@ Object.extend(String.prototype, {
 			// 英文数字后跟全角标点
 			.replace(/([0-9a-zA-Z])[ ]+([\u4e00-\u9fa0·！（），．：；？–—‘’“”…、。〈-】〔〕￠-￥＆])/g, '$1$2')
 			.replace(/([\u4e00-\u9fa0·！（），．：；？–—‘’“”…、。〈-】〔〕￠-￥＆])[ ]+([0-9a-zA-Z])/g, '$1$2')
-		// 英文数字后跟汉字
-		//.replace(/([0-9a-zA-Z])[ ]*([\u4e00-\u9fa0])/g, '$1 $2')
-		// 数字后跟计量单位
-		//.replace(/([0-9])[ ]*(°|%|‰|％|℃)[ ]*([0-9a-zA-Z\u4e00-\u9fa0])/g, '$1$2 $3')
-		// 数字后跟特定单位
-		//.replace(/([0-9])[ ]+(gbps|gb|g|tb|t|mb|m|byte|b)[ ]*([0-9a-zA-Z\u4e00-\u9fa0]?)/gi, '$1$2 $3')
+			// 英文数字后跟汉字
+			//.replace(/([0-9a-zA-Z])[ ]*([\u4e00-\u9fa0])/g, '$1 $2')
+			// 数字后跟计量单位
+			//.replace(/([0-9])[ ]*(°|%|‰|％|℃)[ ]*([0-9a-zA-Z\u4e00-\u9fa0])/g, '$1$2 $3')
+			// 数字后跟特定单位
+			//.replace(/([0-9])[ ]+(gbps|gb|g|tb|t|mb|m|byte|b)[ ]*([0-9a-zA-Z\u4e00-\u9fa0]?)/gi, '$1$2 $3')
 	},
 	// 修正分隔符号
 	replaceSeparator: function() {
-		// 替换分隔符
 		return this
-			.replace(/[ ]+(?=[＊#＃§☆★○●◎◇◆□■△▲※〓＝﹡×＋@\*x\—\-=])/g, '')
-			// 注释标记※
-			.replace(/＊{35,}/g, '\n!@!@!@!@!\n')
-			.replace(/([”。？！」])[…]{3,}$/g, '$1\n@@@@\n')
-			.replace(/[`＊&\*x]{5,}/g, '@@@@')
-			.replace(/(^…$\n){3,}/gm, '@@@@')
-			.replace(/([#＃§☆★○●◎◇◆□■△▲※〓＝﹡＋]{3,}|^[＊×]{3,}|^[\—\-=]{4,}|^[\—\-=]{2,}$)/gm, '@@@@')
-			// 修正数字和某些标点后的*号
-			.replace(/([\w：，；]$)\n?@@@@\n?/gm, '$1****')
-			.replace(/@@@@\n?([，。！？…’”』」])/gm, '****$1')
-			.replace(/@{4,}/g, '\n@@@@\n')
-			.replace(/(^@@@@$\n+)+/gm, '@@@@\n')
-			.replace(/\n+@@@@\n+/gm, '\n@@@@\n')
+			.replaces(configs.rSeparator)
 			// 还原注释标记
 			.replace(/!@!@!@!@!/g, '＊'.times(35))
 			.replace(/@@@@/g, configs.Separator);
 	},
 	// 引号修正
 	replaceQuotes: function(d, simp) {
-		// 分隔符
-		// 法式引号：'‘’“”'
-		// 中式引号：'『』「」'
-		d = d || '‘’“”'.split('');
+		// 法式引号 fr：'‘’“”'
+		// 中式引号 cn：'『』「」'
+		d = (d !== 'fr' ? '‘’“”' : '『』「」').split('')
 		// 是否简单修正
 		simp = simp || false;
 
 		var re = this.replace(/([a-zA-z])([\'`＇‘’『』])([a-zA-z])/g, '$1※@※$3');
-		if (!simp) {
+		if(!simp){
 			re = re.replace(/[‘’『』]/g, '\'')
 				.replace(/[“”「」\[\]]/g, '\"');
 		}
@@ -343,7 +328,7 @@ Object.extend(String.prototype, {
 		var re = this;
 
 		// 非严格限定
-		if (iRelax) {
+		if(iRelax){
 			// 标题间隔符（非严格限定）
 			configs.regSeparator = configs.regSeparatorNull;
 			// 行尾（非严格限定）
@@ -372,7 +357,7 @@ Object.extend(String.prototype, {
 		reg[1] = '(' + rTitle.t1.join('|') + ')';
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2) {
 			// 防止错误判断一下标题
-			if (m2.match(/^[！？。]{1,3}$/g)) return m0;
+			if(m2.match(/^[！？。]{1,3}$/g)) return m0;
 			m2 = m2.replace(new RegExp('^' + rSeparator, 'g'), '')
 				// 修正标题外括号【】
 				.replace(/[【](.*)[】]$/g, '$1')
@@ -384,7 +369,7 @@ Object.extend(String.prototype, {
 		// 04.24 修正非常规标题后面跟着数字序号的情况
 		var r = '(' + rTitle.t1[0] + ')' + iDivide + '(（?[0-9零一二三四五六七八九十]{1,2}）?)';
 		re = re.replace(new RegExp(r, 'g'), '$1$2');
-
+		
 		/****** 常规标题去边框 ******/
 		// 【第一章：标题】
 		var s = [
@@ -401,8 +386,8 @@ Object.extend(String.prototype, {
 		reg[1] = rTitle.t2;
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2, m3) {
 			// 防止错误判断一下标题
-			if ((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)) || m2.match(/^[\-—]/g)) return m0;
-			if (m3.length === 0 && m2.match(/[！？。…]{1,3}$/g)) return m0;
+			if((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)) || m2.match(/^[\-—]/g)) return m0;
+			if(m3.length === 0 && m2.match(/[！？。…]{1,3}$/g)) return m0;
 			m3 = m3.replace(new RegExp('^' + rSeparator, 'g'), '')
 				// 中文间空格转换为逗号
 				.replace(/([\u4E00-\u9FA5])[ ]+([\u4E00-\u9FA5])/g, '$1，$2')
@@ -466,23 +451,6 @@ Object.extend(String.prototype, {
 
 });
 
-// 章节标题居中函数，默认一行35全角字符
-var doCenter = function(str, b1, b2, center) {
-	var fBreak = b1 || '\n';
-	var eBreak = b2 || '';
-	var iCenter = center || false;
-	var lineLength = configs.Linenum * 2;
-
-	if (iCenter) {
-		str = str.trim();
-		var strLength = str.len();
-
-		if (iCenter && lineLength > strLength)
-			str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + str;
-	}
-	return fBreak + str + eBreak;
-};
-
 // 格式化时间
 if (typeof Date.prototype.format !== 'function') {
 	Date.prototype.format = function(fmt) {
@@ -543,224 +511,4 @@ if (typeof String.prototype.findCount !== 'function') {
 		})
 		return count;
 	}
-}
-
-// 截取分段
-function doSplit(str, sm, bm) {
-	var tmpstr = '';
-	if (str.match(/^　{2,}/)) return str + '\n\n';
-	str = str.trim();
-	if (str.len() === 0) return str;
-
-	// 分隔字数
-	var cutNum = configs.Linenum * 2;
-
-	var text = '',
-		linestr = (str === '＊'.times(35)) ? str : '　　' + str;
-
-	// 小于每行最大字数时直接返回
-	if (linestr.len() > cutNum) {
-		var oNum = Math.floor(linestr.len() / cutNum) + 1;
-		for (var j = 0; j < oNum; j++) {
-			// 预分段
-			var tmp = linestr.realSubstring(0, cutNum);
-			// 判断并处理行尾限制字符
-			tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(word) {
-				linestr += word;
-				return '';
-			});
-			// 剩下部分
-			linestr = linestr.realSubstring(tmp.len());
-			// 判断并处理行首限制字符
-			// 处理两个字符，因为经过整理过的标点只留两个
-			linestr = linestr.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(word) {
-				tmp += word;
-				return '';
-			});
-			// 处理单个连续标点
-			linestr = linestr.replace(/^([…～－])$/gm, function(word) {
-				tmp += word;
-				return '';
-			});
-			// 如果有英文并奇数位，英文前加空格补齐
-			// 测试一下全英文状态防止出错
-			var testTmp = tmp
-				.replace(/[\w]/g, '')
-				.replace(configs.Space, '')
-				.replace(configs.HWPunctuation, '')
-				.replace(configs.FWPunctuation, '')
-				.length === 0;
-			if ((tmp.len() < cutNum) && !testTmp) {
-				if (tmp.match(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/)) {
-					tmp = tmp.replace(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/, '$1 $2')
-				} else {
-					tmp = tmp.replace(/([0-9a-zA-Z])([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])/, '$1 $2')
-				}
-				tmp = tmp.replace(/([“‘『「][0-9a-zA-Z ]+[」』’”])/g, function(m) {
-					return m.replace(/ /g, '') + ' ';
-				})
-			}
-			text += tmp + '\n';
-		}
-		tmpstr += text + sm;
-	} else {
-		tmpstr += linestr + bm;
-	}
-	return tmpstr;
-}
-
-// 阿拉伯数字转换格式
-function cc(s) {
-	// 验证输入的字符是否为数字
-	if (isNaN(s)) return
-	// 字符处理完毕后开始转换，采用前后两部分分别转换
-	s = s.toLocaleString()
-	return s.replace(/\.00$/, "")
-}
-
-function doTidy(str) {
-	// 引号替换
-	var others = [
-		[/“/g, '「'],
-		[/”/g, '」'],
-		[/‘/g, '『'],
-		[/’/g, '』']
-	];
-	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
-
-	// 执行整理
-	var str = str
-		// 排版初始化，去空格空行
-		.replaceInit()
-		// 引号替换
-		.replaces(others)
-		// 转换半角
-		.convertNumberLetter()
-		// 英文首字大写
-		//.convertInitial()
-		// 修正分隔符号
-		.replaceSeparator();
-
-	var words = str.split('\n');
-	var count = words.length;
-
-	// 开始进行分隔
-	var re = '';
-	for (var i = 0; i < count; i++)
-		re += doSplit(words[i].trim(), '\n', '\n\n');
-
-	re = re
-		.replace(/作者：(.*)\n(.*)发表于：(.*)\n是否首发：(.*)\n字数：(.*)\n/gm, '')
-		// 修正结尾
-		.replace(eStrs, function(m) {
-			return doCenter(m, '', '', true);
-		})
-		// 标题居中
-		.replaceTitle('', '', true)
-		// 去除多余空行
-		.replace(/^([ 　]+)$\n/gm, '')
-		.replace(/\n{3,}$/gm, '\n\n')
-		.replace(/^\n{2,}/gm, '\n')
-	re = '\n' + re;
-
-	// 插入标头
-	var slength = re.length
-	var spacecount = re.findCount(/[ 　\u2003\u200b\ue4c6\uf8f5\ue004\uf04a\s\uFEFF\xA0]/g)
-
-	var headVal = {
-		'writer': $('#inputAuthor').val().trim(),
-		'bbsname': $('#inputSite').val().trim(),
-		'dateStr': new Date().format("yyyy/MM/dd"),
-		'strNum': cc(slength - spacecount)
-	}
-
-	var headStr = '作者：{writer}\n\
-{dateStr}发表于：{bbsname}\n\
-是否首发：是\n\
-字数：{strNum} 字\n\
-'.format(headVal);
-	/**
-	var inputBookName = $('#inputBookName').val(),
-		inputChapter = $('#inputChapter').val(),
-		inputBookInfo = ''
-	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
-		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
-	}
-	if(inputBookInfo.length > 0)
-		inputBookInfo = inputBookInfo + '\n\n' + headStr
-	else
-		inputBookInfo = headStr
-	**/
-	return headStr + re;
-}
-
-// 一键整理
-function getCleanUp(str) {
-	// 排版初始化，去空格空行
-	str = str.replaceInit()
-	// HTML 字符实体转换
-	if ($('#Check_0').is(':checked'))
-		str = str.converHtmlEntity()
-	// Unicode转换
-	if ($('#Check_1').is(':checked'))
-		str = str.converUnicode()
-	// 转换变体字母
-	if ($('#Check_2').is(':checked'))
-		str = str.convertVariant()
-	// 转换变体序号
-	if ($('#Check_3').is(':checked'))
-		str = str.convertSerialNumber()
-	// 半角字母数字
-	if ($('#Check_4').is(':checked'))
-		str = str.convertNumberLetter()
-	// 全角标点符号
-	if ($('#Check_5').is(':checked'))
-		str = str.convertPunctuation()
-	// 修正章节标题
-	if ($('#Check_6').is(':checked'))
-		str = str.replaceTitle()
-	// 去除汉字间的空格
-	if ($('#Check_7').is(':checked'))
-		str = str.replaceSpace()
-	// 修正分隔符号
-	if ($('#Check_8').is(':checked'))
-		str = str.replaceSeparator()
-	// 修正引号
-	if ($('#Check_9').is(':checked'))
-		str = str.replaceQuotes('‘’“”'.split(''))
-	// 英文首字大写
-	if ($('#Check_10').is(':checked'))
-		str = str.convertInitial()
-	// 结束
-	return str.replaceEnd()
-}
-
-// 加粗标题
-function boldTitle(str) {
-	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
-	return str
-		.replaceTitle('[b]', '[/b]', true)
-		// 修正结尾
-		.replace(eStrs, function(m) {
-			return doCenter(m, '[b]', '[/b]', true);
-		})
-		.replace(/(\r|\r\n|\n\r)^\[\/b\]/gm, '[/b]\n')
-		.replace(/^\[b\]([　]+)/gm, '$1[b]')
-}
-
-// 组合文章标题
-function getTitle(){
-	var inputBookName = $('#inputBookName').val(),
-		inputChapter = $('#inputChapter').val(),
-		inputBookInfo = ''
-	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
-		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
-	}
-	return inputBookInfo.length > 0 ? inputBookInfo : '此处标题'
 }
