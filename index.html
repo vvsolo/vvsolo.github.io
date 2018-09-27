@@ -29,7 +29,7 @@
     <a class="navbar-brand" href="#">排版助手（在线版）</a>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item active">
-        <a class="nav-link" href="./index.zh.html">訪問繁體版</a>
+        <a class="nav-link text-warning" href="./index.zh.html">訪問繁體版</a>
       </li>
     </ul>
   </nav>
@@ -152,7 +152,7 @@
             <input type="text" style="position: absolute; left: -1000px;" id="TitleContent" value="">
             <hr />
             <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
-            <span class="float-right"><strong id="CountMsg">0</strong> 字节</span>
+            <span class="float-right" id="CountMsg"><strong>0</strong> 行/<strong>0</strong> 字节</span>
           </div>
           <div>
             <div class="float-left">
@@ -186,7 +186,7 @@
         <div class="container-fluid">
           <textarea class="form-control" id="TextareaEditor" style="min-height:480px;background-color: #f2f2f2;font-family: '新宋体', '宋体';font-size: 14px;font-weight: bold;" placeholder="粘贴文本到此处" data-lang=""></textarea>
         </div>
-        <div id="subline" style="position: absolute;left: 538px;width:0px;border-right:2px dashed #B8DAFF;height:478px;">
+        <div id="subline" style="position: absolute;width:0px;border-right:2px dashed #B8DAFF;height:478px;">
         </div>
     </div>
   </div>
@@ -195,7 +195,8 @@
   <!-- Bootstrap core JavaScript -->
   <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="js/jquery.shortcuts.js"></script>
+  <script src="js/jquery.shortcuts.js?201809"></script>
+  <script src="js/jquery.TextareaLine.js?201809"></script>
 
   <script src="js/config.js?201809"></script>
   <script src="js/typesetting.min.js?201809"></script>
@@ -236,10 +237,11 @@
       })
       // 按钮
       var tEditor = $('#TextareaEditor')
-      tEditor.focus()
+      // 行号
+      tEditor.TextareaLine().focus()
       // 辅助线
       var position = tEditor.position()
-      $('#subline').offset({ top: position.top + 63 })
+      $('#subline').offset({ top: position.top + 63, left: 842})
       $('[data-subline]').click(function() {
         $('#subline').toggle()
       })
@@ -253,7 +255,9 @@
       })
       // 实时统计字符
       tEditor.on('keyup keydown change focus', function() {
-        $('#CountMsg').html(tEditor.val().length)
+	    var sVal = tEditor.val()
+        $('#CountMsg').find('strong:eq(0)').html(sVal.length > 0 ? sVal.split('\n').length : 0)
+        $('#CountMsg').find('strong:eq(1)').html(sVal.length)
       })
       // 实时显示文章标题
       $('#inputBookName,#inputChapter').on('keyup keydown change focus', function() {

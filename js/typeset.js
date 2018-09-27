@@ -1,21 +1,4 @@
 
-// 章节标题居中函数，默认一行35全角字符
-var doCenter = function(str, b1, b2, center) {
-	var fBreak = b1 || '\n';
-	var eBreak = b2 || '';
-	var iCenter = center || false;
-	var lineLength = configs.Linenum*2;
-
-	if(iCenter){
-		str = str.trim();
-		var strLength = str.len();
-
-		if (iCenter && lineLength > strLength)
-			str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + str;
-	}
-	return fBreak + str + eBreak;
-};
-
 // 截取分段
 function doSplit(str, sm, bm) {
 	var tmpstr = '';
@@ -213,29 +196,16 @@ function getCleanUp(str) {
 	return str.replaceEnd()
 }
 
-// 加粗标题
-function boldTitle(str) {
-	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
-	return str
-		.replaceTitle('[b]', '[/b]', true)
-		// 修正结尾
-		.replace(eStrs, function(m) {
-			return doCenter(m, '[b]', '[/b]', true);
-		})
-		.replace(/(\r|\r\n|\n\r)^\[\/b\]/gm, '[/b]\n')
-		.replace(/^\[b\]([　]+)/gm, '$1[b]')
-}
 
 // 组合文章标题
 function getTitle(r){
-	var inputBookName = $('#inputBookName').val(),
-		inputChapter = $('#inputChapter').val(),
-		inputBookInfo = ''
-	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
-		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
+	var iBookName = $('#inputBookName').val(),
+		iChapter = $('#inputChapter').val(),
+		iBookInfo = ''
+	if(iBookName.length > 0){
+		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
+		if(iChapter.length > 0)
+			iBookInfo = iBookInfo + '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
-	return inputBookInfo.length > 0 ? inputBookInfo : r
+	return iBookInfo.length > 0 ? iBookInfo : (r || '')
 }

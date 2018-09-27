@@ -301,7 +301,7 @@ Object.extend(String.prototype, {
 		// 修正引号初始化
 		return re
 			.replace(/[`＇]/g, '\'')
-			.replace(/[〝〞［］＂]/g, '\"')
+			.replace(/[〝〞［］＂″｢｣]/g, '\"')
 			// 修正单引号
 			.replace(/'([^\'\r\n]+)'/g, d[0] + '$1' + d[1])
 			.replace(/^([　]+)'/gm, '$1' + d[0])
@@ -450,6 +450,23 @@ Object.extend(String.prototype, {
 	}
 
 });
+
+// 章节标题居中函数，默认一行35全角字符
+var doCenter = (str, b1, b2, center) {
+	var fBreak = b1 || '\n';
+	var eBreak = b2 || '';
+	var iCenter = center || false;
+	var lineLength = configs.Linenum*2;
+
+	if(iCenter){
+		str = str.trim();
+		var strLength = str.len();
+
+		if (iCenter && lineLength > strLength)
+			str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + str;
+	}
+	return fBreak + str + eBreak;
+};
 
 // 格式化时间
 if (typeof Date.prototype.format !== 'function') {
