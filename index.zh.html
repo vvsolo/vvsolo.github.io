@@ -193,7 +193,7 @@
   <!-- /.container -->
 
   <!-- Bootstrap core JavaScript -->
-  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="js/jquery.shortcuts.js?201809"></script>
   <script src="js/jquery.TextareaLine.js?201809"></script>
@@ -254,13 +254,13 @@
         tEditor.val(Traditionalized(tEditor.val()))
       })
       // 即時統計字元
-      tEditor.on('keyup keydown change focus', function() {
+      tEditor.on('keyup keydown change focus input propertychange', function() {
 	    var sVal = tEditor.val()
         $('#CountMsg').find('strong:eq(0)').html(sVal.length > 0 ? sVal.split('\n').length : 0)
         $('#CountMsg').find('strong:eq(1)').html(sVal.length)
       })
       // 即時顯示文章標題
-      $('#inputBookName,#inputChapter').on('keyup keydown change focus', function() {
+      $('#inputBookName,#inputChapter').on('keyup keydown change focus input propertychange', function() {
         $('#TitleMsg').html(getTitle('此處標題'))
       })
       // 清空文件
@@ -269,38 +269,33 @@
       });
       // 保存文件
       $('#SaveEditor').click(function() {
-        var sEditor = tEditor.val()
-        if (sEditor.length > 0) {
-          $('#AlertMsg').data('doc', sEditor)
-          $('#AlertMsg').html('文件已保存！')
+        var sVal = tEditor.val()
+        if (sVal.length > 0) {
+          $('#AlertMsg').data('doc', sVal).html('文件已保存！')
         }
         tEditor.focus()
       });
       // 還原文件
       $('#RestoreEditor').click(function() {
-        var sEditor = $('#AlertMsg').data('doc')
-        if (sEditor.length > 0) {
-          tEditor.val(sEditor)
+        var sVal = $('#AlertMsg').data('doc')
+        if (sVal.length > 0) {
+          tEditor.val(sVal).focus()
           $('#AlertMsg').html('文件已還原！')
         }
-        tEditor.focus()
       });
       // 一鍵整理
       $('#onCleanUp').click(function() {
         var sVal = tEditor.val()
         if (sVal.length > 0) {
-          tEditor.val(getCleanUp(sVal))
-          tEditor.focus()
+          tEditor.val(getCleanUp(sVal)).focus()
         }
       })
       // 一鍵排版
       $('#onTypeSet').click(function() {
         var sVal = tEditor.val()
         if (sVal.length > 0) {
-          $('#AlertMsg').data('doc', sVal)
-          $('#AlertMsg').html('排版成功！原格式文件已保存，若想重排請點擊“還原”按鈕！')
-          tEditor.val(doTidy(sVal))
-          tEditor.focus()
+          $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文档已保存，若想重排请点击“还原”按钮！')
+          tEditor.val(doTidy(sVal)).focus()
         }
       })
       // 簡單UBB
@@ -318,9 +313,8 @@
       })
       // 插入待續完結
       $('.btn[data-insert]').each(function() {
-        var $this = $(this)
-        $this.click(function() {
-          var tmp = $this.data('insert')
+        var tmp = $(this).data('insert')
+        $(this).click(function() {
           tEditor.insertContent(tmp)
         })
       })
@@ -328,8 +322,7 @@
       $('#copyTitle').click(function() {
         var sVal = $('#TitleMsg').text()
         if (sVal.length > 0) {
-          $('#TitleContent').val(sVal)
-          $('#TitleContent').select()
+          $('#TitleContent').val(sVal).select()
           document.execCommand('Copy')
           $('#AlertMsg').html('標題已複製到剪貼板！')
         }

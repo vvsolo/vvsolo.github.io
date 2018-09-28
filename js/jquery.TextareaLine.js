@@ -51,7 +51,7 @@
 			that.$element.wrap(that.$group);
 			that.$ol.insertBefore(that.$element);
 			this.$ol.wrap(that.$wrap)
-			that.$element.on('keyup keydown change focus', {
+			that.$element.on('keyup keydown change focus input propertychange', {
 				that: that
 			}, that.inputText);
 			that.$element.on('scroll', {
