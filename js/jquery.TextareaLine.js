@@ -18,20 +18,19 @@
 			"border": 0,
 			"border-right": '1px dashed ' + config.color,
 			"width": config.width,
-			"height": this.$element.height(),
+			"height": this.$element.outerHeight(),
 			"font-size": this.$element.css("font-size"),
 			"line-height": this.$element.css("line-height"),
 			"position": "absolute",
 			"overflow": "hidden",
 			"margin": 0,
-			"padding": '0 5px 0 0',
+			"padding": '5px 5px 0 0',
 			"text-align": "right",
 			"font-family": "consolas"
 		});
 		this.$wrap.css({
-			"padding": ((this.$element.outerHeight() - this.$element.height()) / 2) + 'px 0',
 			"position": "absolute",
-			"height": this.$element.height()
+			"height": this.$element.outerHeight()
 		});
 		this.$element.css({
 			//"white-space": "normal",
@@ -78,7 +77,7 @@
 		updateLine: function(count) {
 			var that = this;
 			var value = that.$element.val().replace(/(\r\n|\n\r|\r|\n)/g, '\n') + '\n';
-			value = value.replace(/\n{2,}$/g, '\n')
+			//value = value.replace(/\n{2,}$/g, '\n')
 			var valArr = value.split('\n')
 			//var trueLineWidth = that.$element.outerWidth(true)
 			//trueLineWidth -= parseInt(that.$element.css('padding-left'))
@@ -91,8 +90,8 @@
 			
 			that.$ol.html('');
 			for (var i = 1; i <= count; i++) {
-				if(i > 1999){
-					$('#AlertMsg').html('行数超过2000行，行号不再显示！')
+				if(i > 5000){
+					$('#AlertMsg').html('行数超过5000行，行号不再显示！')
 					break;
 				}
 				var linestr = valArr[i - 1]
@@ -134,6 +133,7 @@
 		var config = {};
 		var option = arguments[0] ? arguments[0] : {};
 		config.color = option.color || "#aaa";
+		config.bgcolor = option.color || "#ccc";
 		config.width = option.width || "50px";
 		config.display = option.display || "block";
 		return this.each(function() {

@@ -290,12 +290,12 @@ Object.extend(String.prototype, {
 		// 中式引号 cn：'『』「」'
 		d = (d !== 'fr' ? '‘’“”' : '『』「」').split('')
 		// 是否简单修正
-		simp = simp || false;
+		simp = simp || false
 
-		var re = this.replace(/([a-zA-z])([\'`＇‘’『』])([a-zA-z])/g, '$1※@※$3');
+		var re = this.replace(/([a-zA-z])([\'`＇‘’『』])([a-zA-z])/g, '$1※@※$3')
 		if(!simp){
 			re = re.replace(/[‘’『』]/g, '\'')
-				.replace(/[“”「」\[\]]/g, '\"');
+				.replace(/[“”「」]/g, '\"')
 		}
 
 		// 修正引号初始化
@@ -452,7 +452,7 @@ Object.extend(String.prototype, {
 });
 
 // 章节标题居中函数，默认一行35全角字符
-var doCenter = (str, b1, b2, center) {
+var doCenter = function(str, b1, b2, center) {
 	var fBreak = b1 || '\n';
 	var eBreak = b2 || '';
 	var iCenter = center || false;

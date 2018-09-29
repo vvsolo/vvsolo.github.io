@@ -17,7 +17,7 @@
       font-size: 12px;
       background-color: #fafafa;
     }
-    #copyTitle {
+    .btn-copy {
       cursor: pointer;
       font-weight: normal;
     }
@@ -29,7 +29,7 @@
     <a class="navbar-brand" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在線版）</a>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item active">
-        <a class="nav-link text-warning" href="./">访问简体版</a>
+        <a class="nav-link text-warning" href="./index.zh.html">訪問繁體版</a>
       </li>
     </ul>
   </nav>
@@ -147,9 +147,8 @@
           <div class="alert alert-warning" role="alert">
             <h5 class="alert-heading">
               <span id="TitleMsg">此處標題</span>
-              <span title="複製標題到剪貼板" class="badge badge-secondary" id="copyTitle">複製</span>
+              <span title="複製標題到剪貼板" class="badge badge-secondary btn-copy" data-clipboard-target="#TitleMsg">複製</span>
             </h5>
-            <input type="text" style="position: absolute; left: -1000px;" id="TitleContent" value="">
             <hr />
             <span id="AlertMsg" data-doc="">填寫作者等相關訊息後，“一鍵整理” → “排版輸出”.</span>
             <span class="float-right" id="CountMsg"><strong>0</strong> 行/<strong>0</strong> 位元組</span>
@@ -158,22 +157,22 @@
             <div class="float-left">
               <button type="button" class="btn btn-success" title="一鍵整理" id="onCleanUp">一鍵整理</button>
               <button type="button" class="btn btn-success" title="排版輸出" id="onTypeSet">排版輸出</button>
-              <button type="button" class="btn btn-secondary" title="複製文件到剪貼板" id="onCopy">複製文件</button>
+              <button type="button" class="btn btn-secondary btn-copy" title="複製文件到剪貼板" data-clipboard-target="#TextareaEditor">複製文件</button>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary" title="轉換簡體" id="toSimp"><strong>簡</strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="轉換繁體" id="toTrad"><strong>繁</strong></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="轉換簡體" id="toSimp">簡</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="轉換繁體" id="toTrad">繁</button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary" title="加粗" data-ubbcode="[b]{s}[/b]"><strong>B</strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="下劃線" data-ubbcode="[u]{s}[/u]"><strong><u>U</u></strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="斜體" data-ubbcode="[i]{s}[/i]"><strong><em>I</em></strong></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="加粗" data-ubbcode="[b]{s}[/b]">B</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="下劃線" data-ubbcode="[u]{s}[/u]"><u>U</u></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="斜體" data-ubbcode="[i]{s}[/i]"><em>I</em></button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary" title="插入待續" data-insert="（待續）"><strong>續</strong></button>
-                <button type="button" class="btn btn-outline-secondary" title="插入全文完" data-insert="（全文完）"><strong>完</strong></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入待續" data-insert="（待續）">續</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入全文完" data-insert="（全文完）">完</button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary" title="顯隱輔助線" data-subline><strong>輔</strong></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="顯隱輔助線" data-subline>輔</button>
               </div>
             </div>
             <div class="float-right">
@@ -184,10 +183,9 @@
           </div>
         </div>
         <div class="container-fluid">
-          <textarea class="form-control" id="TextareaEditor" style="min-height:480px;background-color: #f2f2f2;font-family: '新宋体', '宋体';font-size: 14px;font-weight: bold;" placeholder="黏貼文本到此處" data-lang=""></textarea>
+          <textarea class="form-control" id="TextareaEditor" style="min-height: 480px;background-color: #f2f2f2;font-family: '新宋体', '宋体';font-size: 14px;font-weight: bold;" placeholder="黏貼文本到此處" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
         </div>
-        <div id="subline" style="position: absolute;width:0px;border-right:2px dashed #B8DAFF;height:478px;">
-        </div>
+        <div id="subline" style="position: absolute;width: 0px;border-right: 2px dashed #B8DAFF;height: 478px;"></div>
     </div>
   </div>
   <!-- /.container -->
@@ -195,6 +193,7 @@
   <!-- Bootstrap core JavaScript -->
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
   <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdn.bootcss.com/clipboard.js/2.0.1/clipboard.min.js"></script>
   <script src="js/jquery.shortcuts.js?201809"></script>
   <script src="js/jquery.TextareaLine.js?201809"></script>
 
@@ -204,7 +203,6 @@
   <script src="js/conver.dic.js?201809"></script>
   <script>
     $(function() {
-	  
       // 讀取保存的設置
       $('#inputBookName').val($.cookie('inputBookName') || '')
       $('#inputChapter').val($.cookie('inputChapter') || '')
@@ -247,11 +245,11 @@
       })
       // 轉簡體
       $('#toSimp').click(function() {
-        tEditor.val(Othered(Simplized(tEditor.val())))
+        tEditor.val(Othered(Simplized(tEditor.val()))).focus()
       })
       // 轉繁體
       $('#toTrad').click(function() {
-        tEditor.val(Traditionalized(tEditor.val()))
+        tEditor.val(Traditionalized(tEditor.val())).focus()
       })
       // 即時統計字元
       tEditor.on('keyup keydown change focus input propertychange', function() {
@@ -294,7 +292,7 @@
       $('#onTypeSet').click(function() {
         var sVal = tEditor.val()
         if (sVal.length > 0) {
-          $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文档已保存，若想重排请点击“还原”按钮！')
+          $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文件已保存，若想重排請點擊“還原”按鈕！')
           tEditor.val(doTidy(sVal)).focus()
         }
       })
@@ -305,7 +303,6 @@
           if (tEditor.selectionRange().length > 0) {
             var tmp = $this.data('ubbcode').replace(/\{s\}/g, tEditor.selectionRange())
             tEditor.insertContent(tmp)
-            $('#AlertMsg').html('標題已' + $this.attr('title') + '！')
           } else {
             $('#AlertMsg').html('未選中文字！')
           }
@@ -318,24 +315,11 @@
           tEditor.insertContent(tmp)
         })
       })
-      // 複製標題到剪貼板
-      $('#copyTitle').click(function() {
-        var sVal = $('#TitleMsg').text()
-        if (sVal.length > 0) {
-          $('#TitleContent').val(sVal).select()
-          document.execCommand('Copy')
-          $('#AlertMsg').html('標題已複製到剪貼板！')
-        }
-      })
-      // 複製文章到剪貼板
-      $('#onCopy').click(function() {
-        var sVal = tEditor.val()
-        if (sVal.length > 0) {
-          tEditor.focus().select()
-          document.execCommand('Copy')
-          tEditor.blur()
-          $('#AlertMsg').html('文件已複製到剪貼板！')
-        }
+      // 複製到剪貼板
+      var clipboard = new ClipboardJS('.btn-copy')
+      clipboard.on('success', function(e) {
+        $('#AlertMsg').html('複製成功！')
+        e.clearSelection()
       });
     });
   </script>

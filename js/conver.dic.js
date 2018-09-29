@@ -24,6 +24,7 @@ function dicS2T() {
 
 // 繁转简补充部分
 // ⼳幺麽甚祗衹乾夥著澹塬瞭榖锺桉勐摀壹
+// 处理一些特定的词组
 function addT2S() {
 	return [
 		// ***** 词组部分 *****
@@ -84,7 +85,6 @@ function addT2S() {
 		[/([计规企比])画/g, '$1划'],
 		[/允([吸舔干])/g, '吮$1'],
 		[/([吸舔])允/g, '$1吮'],
-		[/阴端口/g, '阴阜'],
 		// ***** 补充部分 *****
 		[/\ud860\udd6c/g, '躏'],
 		[/(\u9f8c\ud86d\udf2c|齷齰)/g, '龌龊'],
@@ -105,10 +105,11 @@ function convert(str, ss, tt){
 	//return str;
 	
 	var re='';
-	for(var i=0;i<str.length;i++){
+	for (var i = 0; i < str.length; i++) {
 		var nowStr = str.charAt(i);
-		if(ss.indexOf(nowStr)!=-1)re+=tt.charAt(ss.indexOf(nowStr));
-  		else re+=nowStr;
+		if (str.charCodeAt(i) > 10000 && ss.indexOf(nowStr) != -1)
+			re += tt.charAt(ss.indexOf(nowStr));
+		else re += nowStr;
 	}
 	return re;
 }
@@ -118,8 +119,8 @@ function Traditionalized(str){
 	var bval = dicBasic()
 	// 补充
 	var aval = dicS2T()
-	var ss = bval[1] + aval[1],
-		tt = bval[0] + aval[0]
+	var ss = bval[1] + aval[1]
+	var tt = bval[0] + aval[0]
 	return convert(str, ss, tt)
 }
 //转简体
@@ -128,11 +129,11 @@ function Simplized(str){
 	var bval = dicBasic()
 	// 补充
 	var aval = dicT2S()
-	var ss = bval[1] + aval[1],
-		tt = bval[0] + aval[0]
+	var ss = bval[1] + aval[1]
+	var tt = bval[0] + aval[0]
 	return convert(str, tt, ss)
 }
 // 繁转简补充部分
 function Othered(str){
-	return str.replaces(addT2S())
+	return str.replace(addT2S())
 }
