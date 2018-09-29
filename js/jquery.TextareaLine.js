@@ -15,6 +15,7 @@
 		});
 		this.$ol.css({
 			"color": config.color,
+			//"background-color": config.bgcolor,
 			"border": 0,
 			"border-right": '1px dashed ' + config.color,
 			"width": config.width,
@@ -133,7 +134,7 @@
 		var config = {};
 		var option = arguments[0] ? arguments[0] : {};
 		config.color = option.color || "#aaa";
-		config.bgcolor = option.color || "#ccc";
+		config.bgcolor = option.color || "#efefef";
 		config.width = option.width || "50px";
 		config.display = option.display || "block";
 		return this.each(function() {
