@@ -392,14 +392,14 @@ Object.extend(String.prototype, {
 		/****** 一章/第一章/一章：标题/第一章：标题 ******/
 		reg[1] = rTitle.t2
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2, m3) {
-			// 防止错误判断一下标题：一回头、一幕幕
-			if((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)))
-				return m0
-			// 防止错误判断一下标题：——开头
-			if(m2.match(/^[\-—]{1,4}/g))
+			// 防止错误判断一下标题：——开头，或全是标点
+			if(m2.match(/^[\-—]{1,4}/g) || m3.match(/^[！？。…]{1,3}$/g))
 				return m0
 			// 防止错误判断一下标题：第一部电影很好，很成功。
 			if(!m3.match(configs.regSeparatorCheck) && m3.match(/[，]/g) && m3.match(/[！？。…]{1,3}$/g))
+				return m0
+			// 防止错误判断一下标题：一回头、一幕幕
+			if((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)))
 				return m0
 			m3 = m3
 				.replace(rSeparatorLeft, '')
@@ -442,11 +442,17 @@ Object.extend(String.prototype, {
 		reg[3] = rSeparator + configs.regStrictEnd + '|$)'
 		var pattern = configs.regSkipTitle1
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2) {
+			// 全是标点不处理
+			if(m2.match(/^[！？。…]{1,3}$/g))
+				return m0
+			// 没有间隔符并且以句号结尾不处理
+			if(!m2.match(rSeparatorLeft) && m2.match(/[！？。…]$/g))
+				return m0
+			// 其他处理过滤
 			for(var i = 0; i < pattern.length; i++) {
 				if(m0.match(pattern[i]))
 					return m0
 			}
-			if(m2.match(/^[！？。…]/)) return m0
 			m2 = m2
 				.replace(rSeparatorLeft, '')
 				.replace(/[【】]/g, '')
