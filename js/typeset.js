@@ -94,7 +94,7 @@ function doTidy(str) {
 		// 英文首字大写
 		//.convertInitial()
 		// 修正分隔符号
-		.replaceSeparator();
+		.replaceSeparator()
 
 	var words = str.split('\n');
 	var count = words.length;
@@ -188,7 +188,7 @@ function getCleanUp(str) {
 		str = str.replaceSeparator()
 	// 修正引号
 	if ($('#Check_9').is(':checked'))
-		str = str.replaceQuotes('‘’“”'.split(''))
+		str = str.replaceQuotes('fr')
 	// 英文首字大写
 	if ($('#Check_10').is(':checked'))
 		str = str.convertInitial()

@@ -104,7 +104,7 @@ Object.extend(String.prototype, {
 	},
 	// 英文首字大写
 	convertInitial: function() {
-		var allInitial = [];
+		//var allInitial = [];
 		var re = this
 			// 转换英文小写
 			.toLowerCase()
@@ -139,6 +139,10 @@ Object.extend(String.prototype, {
 			})
 			// 处理型号类
 			.replace(/([a-zA-Z]+[\-—\~～]\d|\d[\-—\~～][a-zA-Z]+)/g, function(m) {
+				return m.toUpperCase()
+			})
+			// 处理连续的英语
+			.replace(/(\W)(a{2,}|b{2,}|c{2,}|d{2,}|e{2,}|f{2,}|g{2,}|h{2,}|i{2,}|j{2,}|k{2,}|l{2,}|m{2,}|n{2,}|o{2,}|p{2,}|q{2,}|r{2,}|s{2,}|t{2,}|u{2,}|v{2,}|w{2,}|x{2,}|y{2,}|z{2,})(\W)/gi, function(m) {
 				return m.toUpperCase()
 			})
 			// 专用英文缩写全部大写
@@ -222,7 +226,7 @@ Object.extend(String.prototype, {
 	// Unicode转换
 	converUnicode: function() {
 		return this
-			.replace(/\\u?([0-9abcdef]{4})/gi, function(m) {
+			.replace(/\\u?([0-9a-f]{4})/gi, function(m) {
 				return unescape(m.replace(/\\u?/gi, '%u'))
 			})
 			.replace(/([＆&]#(\d+)[;；])/gi, function(m) {
@@ -282,13 +286,13 @@ Object.extend(String.prototype, {
 			.replaces(configs.rSeparator)
 			// 还原注释标记
 			.replace(/!@!@!@!@!/g, '＊'.times(35))
-			.replace(/@@@@/g, configs.Separator);
+			.replace(/@@@@/g, configs.Separator)
 	},
 	// 引号修正
 	replaceQuotes: function(d, simp) {
 		// 法式引号 fr：'‘’“”'
 		// 中式引号 cn：'『』「」'
-		d = (d !== 'fr' ? '‘’“”' : '『』「」').split('')
+		d = (d !== 'cn' ? '‘’“”' : '『』「」').split('')
 		// 是否简单修正
 		simp = simp || false
 
@@ -320,30 +324,32 @@ Object.extend(String.prototype, {
 	},
 	// 修正章节标题
 	replaceTitle: function(b1, b2, center, relax) {
-		var iDivide = configs.Divide;
-		var fBreak = b1 || '\n\n';
-		var eBreak = b2 || '';
+		var iDivide = configs.Divide
+		var fBreak = b1 || '\n\n'
+		var eBreak = b2 || ''
 		var iCenter = center || false;
-		var iRelax = relax || false;
-		var re = this;
+		var iRelax = relax || false
+		var re = this
 
 		// 非严格限定
 		if(iRelax){
 			// 标题间隔符（非严格限定）
-			configs.regSeparator = configs.regSeparatorNull;
+			configs.regSeparator = configs.regSeparatorNull
 			// 行尾（非严格限定）
-			configs.regStrictEnd = configs.regEnd;
+			configs.regStrictEnd = configs.regEnd
 		}
 
-		var rTitle = configs.regTitle;
-		var rSeparator = configs.regSeparator;
-		var rSeparatorNull = configs.regSeparatorNull;
+		var rTitle = configs.regTitle
+		var rSeparator = configs.regSeparator
+		var rSeparatorNull = configs.regSeparatorNull
+		var rSeparatorLeft = new RegExp('^' + rSeparator, 'g')
+		var rSeparatorAll = new RegExp('^' + rSeparator + '$', 'g')
 
 		/****** 分隔符居中 ******/
 		if (iCenter) {
 			re = re.replace(new RegExp(configs.regStart + configs.Separator, 'gm'), function(m) {
-				return doCenter(m, '', '', iCenter);
-			});
+				return doCenter(m, '', '', iCenter)
+			})
 		}
 
 		var reg = [
@@ -352,23 +358,24 @@ Object.extend(String.prototype, {
 			'(?:' + rSeparatorNull + ')',
 			'(' + configs.regEnd + '|$)',
 			'$'
-		];
+		]
 		/****** 非常规标题 ******/
-		reg[1] = '(' + rTitle.t1.join('|') + ')';
+		reg[1] = '(' + rTitle.t1.join('|') + ')'
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2) {
 			// 防止错误判断一下标题
-			if(m2.match(/^[！？。]{1,3}$/g)) return m0;
-			m2 = m2.replace(new RegExp('^' + rSeparator, 'g'), '')
+			if(m2.match(/^[！？。]{1,3}$/g)) return m0
+			m2 = m2
+				.replace(rSeparatorLeft, '')
 				// 修正标题外括号【】
-				.replace(/[【](.*)[】]$/g, '$1')
+				.replace(/[【】]/g, '')
 				// 去除只有间隔符的情况
-				.replace(new RegExp('^' + rSeparator + '$', 'g'), '');
-			if (m2.length > 0) m2 = iDivide + m2;
-			return doCenter(m1 + m2, fBreak, eBreak, iCenter);
+				.replace(rSeparatorAll, '')
+			if (m2.length > 0) m2 = iDivide + m2
+			return doCenter(m1 + m2, fBreak, eBreak, iCenter)
 		});
 		// 04.24 修正非常规标题后面跟着数字序号的情况
-		var r = '(' + rTitle.t1[0] + ')' + iDivide + '(（?[0-9零一二三四五六七八九十]{1,2}）?)';
-		re = re.replace(new RegExp(r, 'g'), '$1$2');
+		var r = '(' + rTitle.t1[0] + ')' + iDivide + '(（?[0-9零一二三四五六七八九十]{1,2}）?)'
+		re = re.replace(new RegExp(r, 'g'), '$1$2')
 		
 		/****** 常规标题去边框 ******/
 		// 【第一章：标题】
@@ -378,77 +385,77 @@ Object.extend(String.prototype, {
 			'(' + rSeparatorNull + ')',
 			'[【]?(' + configs.regEnd + '|$)[】]?',
 			'$'
-		];
+		]
 		re = re.replace(new RegExp(s.join(''), 'gm'), function(t) {
-			return t.replace(/[【】]/g, '');
-		});
+			return t.replace(/[【】]/g, '')
+		})
 		/****** 一章/第一章/一章：标题/第一章：标题 ******/
-		reg[1] = rTitle.t2;
+		reg[1] = rTitle.t2
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2, m3) {
-			// 防止错误判断一下标题
-			if((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)) || m2.match(/^[\-—]/g)) return m0;
-			if(m3.length === 0 && m2.match(/[！？。…]{1,3}$/g)) return m0;
-			m3 = m3.replace(new RegExp('^' + rSeparator, 'g'), '')
+			// 防止错误判断一下标题：一回头、一幕幕
+			if((m0.match(configs.regSkipTitle) && !m3.match(configs.regSeparatorCheck) && m3.match(/[！？。…]{1,3}$/g)))
+				return m0
+			// 防止错误判断一下标题：——开头
+			if(m2.match(/^[\-—]{1,4}/g))
+				return m0
+			// 防止错误判断一下标题：第一部电影很好，很成功。
+			if(!m3.match(configs.regSeparatorCheck) && m3.match(/[，]/g) && m3.match(/[！？。…]{1,3}$/g))
+				return m0
+			m3 = m3
+				.replace(rSeparatorLeft, '')
 				// 中文间空格转换为逗号
 				.replace(/([\u4E00-\u9FA5])[ ]+([\u4E00-\u9FA5])/g, '$1，$2')
 				.replace(/([\w]+)[ ]{1,4}([\w]+)/g, '$1 $2')
-				.replace(new RegExp('^' + rSeparator + '$', 'g'), '');
-			if (m3.length > 0) m3 = iDivide + m3;
+				// 去除只有间隔符的情况
+				.replace(rSeparatorAll, '')
+			if (m3.length > 0) m3 = iDivide + m3
 			m2 = m2.replace(/[ ]*/g, '')
-			return doCenter('第' + m2 + m3, fBreak, eBreak, iCenter);
-		});
+			return doCenter('第' + m2 + m3, fBreak, eBreak, iCenter)
+		})
 		/****** （一）/（一）标题 ******/
-		reg[1] = rTitle.t5;
-		reg[2] = '';
+		reg[1] = rTitle.t5
+		reg[2] = ''
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2) {
-			m2 = m2.replace(new RegExp('^' + rSeparator, 'g'), '')
-				// 修正标题外括号【】
-				.replace(/[【](.*)[】]$/g, '$1')
-				.replace(new RegExp('^' + rSeparator + '|' + rSeparator + '$', 'g'), '');
-			return doCenter(m1 + m2, fBreak, eBreak, iCenter);
-		});
+			m2 = m2
+				.replace(rSeparatorLeft, '')
+				.replace(/[【】]/g, '')
+				.replace(rSeparatorAll, '')
+			return doCenter(m1 + m2, fBreak, eBreak, iCenter)
+		})
 		// 如果是居中返回
-		if (iCenter) return re;
+		if (iCenter) return re
 
 		/****** 卷一/卷一：标题 ******/
-		reg[1] = rTitle.t3;
-		reg[2] = '(?:' + rSeparatorNull + ')';
+		reg[1] = rTitle.t3
+		reg[2] = '(?:' + rSeparatorNull + ')'
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2, m3) {
-			m3 = m3.replace('^' + new RegExp(rSeparator, 'g'), '')
-				// 修正标题外括号【】
-				.replace(/[【](.*)[】]$/g, '$1')
-				.replace(new RegExp('^' + rSeparator + '$', 'g'), '');
-			if (m3.length > 0) m3 = iDivide + m3;
-			return fBreak + '第' + m2 + m1 + m3 + eBreak;
-		});
+			m3 = m3
+				.replace(rSeparatorLeft, '')
+				.replace(/[【】]/g, '')
+				.replace(rSeparatorAll, '')
+			if (m3.length > 0) m3 = iDivide + m3
+			return fBreak + '第' + m2 + m1 + m3 + eBreak
+		})
 		/****** 01/01./01.标题/一/一、/一、标题 ******/
-		reg[1] = rTitle.t4;
-		reg[2] = '(' + rSeparator + '|';
-		reg[3] = rSeparator + configs.regStrictEnd + '|$)';
+		reg[1] = rTitle.t4
+		reg[2] = '(' + rSeparator + '|'
+		reg[3] = rSeparator + configs.regStrictEnd + '|$)'
+		var pattern = configs.regSkipTitle1
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2) {
-			// 忽略日期格式 2010.10.10, 17.10.10, 17/10/10
-			var pattern1 = /^([\d０-９]{2,4})[\.\-\/。—][\d０-９]{1,2}[\.\-\/。—][\d０-９]{1,2}/g;
-			// 忽略日期格式 2010年10月10日, 五时十二分
-			var pattern2 = /^[\d０-９一二三四五六七八九十]{1,4}[年月日点时分秒點時]([\d０-９一二三四五六七八九十]|$)/g;
-			// 忽略时间格式 20:22:21
-			var pattern3 = /^[\d０-９]{1,2}[\:：][\d０-９]{1,2}[\:：][\d０-９]{1,2}/g;
-			// 其他不规则格式 100%, 60°
-			var pattern4 = /^[\d０-９]{1,6}[\%％‰℃°]$/g;
-			// 比分类格式 3:0
-			var pattern5 = /^[\d０-９]{1,2}[\:：][\d０-９]{1,2}/g;
-			if (pattern1.test(m0) || pattern2.test(m0) || pattern3.test(m0) || pattern4.test(m0) || pattern5.test(m0))
-				return m0;
-
-			m2 = m2.replace(new RegExp('^' + rSeparator, 'g'), '')
-				// 修正标题外括号【】
-				.replace(/[【](.*)[】]$/g, '$1')
-				.replace(new RegExp('^' + rSeparator + '$', 'g'), '');
-			if (m2.length > 0) m2 = iDivide + m2;
-			return fBreak + '第' + m1 + '章' + m2 + eBreak;
-		});
-		return re;
+			for(var i = 0; i < pattern.length; i++) {
+				if(m0.match(pattern[i]))
+					return m0
+			}
+			if(m2.match(/^[！？。…]/)) return m0
+			m2 = m2
+				.replace(rSeparatorLeft, '')
+				.replace(/[【】]/g, '')
+				.replace(rSeparatorAll, '')
+			if (m2.length > 0) m2 = iDivide + m2
+			return fBreak + '第' + m1 + '章' + m2 + eBreak
+		})
+		return re
 	}
-
 });
 
 // 章节标题居中函数，默认一行35全角字符
