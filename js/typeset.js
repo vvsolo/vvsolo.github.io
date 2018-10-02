@@ -1,40 +1,39 @@
 
 // 截取分段
-function doSplit(str, sm, bm) {
-	var tmpstr = '';
-	if (str.match(/^　{2,}/)) return str + '\n\n';
-	str = str.trim();
-	if (str.len() === 0) return str;
-
+function doSplit(str, sm, bm){
+	var tmpstr = ''
 	// 分隔字数
-	var cutNum = configs.Linenum * 2;
-
+	var cutNum = configs.Linenum*2
+	if(str.match(/^　{2,}/)) return str + '\n\n'
+	str = str.trim()
+	if(str.len() === 0) return str
+	
 	var text = '',
-		linestr = (str === '＊'.times(35)) ? str : '　　' + str;
+		linestr = (str === '＊'.times(35)) ? str : '　　' + str
 
 	// 小于每行最大字数时直接返回
-	if (linestr.len() > cutNum) {
-		var oNum = Math.floor(linestr.len() / cutNum) + 1;
-		for (var j = 0; j < oNum; j++) {
+	if(linestr.len() > cutNum){
+		var oNum = Math.floor(linestr.len() / cutNum) + 1
+		for(var j = 0; j < oNum; j++){
 			// 预分段
-			var tmp = linestr.realSubstring(0, cutNum);
+			var tmp = linestr.realSubstring(0, cutNum)
 			// 判断并处理行尾限制字符
-			tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(word) {
-				linestr += word;
-				return '';
-			});
+			tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(word){
+				linestr += word
+				return ''
+			})
 			// 剩下部分
-			linestr = linestr.realSubstring(tmp.len());
+			linestr = linestr.realSubstring(tmp.len())
 			// 判断并处理行首限制字符
 			// 处理两个字符，因为经过整理过的标点只留两个
-			linestr = linestr.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(word) {
-				tmp += word;
-				return '';
+			linestr = linestr.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(word){
+				tmp += word
+				return ''
 			});
 			// 处理单个连续标点
-			linestr = linestr.replace(/^([…～－])$/gm, function(word) {
-				tmp += word;
-				return '';
+			linestr = linestr.replace(/^([…～－])$/gm, function(word){
+				tmp += word
+				return ''
 			});
 			// 如果有英文并奇数位，英文前加空格补齐
 			// 测试一下全英文状态防止出错
@@ -44,23 +43,23 @@ function doSplit(str, sm, bm) {
 				.replace(configs.HWPunctuation, '')
 				.replace(configs.FWPunctuation, '')
 				.length === 0;
-			if ((tmp.len() < cutNum) && !testTmp) {
-				if (tmp.match(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/)) {
+			if((tmp.len() < cutNum) && !testTmp){
+				if(tmp.match(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/)){
 					tmp = tmp.replace(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/, '$1 $2')
-				} else {
+				}else{
 					tmp = tmp.replace(/([0-9a-zA-Z])([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])/, '$1 $2')
 				}
-				tmp = tmp.replace(/([“‘『「][0-9a-zA-Z ]+[」』’”])/g, function(m) {
-					return m.replace(/ /g, '') + ' ';
+				tmp = tmp.replace(/([“‘『「][0-9a-zA-Z ]+[」』’”])/g, function(m){
+					return m.replace(/ /g, '') + ' '
 				})
 			}
-			text += tmp + '\n';
+			text += tmp + '\n'
 		}
-		tmpstr += text + sm;
+		tmpstr += text + sm
 	} else {
-		tmpstr += linestr + bm;
+		tmpstr += linestr + bm
 	}
-	return tmpstr;
+	return tmpstr
 }
 
 // 阿拉伯数字转换格式
@@ -72,6 +71,7 @@ function cc(s) {
 	return s.replace(/\.00$/, "")
 }
 
+// 排版
 function doTidy(str) {
 	// 引号替换
 	var others = [
@@ -79,9 +79,9 @@ function doTidy(str) {
 		[/”/g, '」'],
 		[/‘/g, '『'],
 		[/’/g, '』']
-	];
+	]
 	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm');
+	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm')
 
 	// 执行整理
 	var str = str
@@ -96,19 +96,19 @@ function doTidy(str) {
 		// 修正分隔符号
 		.replaceSeparator()
 
-	var words = str.split('\n');
-	var count = words.length;
+	var words = str.split('\n')
+	var count = words.length
 
 	// 开始进行分隔
-	var re = '';
+	var re = ''
 	for (var i = 0; i < count; i++)
-		re += doSplit(words[i].trim(), '\n', '\n\n');
+		re += doSplit(words[i].trim(), '\n', '\n\n')
 
 	re = re
 		.replace(/作者：(.*)\n(.*)发表于：(.*)\n是否首发：(.*)\n字数：(.*)\n/gm, '')
 		// 修正结尾
 		.replace(eStrs, function(m) {
-			return doCenter(m, '', '', true);
+			return m.toTitleCenter('', '', true)
 		})
 		// 标题居中
 		.replaceTitle('', '', true)
@@ -116,7 +116,7 @@ function doTidy(str) {
 		.replace(/^([ 　]+)$\n/gm, '')
 		.replace(/\n{3,}$/gm, '\n\n')
 		.replace(/^\n{2,}/gm, '\n')
-	re = '\n' + re;
+	re = '\n' + re
 
 	// 插入标头
 	var slength = re.length
@@ -152,7 +152,7 @@ function doTidy(str) {
 	else
 		inputBookInfo = headStr
 	**/
-	return headStr.format(headVal) + re;
+	return headStr.format(headVal) + re
 }
 
 // 一键整理
@@ -195,7 +195,6 @@ function getCleanUp(str) {
 	// 结束
 	return str.replaceEnd()
 }
-
 
 // 组合文章标题
 function getTitle(r){
