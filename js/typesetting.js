@@ -299,7 +299,7 @@ Object.extend(String.prototype, {
 		var re = this.replace(/([a-zA-z])([\'`＇‘’『』])([a-zA-z])/g, '$1※@※$3')
 		if(!simp){
 			re = re.replace(/[‘’『』]/g, '\'')
-				.replace(/[“”「」\[\]]/g, '\"')
+				.replace(/[“”「」]/g, '\"')
 		}
 
 		// 修正引号初始化
@@ -332,9 +332,10 @@ Object.extend(String.prototype, {
 
 		if(iCenter){
 			var strLength = str.len()
+			var rema = (strLength%4 === 0) ? ' ' : ''
 
 			if (iCenter && lineLength > strLength)
-				str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + str
+				str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + rema + str
 		}
 		return fBreak + str + eBreak
 	},

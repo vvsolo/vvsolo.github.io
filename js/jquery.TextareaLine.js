@@ -15,16 +15,16 @@
 		});
 		this.$ol.css({
 			"color": config.color,
-			//"background-color": config.bgcolor,
+			"background-color": config.bgcolor,
 			"border": 0,
-			"border-right": '1px dashed ' + config.color,
+			"border-right": '1px solid ' + config.color,
 			"width": config.width,
-			"height": this.$element.outerHeight(),
+			"height": this.$element.outerHeight(true) - 2,
 			"font-size": this.$element.css("font-size"),
 			"line-height": this.$element.css("line-height"),
 			"position": "absolute",
 			"overflow": "hidden",
-			"margin": 0,
+			"margin": '1px 0',
 			"padding": '5px 5px 0 0',
 			"text-align": "right",
 			"font-family": "consolas"
@@ -80,14 +80,16 @@
 			var value = that.$element.val().replace(/(\r\n|\n\r|\r|\n)/g, '\n') + '\n';
 			//value = value.replace(/\n{2,}$/g, '\n')
 			var valArr = value.split('\n')
-			//var trueLineWidth = that.$element.outerWidth(true)
-			//trueLineWidth -= parseInt(that.$element.css('padding-left'))
-			//trueLineWidth -= parseInt(that.$element.css('padding-right'))
-			//trueLineWidth -= parseInt(50)
-			//var trueFontSize = parseInt(that.$element.css('font-size'))
+			var trueLineWidth = that.$element.outerWidth(true)
+			trueLineWidth -= parseInt(that.$element.css('padding-left'))
+			trueLineWidth -= parseInt(that.$element.css('padding-right'))
+			trueLineWidth -= parseInt(40)
+			var trueFontSize = parseInt(that.$element.css('font-size'))
 			// 每行最大字数
-			//var trueLineFontNum = parseInt(trueLineWidth / trueFontSize)
-			var trueLineFontNum = 78
+			var trueLineFontNum = parseInt(trueLineWidth / trueFontSize)
+			//alert(trueLineFontNum)
+			//$('#AlertMsg').html(trueLineFontNum)
+			//var trueLineFontNum = 78
 			
 			that.$ol.html('');
 			for (var i = 1; i <= count; i++) {
@@ -133,8 +135,8 @@
 	$.fn.TextareaLine = function(option) {
 		var config = {};
 		var option = arguments[0] ? arguments[0] : {};
-		config.color = option.color || "#aaa";
-		config.bgcolor = option.color || "#efefef";
+		config.color = option.color || "#999";
+		config.bgcolor = option.bgcolor || "#1E1E1E";
 		config.width = option.width || "50px";
 		config.display = option.display || "block";
 		return this.each(function() {

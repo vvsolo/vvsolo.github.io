@@ -5,13 +5,12 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="排版助手（在線版）">
+  <meta name="description" content="排版助手（在线版）">
   <meta name="author" content="vsolo">
-  <title>排版助手（在線版）</title>
+  <title>排版助手（在线版）</title>
 
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.1/css/bootstrap.min.css">
-  <link href="codemirror/codemirror.css" rel="stylesheet">
   <style>
     html,
     body {
@@ -19,7 +18,7 @@
       background-color: #fafafa;
       min-width: 960px;
     }
-    .btn-copy-title {
+    .btn-copy {
       cursor: pointer;
       font-weight: normal;
     }
@@ -28,11 +27,11 @@
 
 <body>
   <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在線版）</a>
+    <a class="navbar-brand" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在线版）</a>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item active">
-        <a class="text-warning" href="./index.e.html">非高亮版</a> | 
-        <a class="text-warning" href="./">简体版</a>
+        <a class="text-warning" href="./">高亮版</a> | 
+        <a class="text-warning" href="./index.zh.html">繁體版</a>
       </li>
     </ul>
   </nav>
@@ -42,39 +41,39 @@
 
         <div class="container-fluid">
           <div class="alert alert-primary" role="alert">
-            <strong>標頭設置</strong>
+            <strong>标头设置</strong>
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
-              <div class="input-group-text">書名</div>
+              <div class="input-group-text">书名</div>
             </div>
-            <input type="text" class="form-control" id="inputBookName" placeholder="小說名稱">
+            <input type="text" class="form-control" id="inputBookName" placeholder="小说名称">
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
-              <div class="input-group-text">章節</div>
+              <div class="input-group-text">章节</div>
             </div>
-            <input type="text" class="form-control" id="inputChapter" placeholder="更新章節">
+            <input type="text" class="form-control" id="inputChapter" placeholder="更新章节">
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
               <div class="input-group-text">作者</div>
             </div>
-            <input type="text" class="form-control" id="inputAuthor" placeholder="作者名稱">
+            <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
           </div>
           <div class="input-group mb-2">
             <div class="input-group-prepend">
-              <div class="input-group-text">首發</div>
+              <div class="input-group-text">首发</div>
             </div>
-            <input type="text" class="form-control" id="inputSite" placeholder="首發站點">
+            <input type="text" class="form-control" id="inputSite" placeholder="首发站点">
           </div>
           <div class="alert alert-primary" role="alert">
-            <strong>格式設置</strong>
+            <strong>格式设置</strong>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_0">
-              <label class="form-check-label" for="Check_0">修正 HTML 字元實體</label>
+              <label class="form-check-label" for="Check_0">修正 HTML 字符实体</label>
             </div>
           </div>
           <div class="input-group mb-2">
@@ -86,62 +85,62 @@
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_2">
-              <label class="form-check-label" for="Check_2">修正變體字母</label>
+              <label class="form-check-label" for="Check_2">修正变体字母</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_3">
-              <label class="form-check-label" for="Check_3">修正變體序號</label>
+              <label class="form-check-label" for="Check_3">修正变体序号</label>
             </div>
           </div>
           <hr />
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_5" checked>
-              <label class="form-check-label" for="Check_5">全形標點符號</label>
+              <label class="form-check-label" for="Check_5">全角标点符号</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_4" checked>
-              <label class="form-check-label" for="Check_4">半形字母數字</label>
+              <label class="form-check-label" for="Check_4">半角字母数字</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_10" checked>
-              <label class="form-check-label" for="Check_10">英文首字大寫</label>
+              <label class="form-check-label" for="Check_10">英文首字大写</label>
             </div>
           </div>
           <hr />
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_6" checked>
-              <label class="form-check-label" for="Check_6">修正章節標題</label>
+              <label class="form-check-label" for="Check_6">修正章节标题</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_7" checked>
-              <label class="form-check-label" for="Check_7">修正漢字空格</label>
+              <label class="form-check-label" for="Check_7">修正汉字空格</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_8" checked>
-              <label class="form-check-label" for="Check_8">修正分隔符號</label>
+              <label class="form-check-label" for="Check_8">修正分隔符号</label>
             </div>
           </div>
           <div class="input-group mb-2">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="Check_9" checked>
-              <label class="form-check-label" for="Check_9">修正引用符號</label>
+              <label class="form-check-label" for="Check_9">修正引用符号</label>
             </div>
           </div>
           <hr />
           <div class="input-group mb-2">
-            <button type="button" class="btn btn-primary" title="保存設置到 Cookies" id="SaveConfig">保存設置</button>
+            <button type="button" class="btn btn-primary" title="保存设置到 Cookies" id="SaveConfig">保存设置</button>
           </div>
         </div>
       </div>
@@ -149,80 +148,68 @@
         <div style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
             <h5 class="alert-heading">
-              <span id="TitleMsg">此處標題</span>
-              <span title="複製標題到剪貼板" class="badge badge-secondary btn-copy-title" data-clipboard-target="#TitleMsg">複製</span>
+              <span id="TitleMsg">此处标题</span>
+              <span title="复制标题到剪贴板" class="badge badge-secondary btn-copy" data-clipboard-target="#TitleMsg">复制</span>
             </h5>
             <hr />
-            <span id="AlertMsg" data-doc="">填寫作者等相關訊息後，“一鍵整理” → “排版輸出”.</span>
-            <span class="float-right" id="CountMsg"><strong>0</strong> 行/<strong>0</strong> 位元組</span>
+            <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
+            <span class="float-right" id="CountMsg"><strong>0</strong> 行/<strong>0</strong> 字节</span>
           </div>
           <div>
             <div class="float-left">
-              <button type="button" class="btn btn-success" title="一鍵整理" id="onCleanUp">一鍵整理</button>
-              <button type="button" class="btn btn-success" title="排版輸出" id="onTypeSet">排版輸出</button>
-              <button type="button" class="btn btn-secondary btn-copy-text" title="複製文件到剪貼板">複製文件</button>
+              <button type="button" class="btn btn-success" title="一键整理" id="onCleanUp">一键整理</button>
+              <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet">排版输出</button>
+              <button type="button" class="btn btn-secondary btn-copy" title="复制文档到剪贴板" data-clipboard-target="#TextareaEditor">复制文档</button>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="轉換簡體" id="toSimp">簡</button>
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="轉換繁體" id="toTrad">繁</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换简体" id="toSimp">简</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换繁体" id="toTrad">繁</button>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="加粗" data-ubbcode="[b]{s}[/b]">B</button>
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="下劃線" data-ubbcode="[u]{s}[/u]"><u>U</u></button>
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="斜體" data-ubbcode="[i]{s}[/i]"><em>I</em></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="下划线" data-ubbcode="[u]{s}[/u]"><u>U</u></button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="斜体" data-ubbcode="[i]{s}[/i]"><em>I</em></button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入待續" data-insert="（待續）">續</button>
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入待续" data-insert="（待续）">续</button>
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入全文完" data-insert="（全文完）">完</button>
+              </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="显隐辅助线" data-subline>辅</button>
               </div>
             </div>
             <div class="float-right">
-              <button type="button" class="btn btn-primary" title="保存臨時文件" id="SaveEditor">保存</button>
-              <button type="button" class="btn btn-info" title="還原臨時文件" id="RestoreEditor">還原</button>
-              <button type="button" class="btn btn-danger" title="清空文件" id="ClearEditor">清空</button>
+              <button type="button" class="btn btn-primary" title="保存临时文档" id="SaveEditor">保存</button>
+              <button type="button" class="btn btn-info" title="还原临时文档" id="RestoreEditor">还原</button>
+              <button type="button" class="btn btn-danger" title="清空文档" id="ClearEditor">清空</button>
             </div>
           </div>
         </div>
         <div>
-          <textarea class="form-control" id="TextareaEditor" placeholder="黏貼文本到此處" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+          <textarea class="form-control" id="TextareaEditor" style="min-height: 480px;background-color: #1E1E1E;color:#EFCB87;font-family: NSimSun, SimSun, Consolas;font-size: 15px;" placeholder="粘贴文本到此处" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
         </div>
+        <div id="subline" style="position: absolute;width: 0px;border-right: 1px dashed #999;height: 478px;"></div>
     </div>
   </div>
   <!-- /.container -->
 
   <!-- Bootstrap core JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/selection/active-line.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/mode/simple.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/display/placeholder.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/display/rulers.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/selection/mark-selection.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdn.bootcss.com/clipboard.js/2.0.1/clipboard.min.js"></script>
+  <script src="js/jquery.shortcuts.js?201810"></script>
+  <script src="js/jquery.TextareaLine.js?201810"></script>
 
   <script src="js/config.js?201810"></script>
-  <script src="codemirror/mode.text.js?201810"></script>
   <script src="js/extend.js?201810"></script>
   <script src="js/typesetting.min.js?201810"></script>
   <script src="js/typeset.min.js?201810"></script>
   <script src="js/conver.dic.js?201810"></script>
   <script>
     $(function() {
-      var editor = CodeMirror.fromTextArea(document.getElementById("TextareaEditor"), {
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        styleSelectedText: true,
-        autofocus: true,
-        //cursorHeight: 0.85,
-        rulers: [{color: '#393A39', column: 70, lineStyle: "dashed"}],
-        theme: 'idea',
-        mode: 'text'
-      });
-      // 讀取保存的設置
+      // 读取保存的设置
       $('#inputBookName').val($.cookie('inputBookName') || '')
       $('#inputChapter').val($.cookie('inputChapter') || '')
-      $('#TitleMsg').html(getTitle('此處標題'))
+      $('#TitleMsg').html(getTitle('此处标题'))
       $('#inputAuthor').val($.cookie('inputAuthor') || '')
       $('#inputSite').val($.cookie('inputSite') || '')
       for (var i = 0; i < 4; i++) {
@@ -233,7 +220,7 @@
           $('#' + tmp).removeAttr('checked')
         }
       }
-      // 保存設置
+      // 保存设置
       $('#SaveConfig').click(function() {
         $.cookie('inputBookName', $('#inputBookName').val(), { expires: 365 })
         $.cookie('inputChapter', $('#inputChapter').val(), { expires: 365 })
@@ -247,97 +234,97 @@
             $.removeCookie(tmp)
           }
         }
-        $('#AlertMsg').html('設置已保存！')
+        $('#AlertMsg').html('设置已保存！')
       })
-      // 轉簡體
+      // 按钮
+      var tEditor = $('#TextareaEditor')
+      // 行号
+      tEditor.TextareaLine().focus()
+      // 左宽+行号宽+字体宽+边距
+      var wleft = $('#c-left').outerWidth(true) + 50 + parseInt(tEditor.css('font-size'))*35 + 15
+      var ibold = (tEditor.css('font-weight') == 'bold') ? 20 : 10
+      // 辅助线
+      var position = tEditor.position()
+      $('#subline').offset({ top: position.top + 63, left: wleft + ibold})
+      $('[data-subline]').click(function() {
+        $('#subline').toggle()
+      })
+      // 转简体
       $('#toSimp').click(function() {
-        var sVal = editor.getValue()
-        editor.setValue(Othered(Simplized(sVal))).focus()
+        tEditor.val(Othered(Simplized(tEditor.val()))).focus()
       })
-      // 轉繁體
+      // 转繁体
       $('#toTrad').click(function() {
-        var sVal = editor.getValue()
-        editor.setValue(Traditionalized(sVal)).focus()
+        tEditor.val(Traditionalized(tEditor.val())).focus()
       })
-      // 即時統計字元
-      editor.on('change', function() {
-        var sVal = editor.getValue()
-        $('#CountMsg').find('strong:eq(0)').html(editor.lineCount())
+      // 实时统计字符
+      tEditor.on('keyup keydown change focus input propertychange', function() {
+	    var sVal = tEditor.val()
+        $('#CountMsg').find('strong:eq(0)').html(sVal.length > 0 ? sVal.split('\n').length : 0)
         $('#CountMsg').find('strong:eq(1)').html(sVal.length)
       })
-      // 即時顯示文章標題
+      // 实时显示文章标题
       $('#inputBookName,#inputChapter').on('keyup keydown change focus input propertychange', function() {
-        $('#TitleMsg').html(getTitle('此處標題'))
+        $('#TitleMsg').html(getTitle('此处标题'))
       })
-      // 清空文件
+      // 清空文档
       $('#ClearEditor').click(function() {
-        editor.setValue('').focus()
+        tEditor.val('').focus()
       });
-      // 保存文件
+      // 保存文档
       $('#SaveEditor').click(function() {
-        var sVal = editor.getValue()
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          $('#AlertMsg').data('doc', sVal).html('文件已保存！')
+          $('#AlertMsg').data('doc', sVal).html('文档已保存！')
         }
-        editor.focus()
+        tEditor.focus()
       });
-      // 還原文件
+      // 还原文档
       $('#RestoreEditor').click(function() {
         var sVal = $('#AlertMsg').data('doc')
         if (sVal.length > 0) {
-          editor.setValue(sVal).focus()
-          $('#AlertMsg').html('文件已還原！')
+          tEditor.val(sVal).focus()
+          $('#AlertMsg').html('文档已还原！')
         }
       });
-      // 一鍵整理
+      // 一键整理
       $('#onCleanUp').click(function() {
-        var sVal = editor.getValue()
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          editor.setValue(getCleanUp(sVal))
+          tEditor.val(getCleanUp(sVal)).focus()
         }
       })
-      // 一鍵排版
+      // 一键排版
       $('#onTypeSet').click(function() {
-        var sVal = editor.getValue()
+        var sVal = tEditor.val()
         if (sVal.length > 0) {
-          $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文件已保存，若想重排請點擊“還原”按鈕！')
-          editor.setValue(doTidy(sVal))
+          $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文档已保存，若想重排请点击“还原”按钮！')
+          tEditor.val(doTidy(sVal)).focus()
         }
       })
-      // 簡單UBB
+      // 简单UBB
       $('.btn[data-ubbcode]').each(function() {
         var $this = $(this)
         $this.click(function() {
-	      var selection = editor.getSelection()
-          if (selection.length > 0) {
-            var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
-            editor.replaceSelection(tmp)
+          if (tEditor.selectionRange().length > 0) {
+            var tmp = $this.data('ubbcode').replace(/\{s\}/g, tEditor.selectionRange())
+            tEditor.insertContent(tmp)
           } else {
-            $('#AlertMsg').html('未選中文字！')
+            $('#AlertMsg').html('未选中文字！')
           }
         })
       })
-      // 插入待續完結
+      // 插入待续完结
       $('.btn[data-insert]').each(function() {
         var tmp = $(this).data('insert')
         $(this).click(function() {
-	      editor.replaceSelection(tmp, 'around')
+          tEditor.insertContent(tmp)
         })
       })
-      // 複製標題到剪貼板
-      var clipboardTitle = new ClipboardJS('.btn-copy-title')
-      clipboardTitle.on('success', function(e) {
-        $('#AlertMsg').html('標題複製成功！')
-        e.clearSelection()
-      });
-      // 複製文件到剪貼板
-      var clipboardText = new ClipboardJS('.btn-copy-text', {
-        text: function(trigger) {
-          return editor.getValue();
-        }
-      })
-      clipboardText.on('success', function(e) {
-        $('#AlertMsg').html('文件複製成功！')
+      // 复制到剪贴板
+      var clipboard = new ClipboardJS('.btn-copy')
+      clipboard.on('success', function(e) {
+        $('#AlertMsg').html('复制成功！')
         e.clearSelection()
       });
     });

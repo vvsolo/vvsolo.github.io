@@ -10,14 +10,16 @@
   <title>排版助手（在线版）</title>
 
   <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link href="codemirror/codemirror.css" rel="stylesheet">
   <style>
     html,
     body {
       font-size: 12px;
       background-color: #fafafa;
+      min-width: 960px;
     }
-    .btn-copy {
+    .btn-copy-title {
       cursor: pointer;
       font-weight: normal;
     }
@@ -29,13 +31,13 @@
     <a class="navbar-brand" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在线版）</a>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item active">
-        <a class="nav-link text-warning" href="./index.zh.html">訪問繁體版</a>
+        <a class="text-warning" href="./index.zh.html">繁體版</a>
       </li>
     </ul>
   </nav>
   <div class="container-fluid" style="margin:20px 0;">
-    <div class="row">
-      <div class="col-2">
+    <div class="row no-gutters">
+      <div class="col-4 col-sm-2 col-md-2" id="c-left">
 
         <div class="container-fluid">
           <div class="alert alert-primary" role="alert">
@@ -142,12 +144,12 @@
           </div>
         </div>
       </div>
-      <div class="col-10">
-        <div class="container-fluid" style="padding-bottom:40px">
+      <div class="col-8 col-sm-10 col-md-10" id="c-right">
+        <div style="padding-bottom:40px">
           <div class="alert alert-warning" role="alert">
             <h5 class="alert-heading">
               <span id="TitleMsg">此处标题</span>
-              <span title="复制标题到剪贴板" class="badge badge-secondary btn-copy" data-clipboard-target="#TitleMsg">复制</span>
+              <span title="复制标题到剪贴板" class="badge badge-secondary btn-copy-title" data-clipboard-target="#TitleMsg">复制</span>
             </h5>
             <hr />
             <span id="AlertMsg" data-doc="">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
@@ -157,7 +159,7 @@
             <div class="float-left">
               <button type="button" class="btn btn-success" title="一键整理" id="onCleanUp">一键整理</button>
               <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet">排版输出</button>
-              <button type="button" class="btn btn-secondary btn-copy" title="复制文档到剪贴板" data-clipboard-target="#TextareaEditor">复制文档</button>
+              <button type="button" class="btn btn-secondary btn-copy-text" title="复制文档到剪贴板">复制文档</button>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换简体" id="toSimp">简</button>
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换繁体" id="toTrad">繁</button>
@@ -171,9 +173,6 @@
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入待续" data-insert="（待续）">续</button>
                 <button type="button" class="btn btn-outline-secondary font-weight-bold" title="插入全文完" data-insert="（全文完）">完</button>
               </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary font-weight-bold" title="显隐辅助线" data-subline>辅</button>
-              </div>
             </div>
             <div class="float-right">
               <button type="button" class="btn btn-primary" title="保存临时文档" id="SaveEditor">保存</button>
@@ -182,28 +181,43 @@
             </div>
           </div>
         </div>
-        <div class="container-fluid">
-          <textarea class="form-control" id="TextareaEditor" style="min-height: 480px;background-color: #f2f2f2;font-family: '新宋体', '宋体';font-size: 14px;font-weight: bold;" placeholder="粘贴文本到此处" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+        <div>
+          <textarea class="form-control" id="TextareaEditor" placeholder="粘贴文本到此处" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
         </div>
-        <div id="subline" style="position: absolute;width: 0px;border-right: 2px dashed #B8DAFF;height: 478px;"></div>
     </div>
   </div>
   <!-- /.container -->
 
   <!-- Bootstrap core JavaScript -->
-  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
-  <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="https://cdn.bootcss.com/clipboard.js/2.0.1/clipboard.min.js"></script>
-  <script src="js/jquery.shortcuts.js?201810"></script>
-  <script src="js/jquery.TextareaLine.js?201810"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/selection/active-line.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/mode/simple.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/display/placeholder.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/display/rulers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/addon/selection/mark-selection.min.js"></script>
 
   <script src="js/config.js?201810"></script>
+  <script src="codemirror/mode.text.js?201810"></script>
   <script src="js/extend.js?201810"></script>
   <script src="js/typesetting.min.js?201810"></script>
   <script src="js/typeset.min.js?201810"></script>
   <script src="js/conver.dic.js?201810"></script>
   <script>
     $(function() {
+      var editor = CodeMirror.fromTextArea(document.getElementById("TextareaEditor"), {
+        lineNumbers: true,
+        lineWrapping: true,
+        styleActiveLine: true,
+        styleSelectedText: true,
+        autofocus: true,
+        //cursorHeight: 0.85,
+        rulers: [{color: '#393A39', column: 70, lineStyle: "dashed"}],
+        theme: 'idea',
+        mode: 'text'
+      });
       // 读取保存的设置
       $('#inputBookName').val($.cookie('inputBookName') || '')
       $('#inputChapter').val($.cookie('inputChapter') || '')
@@ -234,28 +248,20 @@
         }
         $('#AlertMsg').html('设置已保存！')
       })
-      // 按钮
-      var tEditor = $('#TextareaEditor')
-      // 行号
-      tEditor.TextareaLine().focus()
-      // 辅助线
-      var position = tEditor.position()
-      $('#subline').offset({ top: position.top + 63, left: 842})
-      $('[data-subline]').click(function() {
-        $('#subline').toggle()
-      })
       // 转简体
       $('#toSimp').click(function() {
-        tEditor.val(Othered(Simplized(tEditor.val()))).focus()
+        var sVal = editor.getValue()
+        editor.setValue(Othered(Simplized(sVal))).focus()
       })
       // 转繁体
       $('#toTrad').click(function() {
-        tEditor.val(Traditionalized(tEditor.val())).focus()
+        var sVal = editor.getValue()
+        editor.setValue(Traditionalized(sVal)).focus()
       })
       // 实时统计字符
-      tEditor.on('keyup keydown change focus input propertychange', function() {
-	    var sVal = tEditor.val()
-        $('#CountMsg').find('strong:eq(0)').html(sVal.length > 0 ? sVal.split('\n').length : 0)
+      editor.on('change', function() {
+        var sVal = editor.getValue()
+        $('#CountMsg').find('strong:eq(0)').html(editor.lineCount())
         $('#CountMsg').find('strong:eq(1)').html(sVal.length)
       })
       // 实时显示文章标题
@@ -264,46 +270,47 @@
       })
       // 清空文档
       $('#ClearEditor').click(function() {
-        tEditor.val('').focus()
+        editor.setValue('').focus()
       });
       // 保存文档
       $('#SaveEditor').click(function() {
-        var sVal = tEditor.val()
+        var sVal = editor.getValue()
         if (sVal.length > 0) {
           $('#AlertMsg').data('doc', sVal).html('文档已保存！')
         }
-        tEditor.focus()
+        editor.focus()
       });
       // 还原文档
       $('#RestoreEditor').click(function() {
         var sVal = $('#AlertMsg').data('doc')
         if (sVal.length > 0) {
-          tEditor.val(sVal).focus()
+          editor.setValue(sVal).focus()
           $('#AlertMsg').html('文档已还原！')
         }
       });
       // 一键整理
       $('#onCleanUp').click(function() {
-        var sVal = tEditor.val()
+        var sVal = editor.getValue()
         if (sVal.length > 0) {
-          tEditor.val(getCleanUp(sVal)).focus()
+          editor.setValue(getCleanUp(sVal))
         }
       })
       // 一键排版
       $('#onTypeSet').click(function() {
-        var sVal = tEditor.val()
+        var sVal = editor.getValue()
         if (sVal.length > 0) {
           $('#AlertMsg').data('doc', sVal).html('排版成功！原格式文档已保存，若想重排请点击“还原”按钮！')
-          tEditor.val(doTidy(sVal)).focus()
+          editor.setValue(doTidy(sVal))
         }
       })
       // 简单UBB
       $('.btn[data-ubbcode]').each(function() {
         var $this = $(this)
         $this.click(function() {
-          if (tEditor.selectionRange().length > 0) {
-            var tmp = $this.data('ubbcode').replace(/\{s\}/g, tEditor.selectionRange())
-            tEditor.insertContent(tmp)
+	      var selection = editor.getSelection()
+          if (selection.length > 0) {
+            var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
+            editor.replaceSelection(tmp)
           } else {
             $('#AlertMsg').html('未选中文字！')
           }
@@ -313,13 +320,23 @@
       $('.btn[data-insert]').each(function() {
         var tmp = $(this).data('insert')
         $(this).click(function() {
-          tEditor.insertContent(tmp)
+	      editor.replaceSelection(tmp, 'around')
         })
       })
-      // 复制到剪贴板
-      var clipboard = new ClipboardJS('.btn-copy')
-      clipboard.on('success', function(e) {
-        $('#AlertMsg').html('复制成功！')
+      // 复制标题到剪贴板
+      var clipboardTitle = new ClipboardJS('.btn-copy-title')
+      clipboardTitle.on('success', function(e) {
+        $('#AlertMsg').html('标题复制成功！')
+        e.clearSelection()
+      });
+      // 复制文档到剪贴板
+      var clipboardText = new ClipboardJS('.btn-copy-text', {
+        text: function(trigger) {
+          return editor.getValue();
+        }
+      })
+      clipboardText.on('success', function(e) {
+        $('#AlertMsg').html('文档复制成功！')
         e.clearSelection()
       });
     });
