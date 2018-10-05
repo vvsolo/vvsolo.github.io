@@ -58,18 +58,18 @@ Object.extend(String.prototype, {
 		return sub
 	},
 	// 去除首尾所有空格
-	trim: function(r) {
+	trimSpace: function(r) {
 		return this.replace(configs.trim, r || '')
 	},
 	// 排版初始化，去空格空行
 	replaceInit: function() {
 		return this
+			// 修正所有换行为 UNIX 标准
+			.replace(/(\r\n|\n\r|\r|\n)/gm, '\n')
 			// 转换所有空格样式为标准
 			.replace(configs.Space, ' ')
 			// 去除首尾所有空格
-			.trim('\n')
-			// 修正所有换行为 UNIX 标准
-			.replace(/(\r\n|\n\r|\r)/g, '\n')
+			.trimSpace('\n')
 			// 所有行尾加换行
 			.replace(/$/g, '\n')
 			// 英文间单引号替换
@@ -151,7 +151,7 @@ Object.extend(String.prototype, {
 			//	return m.toUpperCase()
 			//})
 			// 处理英语中的 ' 标点符号
-			.replace(/([a-zA-Z]+)[\'\`＇‘’『』]([a-zA-Z])/g, function(m0, m1, m2) {
+			.replace(/([a-zA-Z]+)[\'\`＇‘’『』]([a-zA-Z]+)/g, function(m0, m1, m2) {
 				return m1.replace(/\b[a-z]/g, function(n) {
 					return n.toUpperCase()
 				}) + "'" + m2.toLowerCase()
@@ -328,7 +328,7 @@ Object.extend(String.prototype, {
 		var eBreak = b2 || ''
 		var iCenter = center || false
 		var lineLength = configs.Linenum*2
-		var str = this.trim()
+		var str = this.trimSpace()
 
 		if(iCenter){
 			var strLength = str.len()

@@ -5,7 +5,7 @@ function doSplit(str, sm, bm){
 	// 分隔字数
 	var cutNum = configs.Linenum*2
 	if(str.match(/^　{2,}/)) return str + '\n\n'
-	str = str.trim()
+	str = str.trimSpace()
 	if(str.len() === 0) return str
 	
 	var text = '',
@@ -85,6 +85,8 @@ function doTidy(str) {
 
 	// 执行整理
 	var str = str
+		// 清除原数据
+		.replace(/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '')
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -102,10 +104,9 @@ function doTidy(str) {
 	// 开始进行分隔
 	var re = ''
 	for (var i = 0; i < count; i++)
-		re += doSplit(words[i].trim(), '\n', '\n\n')
+		re += doSplit(words[i].trimSpace(), '\n', '\n\n')
 
 	re = re
-		.replace(/作者：(.*)\n(.*)发表于：(.*)\n是否首发：(.*)\n字数：(.*)\n/gm, '')
 		// 修正结尾
 		.replace(eStrs, function(m) {
 			return m.toTitleCenter('', '', true)
@@ -123,8 +124,8 @@ function doTidy(str) {
 	var spacecount = re.findCount(configs.AllSpace)
 
 	var headVal = {
-		'writer': $('#inputAuthor').val().trim(),
-		'bbsname': $('#inputSite').val().trim(),
+		'writer': $('#inputAuthor').val().trimSpace(),
+		'bbsname': $('#inputSite').val().trimSpace(),
 		'dateStr': new Date().format("yyyy/MM/dd"),
 		'strNum': cc(slength - spacecount)
 	}
@@ -143,9 +144,9 @@ function doTidy(str) {
 		inputChapter = $('#inputChapter').val(),
 		inputBookInfo = ''
 	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
+		inputBookInfo = '【' + inputBookName.trimSpace().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
 		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trim().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
+			inputBookInfo = inputBookInfo + '（' + inputChapter.trimSpace().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
 	if(inputBookInfo.length > 0)
 		inputBookInfo = inputBookInfo + '\n\n' + headStr
@@ -156,9 +157,9 @@ function doTidy(str) {
 }
 
 // 一键整理
-function getCleanUp(str) {
+function editorCleanUp(str) {
 	// 排版初始化，去空格空行
-	str = str.replaceInit()
+	str = str.replaceInit();
 	// HTML 字符实体转换
 	if ($('#Check_0').is(':checked'))
 		str = str.converHtmlEntity()
@@ -202,9 +203,9 @@ function getTitle(r){
 		iChapter = $('#inputChapter').val(),
 		iBookInfo = ''
 	if(iBookName.length > 0){
-		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
+		iBookInfo = '【' + iBookName.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
 		if(iChapter.length > 0)
-			iBookInfo = iBookInfo + '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
+			iBookInfo = iBookInfo + '（' + iChapter.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	}
 	return iBookInfo.length > 0 ? iBookInfo : (r || '')
 }

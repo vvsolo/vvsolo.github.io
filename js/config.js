@@ -12,7 +12,7 @@ var configs = {
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 标题正则设定 ******/
 	// 所有空格样式（不包括换行）
-	Space: /[ 　\u2003\u200b\ue4c6\uf8f5\ue004\uf04a\f\t\v]/g,
+	Space: /[ 　\u2003\u200b\ue4c6\uf8f5\ue004\uf04a]/g,
 	// 所有空格样式（包括换行）
 	AllSpace: /[ 　\u2003\u200b\ue4c6\uf8f5\ue004\uf04a\s\uFEFF\xA0]/g,
 	// 首尾空格
