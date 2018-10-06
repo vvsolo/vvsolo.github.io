@@ -17,7 +17,7 @@
     }
     #TextareaEditor {
       margin: 0;
-      font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+      font-family: Consolas, Monaco, Courier New, monospace, serif;
       font-size: 14px;
       line-height: 1.5;
       min-height: 560px;
@@ -48,12 +48,11 @@
       background-color: none;
     }
     .editor-message {
-      bottom: 30px;
+      bottom: 20px;
       padding: 5px;
     }
     #AlertMsg {
-      font-size: 12px;
-      font-weight: 400;
+      font-size: 13px;
     }
     #c-left {
       margin: 0;
@@ -233,13 +232,13 @@
     <!-- /.container -->
 
 <!-- Bootstrap core JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
 
-<script src="js/config.js?201810"></script>
 <script src="js/extend.js?201810"></script>
+<script src="js/config.js?201810"></script>
 <script src="js/typesetting.min.js?201810"></script>
 <script src="js/typeset.min.js?201810"></script>
 <script src="js/conver.dic.js?201810"></script>
@@ -250,13 +249,18 @@
 <script>
   //sEditor.setMode("ace/mode/novel");
   $(function() {
+    // 提示信息
+    function showMessage(str){
+      $('#AlertMsg').html(str)
+      $('.editor-message').show().delay(5000).fadeOut(400)
+    }
     // 编辑区域全屏占，修正编辑器高度
     var tEditor = $('#TextareaEditor')
     var editorTitleHeight = $('.editor-title').outerHeight()
-    var editorStatusHeight = $('.editor-status').outerHeight()
-    tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight - editorStatusHeight))
+    tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
+    $('.editor-message').css('bottom', tEditor.height() - 20).delay(8000).fadeOut(400)
     // 初始化编辑器
-    var editor = ace.edit("TextareaEditor");
+    var editor = ace.edit("TextareaEditor")
     editor.setOptions({
       theme: "ace/theme/novel",
       mode: "ace/mode/novel",
@@ -308,7 +312,7 @@
         else
           $.removeCookie(tmp)
       }
-      $('#AlertMsg').html('设置已保存！')
+      showMessage('设置已保存！')
     })
     // 转简体
     $('#toSimp').on('click', function() {
@@ -334,7 +338,8 @@
     $('#SaveEditor').click(function() {
       var sVal = sEditor.getValue()
       if (sVal.length > 0) {
-        $('#AlertMsg').data('doc', sVal).html('文档已保存！')
+        $('#AlertMsg').data('doc', sVal)
+        showMessage('文档已保存！')
       }
       editor.focus()
     });
@@ -343,7 +348,7 @@
       var sVal = $('#AlertMsg').data('doc')
       if (sVal.length > 0) {
         sEditor.setValue(sVal).focus()
-        $('#AlertMsg').html('文档已还原！')
+        showMessage('文档已还原！')
       }
     });
     // 一键整理
@@ -358,7 +363,8 @@
     $('#onTypeSet').click(function() {
       var sVal = sEditor.getValue()
       if (sVal.length > 0) {
-        $('#AlertMsg').data('doc', sVal).html('排版成功！重排请点击“还原”按钮！')
+        $('#AlertMsg').data('doc', sVal)
+        showMessage('排版成功！重排请点击“还原”按钮！')
         sEditor.setValue(doTidy(sVal)).focus()
       }
     })
@@ -371,7 +377,7 @@
           var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
           editor.insert(tmp)
         } else {
-          $('#AlertMsg').html('未选中文字！')
+          showMessage('未选中文字！')
         }
       })
     })
@@ -385,7 +391,7 @@
     // 复制标题到剪贴板
     var clipboardTitle = new ClipboardJS('.copy-title')
     clipboardTitle.on('success', function(e) {
-      $('#AlertMsg').html('标题复制成功！')
+      showMessage('标题复制成功！')
       e.clearSelection()
     });
     // 复制文档到剪贴板
@@ -395,7 +401,7 @@
       }
     })
     clipboardText.on('success', function(e) {
-      $('#AlertMsg').html('文档复制成功！')
+      showMessage('文档复制成功！')
       e.clearSelection()
     });
   });

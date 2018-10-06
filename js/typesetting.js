@@ -64,12 +64,12 @@ Object.extend(String.prototype, {
 	// 排版初始化，去空格空行
 	replaceInit: function() {
 		return this
-			// 修正所有换行为 UNIX 标准
-			.replace(/(\r\n|\n\r|\r|\n)/gm, '\n')
 			// 转换所有空格样式为标准
 			.replace(configs.Space, ' ')
 			// 去除首尾所有空格
 			.trimSpace('\n')
+			// 修正所有换行为 UNIX 标准
+			.replace(/(\r\n|\n\r|\r)/g, '\n')
 			// 所有行尾加换行
 			.replace(/$/g, '\n')
 			// 英文间单引号替换
@@ -454,6 +454,14 @@ Object.extend(String.prototype, {
 		re = re.replace(new RegExp(reg.join(''), 'gm'), function(m0, m1, m2, m3) {
 			m3 = handleTitle(m3)
 			return fBreak + '第' + m2 + m1 + m3 + eBreak
+		})
+		/****** chapter 22 ******/
+		reg[1] = rTitle.t6
+		// 处理外框
+		re = replaceBorder(re, reg[1])
+		re = re.replace(new RegExp(reg.join(''), 'gim'), function(m0, m1, m2) {
+			m2 = handleTitle(m2)
+			return fBreak + '第' + m1 + '章' + m2 + eBreak
 		})
 		/****** 01/01./01.标题/一/一、/一、标题 ******/
 		reg[1] = rTitle.t4

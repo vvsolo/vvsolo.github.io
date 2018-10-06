@@ -60,3 +60,29 @@ if (typeof String.prototype.findCount !== 'function') {
 		return count;
 	}
 }
+
+// 特殊方式替换字符串
+/*
+ * arrs = {name:"loogn",age:22,sex:['man', 'woman']}
+ * var result0 = "我是≮name≯，≮sex.0≯，今年≮age≯了".format(arrs)
+ *
+ */
+if (typeof String.prototype.fmt !== 'function') {
+	String.prototype.fmt = function(args) {
+		if (typeof args !== "object")
+			return this;
+		var re = this;
+		// 特殊标记 ≮([^≮≯]+)≯
+		if(/≮([^≮≯]+)≯/g.test(re)) {
+			// 子项是数组
+			re = re.replace(/≮([\w]+)\.([\d]{1,2})≯/g, function(m, m1, m2){
+				return args[m1][m2] || m
+			})
+			// 子项
+			re = re.replace(/≮([\w]+)≯/g, function(m, m1){
+				return (typeof args[m1] === "array") ? args[m1].join('') : args[m1] || m
+			})
+		}
+		return re;
+	}
+}
