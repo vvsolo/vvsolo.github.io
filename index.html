@@ -20,7 +20,7 @@
       font-family: Consolas, Monaco, Courier New, monospace, serif;
       font-size: 14px;
       line-height: 1.5;
-      min-height: 560px;
+      min-height: 500px;
       width: 100%;
       height: 100%;
     }
@@ -35,7 +35,6 @@
     .ace_status-indicator {
       position: fixed;
       right: 10px;
-      bottom: 2px;
       z-index: 1001;
       min-width: 300px;
       height: 20px;
@@ -47,9 +46,11 @@
       padding-right: 10px;
       background-color: none;
     }
+    .ace_status-indicator {
+      bottom: 2px;
+    }
     .editor-message {
-      bottom: 20px;
-      padding: 5px;
+      top: 20px;
     }
     #AlertMsg {
       font-size: 13px;
@@ -249,16 +250,24 @@
 <script>
   //sEditor.setMode("ace/mode/novel");
   $(function() {
+    // 编辑区域全屏占，修正编辑器高度
+    var tEditor = $('#TextareaEditor')
+    var editorTitleHeight = 50
     // 提示信息
     function showMessage(str){
       $('#AlertMsg').html(str)
       $('.editor-message').show().delay(5000).fadeOut(400)
     }
-    // 编辑区域全屏占，修正编辑器高度
-    var tEditor = $('#TextareaEditor')
-    var editorTitleHeight = $('.editor-title').outerHeight()
-    tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
-    $('.editor-message').css('bottom', tEditor.height() - 20).delay(8000).fadeOut(400)
+    function getEditorHeight() {
+      editorTitleHeight = $('.editor-title').outerHeight()
+      tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
+      $('.editor-message').css('top', editorTitleHeight + 10)
+    }
+    getEditorHeight()
+    $(window).resize(function(){
+      getEditorHeight()
+    });
+    $('.editor-message').delay(8000).fadeOut(400)
     // 初始化编辑器
     var editor = ace.edit("TextareaEditor")
     editor.setOptions({
