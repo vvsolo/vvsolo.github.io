@@ -75,8 +75,8 @@ border-radius: 2px;\
 border: 8px solid #3f475d;\
 }\
 .ace-novel .ace_print-margin {\
-width: 5px;\
-background: #3C3836;\
+width: 0;\
+border-left: 1px dashed #4d4d4d;\
 }\
 .ace-novel .ace_bookmark { background-color: #8B0A6B; color: #fff; }\
 .ace-novel .ace_title0 { background-color: #006200; color: #fff; }\

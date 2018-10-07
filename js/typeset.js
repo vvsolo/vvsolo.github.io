@@ -198,14 +198,13 @@ function editorCleanUp(str) {
 }
 
 // 组合文章标题
-function getTitle(r){
+function setTitle(){
 	var iBookName = $('#inputBookName').val(),
 		iChapter = $('#inputChapter').val(),
 		iBookInfo = ''
-	if(iBookName.length > 0){
+	if(iBookName.length > 0)
 		iBookInfo = '【' + iBookName.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
-		if(iChapter.length > 0)
-			iBookInfo = iBookInfo + '（' + iChapter.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
-	}
-	return iBookInfo.length > 0 ? iBookInfo : (r || '')
+	if(iChapter.length > 0)
+		iBookInfo += '（' + iChapter.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
+	 $('#TitleMsg').html(iBookInfo || $('#TitleMsg').attr('data-tip'))
 }

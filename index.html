@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="排版助手（在线版）">
-  <meta name="author" content="vsolo">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="排版助手（在线版）" />
+  <meta name="author" content="vsolo" />
   <title>排版助手（在线版）</title>
   <!-- Bootstrap core CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     html,
     body {
@@ -31,7 +31,6 @@
     .editor-title {
       border: 0;
     }
-    .editor-message,
     .ace_status-indicator {
       position: fixed;
       right: 10px;
@@ -49,13 +48,11 @@
     .ace_status-indicator {
       bottom: 2px;
     }
-    .editor-message {
-      top: 20px;
-    }
     #AlertMsg {
-      font-size: 13px;
+      font-size: 1rem;
     }
-    #c-left {
+    #c-left,
+    #c-right {
       margin: 0;
       padding: 0;
       position: absolute;
@@ -63,16 +60,19 @@
       bottom: 0;
       left: 0;
       right: 0;
-      max-width: 200px;
+    }
+    #c-left {
+      width: 200px;
     }
     #c-right {
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      top: 0;
-      bottom: 0;
       left: 200px;
-      right: 0;
+    }
+    .form-control[type="text"] {
+      font-weight: 600;
+    }
+    .form-control::placeholder {
+      opacity: 0.3;
+      font-weight: 400;
     }
   </style>
 </head>
@@ -82,7 +82,7 @@
       <a class="navbar-brand font-weight-bold" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在线版）</a>
       <ul class="navbar-nav justify-content-end">
         <li class="nav-item active">
-          <a class="text-warning" href="./index.zh.html">繁</a>
+          <a id="chinese" class="text-dark" href="javascript:void(0);" data-default="简|繁">繁</a>
         </li>
       </ul>
     </nav>
@@ -182,27 +182,29 @@
       </div>
       <hr />
       <div class="input-group mb-2">
-        <button type="button" class="btn btn-primary" title="保存设置到 Cookies" id="SaveConfig">保存设置</button>
+        <button type="button" class="btn btn-primary" title="保存设置" id="SaveConfig" data-tip="设置已保存！">保存设置</button>
       </div>
     </div>
   </div>
-  <div class="" id="c-right">
+  <div class="bg-dark text-white" id="c-right">
     <div class="p-0">
       <div class="alert m-0 rounded-0 border-0 editor-title" role="alert">
         <div class="row">
           <div class="col-7 text-left">
-            <h4 class="alert-heading d-inline" id="TitleMsg">此处标题</h4>
-            <span class="font-weight-light copy-title" data-clipboard-target="#TitleMsg">点击复制标题到剪贴板</span>
+            <h4 class="alert-heading d-inline" id="TitleMsg" data-tip="此处标题">此处标题</h4>
+            <span class="font-weight-light copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！">点击复制标题到剪贴板</span>
           </div>
-          <div class="col-5 text-right">
+          <div class="col-5 text-right editor-message">
+            <span class="badge badge-warning" id="AlertMsg">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
           </div>
         </div>
-        <hr class="bg-light" />
+        <hr class="bg-secondary" />
         <div class="row">
           <div class="col-8 text-left">
+            <button type="button" class="btn btn-light" title="隐藏或显示左侧栏" id="floatTool" data-tip="显|隐">隐</button>
             <button type="button" class="btn btn-success" title="一键整理" id="onCleanUp">一键整理</button>
-            <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet">排版输出</button>
-            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板">复制文档</button>
+            <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版输出</button>
+            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板" data-tip="文档已复制到剪贴板！">复制文档</button>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换简体" id="toSimp">简</button>
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换繁体" id="toTrad">繁</button>
@@ -218,23 +220,23 @@
             </div>
           </div>
           <div class="col-4 text-right">
-            <button type="button" class="btn btn-primary" title="保存临时文档" id="SaveEditor">保存</button>
+            <button type="button" class="btn btn-secondary" title="新建文档" id="CreateEditor">新建</button>
+            <button type="button" class="btn btn-primary" title="缓存临时文档" id="SaveEditor" data-tip="文档已保存！">缓存</button>
             <button type="button" class="btn btn-info" title="还原临时文档" id="RestoreEditor">还原</button>
-            <button type="button" class="btn btn-danger" title="清空文档" id="ClearEditor">清空</button>
+            <button type="button" class="btn btn-danger" title="清空临时文档" id="ClearEditor">清空</button>
           </div>
         </div>
       </div>
-      <pre id="TextareaEditor" placeholder="粘贴文本到此处"></pre>
+      <pre id="TextareaEditor" placeholder="粘贴文本到此处" notran="true"></pre>
       <div class="editor-status" id="statusBar"></div>
-      <div class="editor-message">
-        <span class="badge badge-warning" id="AlertMsg">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
-      </div>
     </div>
+  </div>
     <!-- /.container -->
 
 <!-- Bootstrap core JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-storage-api/1.9.4/jquery.storageapi.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
 
@@ -242,32 +244,45 @@
 <script src="js/config.js?201810"></script>
 <script src="js/typesetting.min.js?201810"></script>
 <script src="js/typeset.min.js?201810"></script>
-<script src="js/conver.dic.js?201810"></script>
+<script src="js/jquery.s2t.dic.js?201810"></script>
+<script src="js/jquery.s2t.js?201810"></script>
 
-<script src="./ace/theme-novel.js"></script>
-<script src="./ace/mode-novel.js"></script>
-<script src="./ace/ext-statusbar.js"></script>
+<script src="./ace/theme-novel.js?201810"></script>
+<script src="./ace/mode-novel.js?201810"></script>
+<script src="./ace/ext-statusbar.js?201810"></script>
 <script>
   //sEditor.setMode("ace/mode/novel");
   $(function() {
-    // 编辑区域全屏占，修正编辑器高度
+    // 简繁互换
+    var isLanguage = $('#chinese')
     var tEditor = $('#TextareaEditor')
     var editorTitleHeight = 50
-    // 提示信息
-    function showMessage(str){
-      $('#AlertMsg').html(str)
-      $('.editor-message').show().delay(5000).fadeOut(400)
+    function setLanguage() {
+      var tipVal = isLanguage.data('default').split('|')
+      if(tipVal[0] == isLanguage.html()) {
+        $('body').t2s();
+        isLanguage.html(tipVal[1]);
+      } else {
+        $('body').s2t();
+        isLanguage.html(tipVal[0]);
+      }
     }
+    // 编辑区域全屏占，修正编辑器高度
+    // 提示信息
+    function showMessage(r){
+      $('#AlertMsg').html($(r).attr('data-tip'))
+      $('.editor-message').eq(0).show().delay(5000).fadeOut(400)
+    }
+    // 编辑器高度
     function getEditorHeight() {
-      editorTitleHeight = $('.editor-title').outerHeight()
+      editorTitleHeight = $('.editor-title').eq(0).outerHeight()
       tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
-      $('.editor-message').css('top', editorTitleHeight + 10)
     }
     getEditorHeight()
     $(window).resize(function(){
       getEditorHeight()
     });
-    $('.editor-message').delay(8000).fadeOut(400)
+    $('.editor-message').eq(0).delay(8000).fadeOut(400)
     // 初始化编辑器
     var editor = ace.edit("TextareaEditor")
     editor.setOptions({
@@ -289,94 +304,126 @@
       // 行号固定宽度
       fixedWidthGutter: true
     });
+    // 状态栏
     var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
-    // create a simple selection status indicator
     var statusBar = new StatusBar(editor, document.getElementById("statusBar"));
     var sEditor = editor.getSession()
-
+    var storage = (!$.localStorage) ? $.cookiesStorage : $.localStorage
+    sEditor.setValue(storage.get('tmpContent') || '')
     // 读取保存的设置
-    $('#inputBookName').val($.cookie('inputBookName') || '')
-    $('#inputChapter').val($.cookie('inputChapter') || '')
-    $('#TitleMsg').html(getTitle('此处标题'))
-    $('#inputAuthor').val($.cookie('inputAuthor') || '')
-    $('#inputSite').val($.cookie('inputSite') || '')
+    var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite']
+    for (var i = 0; i < inputVals.length; i++) {
+      $('#' + inputVals[i]).val(storage.get(inputVals[i]) || '')
+    }
     for (var i = 0; i < 4; i++) {
       var tmp = 'Check_' + i;
-      if ($.cookie(tmp)) {
-        $('#' + tmp).removeAttr('checked').attr('checked', 'checked')
-      } else {
-        $('#' + tmp).removeAttr('checked')
-      }
+      $('#' + tmp).removeAttr('checked')
+      if (!storage.isEmpty(tmp))
+        $('#' + tmp).attr('checked', 'checked')
     }
+    if(!storage.isEmpty('language'))
+    	isLanguage.html(storage.get('language'))
     // 保存设置
     $('#SaveConfig').click(function() {
-      $.cookie('inputBookName', $('#inputBookName').val(), { expires: 365 })
-      $.cookie('inputChapter', $('#inputChapter').val(), { expires: 365 })
-      $.cookie('inputAuthor', $('#inputAuthor').val(), { expires: 365 })
-      $.cookie('inputSite', $('#inputSite').val(), { expires: 365 })
+      for (var i = 0; i < inputVals.length; i++) {
+        var tmp = inputVals[i]
+        if($('#' + tmp).val().length > 0)
+          storage.set(tmp, $('#' + tmp).val())
+        else
+          storage.remove(tmp)
+      }
       for (var i = 0; i < 4; i++) {
         var tmp = 'Check_' + i;
         if ($('#' + tmp).is(':checked'))
-          $.cookie(tmp, 'checked', {})
+          storage.set(tmp, 'checked')
         else
-          $.removeCookie(tmp)
+          storage.remove(tmp)
       }
-      showMessage('设置已保存！')
+      storage.set('language', (isLanguage.html() == '简') ? '繁' : '简')
+      showMessage(this)
+    })
+    // 简繁互换
+    setLanguage()
+    isLanguage.click( function(e) {
+      e.preventDefault();
+      setLanguage()
+    });
+    // 左侧收缩工具
+    var floatTool = $('#floatTool')
+    floatTool.click(function() {
+      var cLeft = $('#c-left').position().left === 0
+      $('#c-left').animate({left: (cLeft ? -200 : 0)}, 300)
+      $('#c-right').animate({left: (cLeft ? 0 : 200)}, 300)
+      var tipVal = $(this).attr('data-tip').split('|')
+      $(this).html(cLeft ? tipVal[0] : tipVal[1])
     })
     // 转简体
     $('#toSimp').on('click', function() {
       var sVal = sEditor.getValue()
-      sVal = Othered(Simplized(sVal))
-      sEditor.setValue(sVal).focus()
+      sVal = $.t2s(sVal)
+      sEditor.setValue(sVal)
+      editor.focus()
     })
     // 转繁体
     $('#toTrad').on('click', function() {
       var sVal = sEditor.getValue()
-      sVal = Traditionalized(sVal)
-      sEditor.setValue(sVal).focus()
+      sVal = $.s2t(sVal)
+      sEditor.setValue(sVal)
+      editor.focus()
     })
     // 实时显示文章标题
+    setTitle()
     $('#inputBookName,#inputChapter').on('keyup keydown change focus input propertychange', function() {
-      $('#TitleMsg').html(getTitle('此处标题'))
+      setTitle()
     })
-    // 清空文档
-    $('#ClearEditor').click(function() {
-      sEditor.setValue('').focus()
-    });
     // 保存文档
     $('#SaveEditor').click(function() {
       var sVal = sEditor.getValue()
       if (sVal.length > 0) {
-        $('#AlertMsg').data('doc', sVal)
-        showMessage('文档已保存！')
+        storage.set('tmpContent', sVal)
+        showMessage(this)
       }
       editor.focus()
     });
     // 还原文档
     $('#RestoreEditor').click(function() {
-      var sVal = $('#AlertMsg').data('doc')
+      var sVal = storage.get('tmpContent') || ''
       if (sVal.length > 0) {
-        sEditor.setValue(sVal).focus()
-        showMessage('文档已还原！')
+        sEditor.setValue(sVal)
+        editor.focus()
+        showMessage(this)
       }
+    });
+    // 新建文档
+    $('#CreateEditor').click(function() {
+      sEditor.setValue('')
+      editor.focus()
+    });
+    // 清空文档
+    $('#ClearEditor').click(function() {
+      storage.remove('tmpContent')
+      showMessage(this)
+      editor.focus()
     });
     // 一键整理
     $('#onCleanUp').click(function() {
       var sVal = sEditor.getValue()
       if (sVal.length > 0) {
         sVal = editorCleanUp(sVal)
-        sEditor.setValue(sVal).focus()
+        sEditor.setValue(sVal)
+        editor.focus()
       }
-    })
+    });
     // 一键排版
     $('#onTypeSet').click(function() {
       var sVal = sEditor.getValue()
       if (sVal.length > 0) {
-        $('#AlertMsg').data('doc', sVal)
-        showMessage('排版成功！重排请点击“还原”按钮！')
-        sEditor.setValue(doTidy(sVal)).focus()
+        $.sessionStorage.set('tmpContent', sVal)
+        showMessage(this)
+        sEditor.setValue(doTidy(sVal))
+        editor.focus()
       }
-    })
+    });
     // 简单UBB
     $('.btn[data-ubbcode]').each(function() {
       var $this = $(this)
@@ -386,31 +433,31 @@
           var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
           editor.insert(tmp)
         } else {
-          showMessage('未选中文字！')
+          showMessage(this)
         }
       })
-    })
+    });
     // 插入待续完结
     $('.btn[data-insert]').each(function() {
       var tmp = $(this).data('insert')
       $(this).click(function() {
         editor.insert(tmp)
-      })
-    })
+      });
+    });
     // 复制标题到剪贴板
     var clipboardTitle = new ClipboardJS('.copy-title')
     clipboardTitle.on('success', function(e) {
-      showMessage('标题复制成功！')
+      showMessage(this)
       e.clearSelection()
     });
     // 复制文档到剪贴板
     var clipboardText = new ClipboardJS('.copy-content', {
       text: function(trigger) {
-        return editor.getValue();
+        return editor.getValue()
       }
-    })
+    });
     clipboardText.on('success', function(e) {
-      showMessage('文档复制成功！')
+      showMessage(this)
       e.clearSelection()
     });
   });
