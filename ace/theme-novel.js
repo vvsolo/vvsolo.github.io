@@ -9,7 +9,18 @@ color: #888;\
 }\
 .ace-novel .ace_gutter-active-line {\
 border-right: 1px solid #4d4d4d;\
-background-color: #2A2B2A;\
+background-color: rgba(45,46,45,0.8);\
+}\
+.ace-novel .ace_marker-layer .ace_active-line {\
+background: rgba(45,46,45,0.7);\
+}\
+.ace-novel .ace_marker-layer .ace_selected-word {\
+border-radius: 2px;\
+border: 8px solid #3f475d;\
+}\
+.ace-novel .ace_print-margin {\
+width: 0;\
+border-left: 1px dashed #4d4d4d;\
 }\
 .ace-novel {\
 color: #CFAF76;\
@@ -66,17 +77,6 @@ color: #EBDAB4;\
 }\
 .ace-novel .ace_punctuation.ace_operator {\
 color: yellow;\
-}\
-.ace-novel .ace_marker-layer .ace_active-line {\
-background: #2A2B2A;\
-}\
-.ace-novel .ace_marker-layer .ace_selected-word {\
-border-radius: 2px;\
-border: 8px solid #3f475d;\
-}\
-.ace-novel .ace_print-margin {\
-width: 0;\
-border-left: 1px dashed #4d4d4d;\
 }\
 .ace-novel .ace_bookmark { background-color: #8B0A6B; color: #fff; }\
 .ace-novel .ace_title0 { background-color: #006200; color: #fff; }\
