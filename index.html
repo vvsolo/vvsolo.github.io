@@ -10,70 +10,7 @@
   <!-- Bootstrap core CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    html,
-    body {
-      font-size: 12px;
-      min-width: 960px;
-    }
-    #TextareaEditor {
-      margin: 0;
-      font-family: Consolas, Monaco, Courier New, monospace, serif;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 500px;
-      width: 100%;
-      height: 100%;
-    }
-    .copy-title {
-      cursor: pointer;
-      font-weight: normal;
-    }
-    .editor-title {
-      border: 0;
-    }
-    .ace_status-indicator {
-      position: fixed;
-      right: 10px;
-      z-index: 1001;
-      min-width: 300px;
-      height: 20px;
-      line-height: 20px;
-      display: block;
-      color: #888;
-      font-size: 13px;
-      text-align: right;
-      padding-right: 10px;
-      background-color: none;
-    }
-    .ace_status-indicator {
-      bottom: 2px;
-    }
-    #AlertMsg {
-      font-size: 1rem;
-    }
-    #c-left,
-    #c-right {
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
-    #c-left {
-      width: 200px;
-    }
-    #c-right {
-      left: 200px;
-    }
-    .form-control[type="text"] {
-      font-weight: 600;
-    }
-    .form-control::placeholder {
-      opacity: 0.3;
-      font-weight: 400;
-    }
+  html,body{font-size:12px;min-width:960px}#TextareaEditor{margin:0;font-family:Consolas,Monaco,Courier New,monospace,serif;font-size:14px;line-height:1.5;min-height:500px;width:100%;height:100%}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:200px}#c-right{left:200px}.form-control[type="text"]{font-weight:600}.form-control::placeholder{opacity:0.3;font-weight:400}
   </style>
 </head>
 <body>
@@ -107,33 +44,36 @@
       </div>
       <div class="input-group mb-2">
         <div class="input-group-prepend">
-          <div class="input-group-text">首发</div>
+          <span class="input-group-text">
+            <input type="checkbox" class="mr-1" id="Check_0" title="是否首发" checked="checked">
+            <label class="form-check-label" for="Check_0">首发</label>
+          </span>
         </div>
-        <input type="text" class="form-control" id="inputSite" placeholder="首发站点">
+        <input type="text" class="form-control" id="inputSite" placeholder="首发站点" aria-label="首发站点">
       </div>
       <hr />
       <div class="input-group mb-2">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_0">
-          <label class="form-check-label" for="Check_0">修正 HTML 字符实体</label>
-        </div>
-      </div>
-      <div class="input-group mb-2">
-        <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_1">
-          <label class="form-check-label" for="Check_1">修正 Unicode</label>
+          <label class="form-check-label" for="Check_1">修正 HTML 字符实体</label>
         </div>
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_2">
-          <label class="form-check-label" for="Check_2">修正变体字母</label>
+          <label class="form-check-label" for="Check_2">修正 Unicode</label>
         </div>
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_3">
-          <label class="form-check-label" for="Check_3">修正变体序号</label>
+          <label class="form-check-label" for="Check_3">修正变体字母</label>
+        </div>
+      </div>
+      <div class="input-group mb-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="Check_4">
+          <label class="form-check-label" for="Check_4">修正变体序号</label>
         </div>
       </div>
       <hr />
@@ -145,39 +85,39 @@
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_4" checked>
-          <label class="form-check-label" for="Check_4">半角字母数字</label>
+          <input class="form-check-input" type="checkbox" id="Check_6" checked>
+          <label class="form-check-label" for="Check_6">半角字母数字</label>
         </div>
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_10" checked>
-          <label class="form-check-label" for="Check_10">英文首字大写</label>
+          <input class="form-check-input" type="checkbox" id="Check_11" checked>
+          <label class="form-check-label" for="Check_11">英文首字大写</label>
         </div>
       </div>
       <hr />
       <div class="input-group mb-2">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_6" checked>
-          <label class="form-check-label" for="Check_6">修正章节标题</label>
-        </div>
-      </div>
-      <div class="input-group mb-2">
-        <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_7" checked>
-          <label class="form-check-label" for="Check_7">修正汉字空格</label>
+          <label class="form-check-label" for="Check_7">修正章节标题</label>
         </div>
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_8" checked>
-          <label class="form-check-label" for="Check_8">修正分隔符号</label>
+          <label class="form-check-label" for="Check_8">修正汉字空格</label>
         </div>
       </div>
       <div class="input-group mb-2">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_9" checked>
-          <label class="form-check-label" for="Check_9">修正引用符号</label>
+          <label class="form-check-label" for="Check_9">修正分隔符号</label>
+        </div>
+      </div>
+      <div class="input-group mb-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="Check_10" checked>
+          <label class="form-check-label" for="Check_10">修正引用符号</label>
         </div>
       </div>
       <hr />
@@ -222,8 +162,8 @@
           <div class="col-4 text-right">
             <button type="button" class="btn btn-secondary" title="新建文档" id="CreateEditor">新建</button>
             <button type="button" class="btn btn-primary" title="缓存临时文档" id="SaveEditor" data-tip="文档已保存！">缓存</button>
-            <button type="button" class="btn btn-info" title="还原临时文档" id="RestoreEditor">还原</button>
-            <button type="button" class="btn btn-danger" title="清空临时文档" id="ClearEditor">清空</button>
+            <button type="button" class="btn btn-info" title="还原临时文档" id="RestoreEditor" data-tip="文档已还原！">还原</button>
+            <button type="button" class="btn btn-danger" title="清空临时文档" id="ClearEditor" data-tip="文档已清空！">清空</button>
           </div>
         </div>
       </div>
@@ -250,216 +190,7 @@
 <script src="./ace/theme-novel.js?201810"></script>
 <script src="./ace/mode-novel.js?201810"></script>
 <script src="./ace/ext-statusbar.js?201810"></script>
-<script>
-  //sEditor.setMode("ace/mode/novel");
-  $(function() {
-    // 简繁互换
-    var isLanguage = $('#chinese')
-    var tEditor = $('#TextareaEditor')
-    var editorTitleHeight = 50
-    function setLanguage() {
-      var tipVal = isLanguage.data('default').split('|')
-      if(tipVal[0] == isLanguage.html()) {
-        $('body').t2s();
-        isLanguage.html(tipVal[1]);
-      } else {
-        $('body').s2t();
-        isLanguage.html(tipVal[0]);
-      }
-    }
-    // 编辑区域全屏占，修正编辑器高度
-    // 提示信息
-    function showMessage(r){
-      $('#AlertMsg').html($(r).attr('data-tip'))
-      $('.editor-message').eq(0).show().delay(5000).fadeOut(400)
-    }
-    // 编辑器高度
-    function getEditorHeight() {
-      editorTitleHeight = $('.editor-title').eq(0).outerHeight()
-      tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
-    }
-    getEditorHeight()
-    $(window).resize(function(){
-      getEditorHeight()
-    });
-    $('.editor-message').eq(0).delay(8000).fadeOut(400)
-    // 初始化编辑器
-    var editor = ace.edit("TextareaEditor")
-    editor.setOptions({
-      theme: "ace/theme/novel",
-      mode: "ace/mode/novel",
-      // 折行
-      wrap: 'free',
-      indentedSoftWrap: false,
-      // 字体
-      fontSize: 14,
-      // 打印线
-      printMarginColumn: 70,
-      // 显示空格
-      showInvisibles: true,
-      // 显示滚动条
-      //vScrollBarAlwaysVisible: true,
-      // 空字符是否可复制
-      copyWithEmptySelection: true,
-      // 行号固定宽度
-      fixedWidthGutter: true
-    });
-    // 状态栏
-    var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
-    var statusBar = new StatusBar(editor, document.getElementById("statusBar"));
-    var sEditor = editor.getSession()
-    var storage = $.localStorage
-    sEditor.setValue(storage.get('tmpContent') || '')
-    isLanguage.html(storage.get('language') || '简')
-    // 读取保存的设置
-    var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite']
-    for (var i = 0; i < inputVals.length; i++) {
-      $('#' + inputVals[i]).val(storage.get(inputVals[i]) || '')
-    }
-    for (var i = 0; i < 4; i++) {
-      var tmp = 'Check_' + i;
-      $('#' + tmp).removeAttr('checked')
-      if (!storage.isEmpty(tmp))
-        $('#' + tmp).attr('checked', 'checked')
-    }
-    // 保存设置
-    $('#SaveConfig').click(function() {
-      for (var i = 0; i < inputVals.length; i++) {
-        var tmp = inputVals[i]
-        if($('#' + tmp).val().length > 0)
-          storage.set(tmp, $('#' + tmp).val())
-        else
-          storage.remove(tmp)
-      }
-      for (var i = 0; i < 4; i++) {
-        var tmp = 'Check_' + i;
-        if ($('#' + tmp).is(':checked'))
-          storage.set(tmp, 'checked')
-        else
-          storage.remove(tmp)
-      }
-      storage.set('language', (isLanguage.html() == '简') ? '繁' : '简')
-      showMessage(this)
-    })
-    // 简繁互换
-    setLanguage()
-    isLanguage.click( function(e) {
-      e.preventDefault();
-      setLanguage()
-    });
-    // 左侧收缩工具
-    $('#floatTool').click(function() {
-      var cLeft = $('#c-left').position().left === 0
-      $('#c-left').animate({left: (cLeft ? -200 : 0)}, 300)
-      $('#c-right').animate({left: (cLeft ? 0 : 200)}, 300)
-      var tipVal = $(this).attr('data-tip').split('|')
-      $(this).html(cLeft ? tipVal[0] : tipVal[1])
-    })
-    // 转简体
-    $('#toSimp').on('click', function() {
-      var sVal = sEditor.getValue()
-      sVal = $.t2s(sVal)
-      sEditor.setValue(sVal)
-      editor.focus()
-    })
-    // 转繁体
-    $('#toTrad').on('click', function() {
-      var sVal = sEditor.getValue()
-      sVal = $.s2t(sVal)
-      sEditor.setValue(sVal)
-      editor.focus()
-    })
-    // 实时显示文章标题
-    setTitle()
-    $('#inputBookName,#inputChapter').on('keyup keydown change focus input propertychange', function() {
-      setTitle()
-    })
-    // 保存文档
-    $('#SaveEditor').click(function() {
-      var sVal = sEditor.getValue()
-      if (sVal.length > 0) {
-        storage.set('tmpContent', sVal)
-        showMessage(this)
-      }
-      editor.focus()
-    });
-    // 还原文档
-    $('#RestoreEditor').click(function() {
-      var sVal = storage.get('tmpContent') || ''
-      if (sVal.length > 0) {
-        sEditor.setValue(sVal)
-        editor.focus()
-        showMessage(this)
-      }
-    });
-    // 新建文档
-    $('#CreateEditor').click(function() {
-      sEditor.setValue('')
-      editor.focus()
-    });
-    // 清空文档
-    $('#ClearEditor').click(function() {
-      storage.remove('tmpContent')
-      showMessage(this)
-      editor.focus()
-    });
-    // 一键整理
-    $('#onCleanUp').click(function() {
-      var sVal = sEditor.getValue()
-      if (sVal.length > 0) {
-        sVal = editorCleanUp(sVal)
-        sEditor.setValue(sVal)
-        editor.focus()
-      }
-    });
-    // 一键排版
-    $('#onTypeSet').click(function() {
-      var sVal = sEditor.getValue()
-      if (sVal.length > 0) {
-        $.sessionStorage.set('tmpContent', sVal)
-        showMessage(this)
-        sEditor.setValue(doTidy(sVal))
-        editor.focus()
-      }
-    });
-    // 简单UBB
-    $('.btn[data-ubbcode]').each(function() {
-      var $this = $(this)
-      $this.click(function() {
-        var selection = sEditor.getTextRange(editor.getSelectionRange())
-        if (selection.length > 0) {
-          var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
-          editor.insert(tmp)
-        } else {
-          showMessage(this)
-        }
-      })
-    });
-    // 插入待续完结
-    $('.btn[data-insert]').each(function() {
-      var tmp = $(this).data('insert')
-      $(this).click(function() {
-        editor.insert(tmp)
-      });
-    });
-    // 复制标题到剪贴板
-    var clipboardTitle = new ClipboardJS('.copy-title')
-    clipboardTitle.on('success', function(e) {
-      e.clearSelection()
-      showMessage($('.copy-title'))
-    });
-    // 复制文档到剪贴板
-    var clipboardText = new ClipboardJS('.copy-content', {
-      text: function(trigger) {
-        return editor.getValue()
-      }
-    });
-    clipboardText.on('success', function(e) {
-      e.clearSelection()
-      showMessage($('.copy-content'))
-    });
-  });
-</script>
+<script src="./js/app.js?201810"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {

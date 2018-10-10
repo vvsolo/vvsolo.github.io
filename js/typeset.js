@@ -5,7 +5,7 @@ function doSplit(str, sm, bm){
 	// 分隔字数
 	var cutNum = configs.Linenum*2
 	if(str.match(/^　{2,}/)) return str + '\n\n'
-	str = str.trimSpace()
+	str = str.trim()
 	if(str.len() === 0) return str
 	
 	var text = '',
@@ -62,15 +62,6 @@ function doSplit(str, sm, bm){
 	return tmpstr
 }
 
-// 阿拉伯数字转换格式
-function cc(s) {
-	// 验证输入的字符是否为数字
-	if (isNaN(s)) return
-	// 字符处理完毕后开始转换，采用前后两部分分别转换
-	s = s.toLocaleString()
-	return s.replace(/\.00$/, "")
-}
-
 // 排版
 function doTidy(str) {
 	// 引号替换
@@ -104,7 +95,7 @@ function doTidy(str) {
 	// 开始进行分隔
 	var re = ''
 	for (var i = 0; i < count; i++)
-		re += doSplit(words[i].trimSpace(), '\n', '\n\n')
+		re += doSplit(words[i].trim(), '\n', '\n\n')
 
 	re = re
 		// 修正结尾
@@ -120,40 +111,36 @@ function doTidy(str) {
 	re = '\n' + re
 
 	// 插入标头
-	var slength = re.length
-	var spacecount = re.findCount(configs.AllSpace)
-
-	var headVal = {
-		'writer': $('#inputAuthor').val().trimSpace(),
-		'bbsname': $('#inputSite').val().trimSpace(),
-		'dateStr': new Date().format("yyyy/MM/dd"),
-		'strNum': cc(slength - spacecount)
-	}
-
-	var headStr = ($('html').attr('lang') == 'zh-CN') ? '作者：{writer}\n\
-{dateStr}发表于：{bbsname}\n\
-是否首发：是\n\
-字数：{strNum} 字\n\
-' : '作者：{writer}\n\
-{dateStr}發表於：{bbsname}\n\
-是否首發：是\n\
-字數：{strNum} 字\n\
+	var headStr = ($('#chinese').html() !== '简') ? '作者：{$w}\n\
+{$d}发表于：{$b}\n\
+是否首发：{$y}\n\
+字数：{$n} 字\n\
+' : '作者：{$w}\n\
+{$d}發表於：{$b}\n\
+是否首發：{$y}\n\
+字數：{$n} 字\n\
 ';
+	headStr = headStr.fmt({
+		'w': $('#inputAuthor').val().trim() || '',
+		'b': $('#inputSite').val().trim() || '',
+		'y': $('#Check_0').is(':checked') ? '是' : '否',
+		'd': new Date().fmt("yyyy/MM/dd"),
+		'n': (re.length - re.findCount(allSpace)).fmt()
+	})
 	/**
-	var inputBookName = $('#inputBookName').val(),
-		inputChapter = $('#inputChapter').val(),
-		inputBookInfo = ''
-	if(inputBookName.length > 0){
-		inputBookInfo = '【' + inputBookName.trimSpace().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '】'
-		if(inputChapter.length > 0)
-			inputBookInfo = inputBookInfo + '（' + inputChapter.trimSpace().replace(/^([（【“「<]|[）】”」>]$)/g, '') + '）'
-	}
+	var iBookName = $('#inputBookName').val(),
+		iChapter = $('#inputChapter').val(),
+		iBookInfo = ''
+	if(iBookName.length > 0)
+		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
+	if(iChapter.length > 0)
+		iBookInfo += '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	if(inputBookInfo.length > 0)
 		inputBookInfo = inputBookInfo + '\n\n' + headStr
 	else
 		inputBookInfo = headStr
 	**/
-	return headStr.format(headVal) + re
+	return headStr + re
 }
 
 // 一键整理
@@ -161,37 +148,37 @@ function editorCleanUp(str) {
 	// 排版初始化，去空格空行
 	str = str.replaceInit();
 	// HTML 字符实体转换
-	if ($('#Check_0').is(':checked'))
+	if ($('#Check_1').is(':checked'))
 		str = str.converHtmlEntity()
 	// Unicode转换
-	if ($('#Check_1').is(':checked'))
+	if ($('#Check_2').is(':checked'))
 		str = str.converUnicode()
 	// 转换变体字母
-	if ($('#Check_2').is(':checked'))
+	if ($('#Check_3').is(':checked'))
 		str = str.convertVariant()
 	// 转换变体序号
-	if ($('#Check_3').is(':checked'))
+	if ($('#Check_4').is(':checked'))
 		str = str.convertSerialNumber()
 	// 半角字母数字
-	if ($('#Check_4').is(':checked'))
+	if ($('#Check_6').is(':checked'))
 		str = str.convertNumberLetter()
+	// 修正章节标题
+	if ($('#Check_7').is(':checked'))
+		str = str.replaceTitle()
 	// 全角标点符号
 	if ($('#Check_5').is(':checked'))
 		str = str.convertPunctuation()
-	// 修正章节标题
-	if ($('#Check_6').is(':checked'))
-		str = str.replaceTitle()
 	// 去除汉字间的空格
-	if ($('#Check_7').is(':checked'))
+	if ($('#Check_8').is(':checked'))
 		str = str.replaceSpace()
 	// 修正分隔符号
-	if ($('#Check_8').is(':checked'))
+	if ($('#Check_9').is(':checked'))
 		str = str.replaceSeparator()
 	// 修正引号
-	if ($('#Check_9').is(':checked'))
+	if ($('#Check_10').is(':checked'))
 		str = str.replaceQuotes('fr')
 	// 英文首字大写
-	if ($('#Check_10').is(':checked'))
+	if ($('#Check_11').is(':checked'))
 		str = str.convertInitial()
 	// 结束
 	return str.replaceEnd()
@@ -203,8 +190,8 @@ function setTitle(){
 		iChapter = $('#inputChapter').val(),
 		iBookInfo = ''
 	if(iBookName.length > 0)
-		iBookInfo = '【' + iBookName.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
+		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
 	if(iChapter.length > 0)
-		iBookInfo += '（' + iChapter.trimSpace().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
+		iBookInfo += '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
 	 $('#TitleMsg').html(iBookInfo || $('#TitleMsg').attr('data-tip'))
 }
