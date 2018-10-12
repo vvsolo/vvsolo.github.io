@@ -1,4 +1,4 @@
-/**
+﻿/**
  * typesetting for EverEdit
  * 注意：修改后请切记压缩方可生效！
  */
@@ -45,66 +45,44 @@ Object.extend(String.prototype, {
 	},
 	// 英文首字大写
 	convertInitial: function() {
-		//var allInitial = [];
 		var re = this
 			// 转换英文小写
 			.toLowerCase()
 			// 英文首写全大写
-			.replace(/\b([a-zA-Z])/g, function(m){
-				return m.toUpperCase()
-			})
+			.toUpper(/\b([a-zA-Z])/g, true)
 			// 引用的全转小写
 			.replace(/[《“‘「『【\"（]([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\'\n]{2,})[》”’」】』\"）]/gm, function(m, m1) {
 				// 全是英文时全部首字大写
 				if((m1.match(/[…！？。\!\?\.]$/g) || m1.match(/[，：；＆\,\:\;\&\']/g)) && m1.match(/\w/g)){
 					return m
-					.replace(/[，\, ][A-Z]/g, function(n){
-						return n.toLowerCase();
-					})
-					.replaces(configs.halfSymbol)
-					.replace(/[\.\?\!\:\&][ ]?[a-z]/g, function(n){
-						return n.toUpperCase();
-					})
+						.toUpper(/[，\, ][A-Z]/g, false)
+						.replaces(configs.halfSymbol)
+						.toUpper(/[\.\?\!\:\&][ ]?[a-z]/g, true)
 				}
 				return m
 			})
-			// 独占一行的全英文
-			.replace(/^([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\']{2,})$/gm, function(m, m1) {
-				return m.replace(/[， ][A-Z]/g, function(n){
-					return n.toLowerCase()
-				})
+			// 独占一行的全英文小写
+			.replace(/^([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\']{2,})$/gm, function(m) {
+				return m.toUpper(/[， ][A-Z]/g, false)
 			})
 			// 处理单词全是英文和数字时
 			.replace(/\b([A-Za-z\d]+)\b/g, function(m) {
 				return m.match(/\d/) ? m.toUpperCase() : m
 			})
-			// 处理型号类
-			.replace(/([a-zA-Z]+[\-—\~～]\d|\d[\-—\~～][a-zA-Z]+)/g, function(m) {
-				return m.toUpperCase()
-			})
+			
+			// 型号类全大写
+			.toUpper(/([a-zA-Z]+[\-—\~～]\d|\d[\-—\~～][a-zA-Z]+)/g, true)
 			// 处理连续的英语
-			.replace(/(\W)(a{2,}|b{2,}|c{2,}|d{2,}|e{2,}|f{2,}|g{2,}|h{2,}|i{2,}|j{2,}|k{2,}|l{2,}|m{2,}|n{2,}|o{2,}|p{2,}|q{2,}|r{2,}|s{2,}|t{2,}|u{2,}|v{2,}|w{2,}|x{2,}|y{2,}|z{2,})(\W)/gi, function(m) {
-				return m.toUpperCase()
-			})
-			// 专用英文缩写全部大写
-			//.replace(/[（]([\w]{2,})[）]/g, function(m, m1) {
-			//	if(!allInitial[m1]) allInitial[m1] = m1;
-			//	return m.toUpperCase()
-			//})
+			.toUpper(/\b(a{2,}|b{2,}|c{2,}|d{2,}|e{2,}|f{2,}|g{2,}|h{2,}|i{2,}|j{2,}|k{2,}|l{2,}|m{2,}|n{2,}|o{2,}|p{2,}|q{2,}|r{2,}|s{2,}|t{2,}|u{2,}|v{2,}|w{2,}|x{2,}|y{2,}|z{2,})\b/gi, true)
 			// 处理英语中的 ' 标点符号
 			.replace(/([a-zA-Z]+)[\'\`＇‘’『』]([a-zA-Z]+)/g, function(m0, m1, m2) {
-				return m1.replace(/\b[a-z]/g, function(n) {
-					return n.toUpperCase()
-				}) + "'" + m2.toLowerCase()
+				return m1.toUpper(/\b[a-z]/g, true) + "'" + m2.toLowerCase()
 			})
 			// 处理英语中网址
 			.replace(/([0-9a-zA-Z]+)[。\.]([0-9a-zA-Z—\-_]+)[。\.](com|net|org|gov)/gi, function(m) {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
 			
-		// 处理专用缩写
-		//for(var item in allInitial)
-		//	re = re.replace(new RegExp('\\b(' + allInitial[item] + ')\\b', 'gi'), allInitial[item].toUpperCase())
 		// 处理常用英语书写
 		var pWord = configs.pWord.split('|');
 		for(var i = 0; i < pWord.length; i++)
@@ -173,8 +151,8 @@ Object.extend(String.prototype, {
 			.replace(/([＆&]#(\d+)[;；])/gi, function(m) {
 				return String.fromCharCode(m.replace(/[＆&#;；]/g, ''))
 			})
-			//.replace(/(%[\da-zA-Z]{2})/g, function(m) {
-			//	return decodeURIComponent(m);
+			//.replace(/([%％][\da-f]{2})+/gi, function(m) {
+			//	return decodeURIComponent(m.replace(/％/g, '%')) || decodeURI(m.replace(/％/g, '%')) || m;
 			//})
 	},
 	// html转义符转换
@@ -265,67 +243,49 @@ Object.extend(String.prototype, {
 	},
 	// 标题居中函数，默认一行35全角字符
 	toTitleCenter: function(b1, b2, center) {
-		var fBreak = b1 || '\n'
-		var eBreak = b2 || ''
-		var iCenter = center || false
 		var lineLength = configs.Linenum*2
 		var str = this.trim()
 
-		if(iCenter){
+		if(center === true){
 			var strLength = str.len()
 			var rema = (strLength%4 === 0) ? ' ' : ''
 
-			if (iCenter && lineLength > strLength)
+			if (center && lineLength > strLength)
 				str = '　'.times(parseInt((lineLength - strLength) / 4, 10)) + rema + str
 		}
-		return (fBreak + str + eBreak)
+		return ((b1 || '\n') + str + (b2 || ''))
 	},
 	// 处理标题的外框
 	replaceBorder: function(tit) {
-		var regBorder = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$s})?[{$b.0}]?({$e}|$)[{$b.1}]?$'.fmt({
-			'f': configs.regStart,
-			'b': configs.regTitleBorder,
-			't': tit,
-			's': configs.regSeparator,
-			'e': configs.regEnd
-		})
-		return this.replace(new RegExp(regBorder, 'gm'), function(t) {
-			return t.replace(new RegExp('[' + configs.regTitleBorder.join('') + ']', 'g'), '')
+		var regVal = configs.regTitle
+		regVal.t = tit
+		regVal.b = configs.regTitleBorder
+		var regBorder = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$s})?[{$b.0}]?({$e}|$)[{$b.1}]?$'.fmt(regVal)
+		return this.replace(regBorder.getReg('gm'), function(t) {
+			return t.replace(('[' + regVal.b.join('') + ']').getReg('gm'), '')
 		})
 	},
 	// 修正章节标题
 	replaceTitle: function(b1, b2, center, relax) {
 		var fBreak = b1 || '\n\n'
 		var eBreak = b2 || ''
-		var iCenter = center || false
-		var iRelax = relax || false
 		var re = this
-
-		var rSeparatorLeft = new RegExp('^' + configs.regSeparator, 'g')
-		var rSeparatorAll = new RegExp('^' + configs.regSeparator + '$', 'g')
+		// 替换值
+		var regVal = configs.regTitle
+		var rSeparatorLeft = ('^' + regVal.s).getReg('g')
+		var rSeparatorAll = ('^' + regVal.s + '$').getReg('g')
 
 		// 非严格限定
-		if(iRelax){
+		if(relax === true){
 			// 标题间隔符（非严格限定）
-			configs.regSeparator = configs.regSeparatorNull
+			regVal.s = regVal.sn
 			// 行尾（非严格限定）
-			configs.regStrictEnd = configs.regEnd
-		}
-		// 替换值
-		var regVal = {
-			'f': configs.regStart,
-			't': configs.regTitle,
-			// 标题间隔符（非严格限定）
-			's': configs.regSeparator,
-			'sn': configs.regSeparatorNull,
-			// 行尾（非严格限定）
-			'e': configs.regEnd,
-			'es': configs.regStrictEnd
+			regVal.es = regVal.e
 		}
 		/****** 分隔符居中 ******/
-		if (iCenter) {
-			re = re.replace(new RegExp(regVal.f + configs.Separator, 'gm'), function(m) {
-				return m.toTitleCenter('', '', iCenter)
+		if (center === true) {
+			re = re.replace((regVal.f + configs.Separator).getReg('gm'), function(m) {
+				return m.toTitleCenter('', '', true)
 			})
 		}
 		// 处理标题内容
@@ -349,16 +309,16 @@ Object.extend(String.prototype, {
 		}
 		// 正则标题
 		/****** 非常规标题 ******/
-		var regStr = rr('^{$f}({$t.t1})(?:{$sn})({$e}|$)$', '|')
-		re = re.replaceBorder(regVal.t.t1.join('|')).replace(regStr, function(m0, m1, m2) {
+		var regStr = rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|')
+		re = re.replaceBorder(regVal.t1.join('|')).replace(regStr, function(m0, m1, m2) {
 			// 防止错误判断一下标题
 			if(m2.match(/^[！？。]{1,3}$/g)) return m0
-			return (m1 + handleTitle(m2)).toTitleCenter(fBreak, eBreak, iCenter)
+			return (m1 + handleTitle(m2)).toTitleCenter(fBreak, eBreak, center)
 		})
 		/****** 一章/第一章/一章：标题/第一章：标题 ******/
-		regStr = rr('^{$f}{$t.t2}({$sn})({$e}|$)$')
+		regStr = rr('^{$f}{$t2}({$sn})({$e}|$)$')
 		// m1 章节 m2 间隔 m3 标题
-		re = re.replaceBorder(regVal.t.t2).replace(regStr, function(m0, m1, m2, m3) {
+		re = re.replaceBorder(regVal.t2).replace(regStr, function(m0, m1, m2, m3) {
 			// 防止错误判断一下标题：——开头，或全是标点
 			if(m2.match(/^[\-—]{1,4}/g) || m3.match(/^[！？。…]{1,3}$/g))
 				return m0
@@ -368,30 +328,30 @@ Object.extend(String.prototype, {
 			// 防止错误判断一下标题：一回头、一幕幕
 			if((m0.match(configs.regSkipTitle) && !m2.match(rSeparatorLeft) && m3.match(/[！？。…]{1,3}$/g)))
 				return m0
-			return ('第' + m1.replace(/(^[第]+| )/g, '') + handleTitle(m3)).toTitleCenter(fBreak, eBreak, iCenter)
+			return ('第' + m1.replace(/(^[第]+| )/g, '') + handleTitle(m3)).toTitleCenter(fBreak, eBreak, center)
 		})
 		/****** （一）/（一）标题 ******/
-		regStr = rr('^{$f}{$t.t5}({$e}|$)$')
-		re = re.replaceBorder(regVal.t.t5).replace(regStr, function(m0, m1, m2) {
-			return (m1 + handleTitle(m2, 'no')).toTitleCenter(fBreak, eBreak, iCenter)
+		regStr = rr('^{$f}{$t5}({$e}|$)$')
+		re = re.replaceBorder(regVal.t5).replace(regStr, function(m0, m1, m2) {
+			return (m1 + handleTitle(m2, 'no')).toTitleCenter(fBreak, eBreak, center)
 		})
 		// 如果是居中返回
-		if (iCenter) return re
+		if (center === true) return re
 
 		/****** 卷一/卷一：标题 ******/
-		regStr = rr('^{$f}{$t.t3}(?:{$sn})({$e}|$)$')
-		re = re.replaceBorder(regVal.t.t3).replace(regStr, function(m0, m1, m2, m3) {
+		regStr = rr('^{$f}{$t3}(?:{$sn})({$e}|$)$')
+		re = re.replaceBorder(regVal.t3).replace(regStr, function(m0, m1, m2, m3) {
 			return (fBreak + '第' + m2 + m1 + handleTitle(m3) + eBreak)
 		})
-		/****** chapter 22/ chapter 55 abcd******/
-		regStr = rr('^{$f}{$t.t6}(?:{$s})({$e}|$)$')
-		re = re.replaceBorder(regVal.t.t6).replace(regStr, function(m0, m1, m2) {
+		/****** chapter 22/ chapter 55 abcd ******/
+		regStr = rr('^{$f}{$t6}(?:{$s})({$e}|$)$')
+		re = re.replaceBorder(regVal.t6).replace(regStr, function(m0, m1, m2) {
 			return (fBreak + '第' + m1 + '章' + handleTitle(m2) + eBreak)
 		})
 		/****** 01/01./01.标题/一/一、/一、标题 ******/
 		var pattern = configs.regSkipTitle1
-		regStr = rr('^{$f}{$t.t4}({$s}|{$s}{$e}|$)$')
-		re = re.replaceBorder(regVal.t.t4).replace(regStr, function(m0, m1, m2) {
+		regStr = rr('^{$f}{$t4}({$s}|{$s}{$e}|$)$')
+		re = re.replaceBorder(regVal.t4).replace(regStr, function(m0, m1, m2) {
 			// 全是标点不处理
 			if(m2.match(/^[！？。…]{1,3}$/g))
 				return m0

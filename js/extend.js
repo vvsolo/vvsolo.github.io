@@ -1,9 +1,34 @@
 
+if (!isType) {
+	function isType(type) {
+		return function(obj) {
+			return {}.toString.call(obj) == "[object " + type + "]";
+		}
+	}
+	var isArray = isType("Array");
+	var isString = isType("String");
+	var isObject = isType("Object");
+}
+
 // 对象批量赋值
 Object.extend = function(a, b) {
 	for (var i in b)
-		a[i] = b[i]
-	return a
+		if (!a[i]) a[i] = b[i];
+	return a;
+}
+
+// 循环替换
+var __fmts = function(re, args) {
+	if (isArray(re) || isObject(re)) {
+		for(var item in re) {
+			var tmp = re[item]
+			re[item] = !isString(tmp) ? __fmts(tmp, args) : tmp.fmt(args);
+		}
+	}
+	return re;
+}
+Array.prototype.fmts = function(args) {
+	return __fmts(this, args)
 }
 
 // 删除字符首尾空格
@@ -11,69 +36,53 @@ var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
+var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 
-// 安全转换正则
-if (!String.prototype.regSafe) {
-	String.prototype.regSafe = function() {
-		return String(this).replace(/\\/, '\\\\').replace(/[\\]{2,}/, '\\\\')
-	}
-}
-if (!String.prototype.getReg) {
-	String.prototype.getReg = function(m) {
+// ***** 扩展字符处理 *****
+Object.extend(String.prototype, {
+	// 处理为正则字符串
+	regSafe: function() {
+		return String(this).replace(regEscape, '\$1').replace(/[\\]{2,}/, '\\\\')
+	},
+	// 安全转换正则
+	getReg: function(m) {
 		return new RegExp(this.regSafe(), m || 'g')
-	}
-}
-
-// 格式化所有空格样式为标准
-// 修正所有换行为 UNIX 标准
-if (!String.prototype.space) {
-	String.prototype.space = function() {
-		return String(this).replace(new RegExp("[" + Space + ']', 'g'), ' ').replace(/(\r\n|\n\r|\r)/g, '\n')
-	}
-}
-
-// 删除字符首尾空格
-if (!String.prototype.trim) {
-	var ws = "[" + Space + "]+"
-	String.prototype.trim = function() {
+	},
+	// 修正所有换行为 UNIX 标准
+	toUNIX: function() {
+		return String(this).replace(/(\r\n|\n\r|\r)/g, '\n')
+	},
+	// 格式化所有空格样式为标准
+	space: function() {
+		return String(this).replace(new RegExp("[" + Space + ']', 'g'), ' ').toUNIX()
+	},
+	// 删除字符首尾空格
+	trim: function() {
+		var ws = "[" + Space + "]+"
 		return String(this).replace(new RegExp("^" + ws + "|" + ws + '$', 'gm'), '')
-	}
-}
-
-// 去除所有空格后的长度
-if (!String.prototype.checkEmpty) {
-	String.prototype.checkEmpty = function() {
+	},
+	// 去除所有空格后的长度
+	checkEmpty: function() {
 		return this.replace(allSpace, '').length === 0
-	}
-}
-
-// 循环正则替换
-if (!String.prototype.replaces) {
-	String.prototype.replaces = function(arr) {
-		var re = this;
-		for (var i in arr)
+	},
+	// 循环正则替换
+	replaces: function(arr) {
+		var re = this, i;
+		for (i in arr)
 			re = re.replace(arr[i][0], arr[i][1]);
 		return re;
-	}
-}
-
-// 取双字节与单字节混排时的真实字数
-if (!String.prototype.len) {
-	String.prototype.len = function() {
+	},
+	// 取双字节与单字节混排时的真实字数
+	len: function() {
 		return this.replace(/[^\x00-\xff]/g, '**').length
-	}
-}
-
-// 按真实字数进行分隔
-if (!String.prototype.realSubstring) {
-	String.prototype.realSubstring = function(start, len) {
+	},
+	// 按真实字数进行分隔
+	realSubstring: function(start, len) {
 		var str = this || ''
 		if (str.length === 0) return str
 		start = start || 0
 		len = len || str.len()
-		var byteL = 0
-		var sub = ''
-
+		var byteL = 0, sub = ''
 		for (var i = c = cl = 0; i < str.length; i++) {
 			c = str.charCodeAt(i)
 			cl = c > 0xff ? 2 : 1
@@ -92,36 +101,55 @@ if (!String.prototype.realSubstring) {
 			}
 		}
 		return sub
-	}
-}
-
-// 重复连接字符串
-if (!String.prototype.times) {
-	String.prototype.times = function(m) {
+	},
+	// 重复连接字符串
+	times: function(m) {
 		return m < 1 ? '' : new Array(m + 1).join(this);
-	}
-}
-
-// 取双字节与单字节混排时的真实字数
-if (!String.prototype.realLength) {
-	String.prototype.realLength = function() {
-		return this.replace(/[^\x00-\xff]/g, '**').length;
-	}
-}
-
-// 取正则查询匹配的次数
-if (!String.prototype.findCount) {
-	String.prototype.findCount = function(reg) {
-		var count = 0;
-		var re = this.replace(reg, function() {
-			count++;
+	},
+	// 取正则查询匹配的次数
+	findCount: function(reg) {
+		return this.match(reg) ? this.match(reg).length : 0;
+	},
+	// 正则字母大小写
+	toUpper: function(reg, t) {
+		return this.replace(reg, function(m) {
+			return (t == true) ? m.toUpperCase() : m.toLowerCase()
 		})
-		return count;
+	},
+	// 特殊方式替换字符串
+	/*
+	 * arrs = {name:"loogn",age:22,sex:['man', 'woman']}
+	 * var result0 = "我是{$name}，{$sex.0}，今年{$age}了".fmt(arrs)
+	 */
+	fmt: function(args, r) {
+		if (isString(args))
+			return this.replace(/\{\$zz\}/g, args);
+		if (!isObject(args) && !isArray(args))
+			return this;
+		var re = this;
+		r = r || ''
+		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
+		if (/\{\$([a-z0-9\.\-\_]+)}/gi.test(re)) {
+			re = re
+				// 子项是数组{$name.t1.0}
+				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
+					// 如果子项是数组轮循
+					var tmp = !m2.match(/\./g) ? args[m1][m2] : m.replace(new RegExp('\\{\\$' + m1 + '\\.', 'g'), '\{\$').fmt(args[m1], r)
+					return isArray(tmp) ? tmp.join(r) : (tmp != null ? tmp : m)
+				})
+				// 子项
+				.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
+					var tmp = args[m1] != null ? args[m1] : m
+					return isArray(tmp) ? tmp.join(r) : tmp
+				})
+		}
+		return re;
 	}
-}
+});
 
-// 格式化时间
-if (!Date.prototype.fmt) {
+// ***** 扩展时间处理 *****
+if(!Date.prototype.fmt) {
+	// 格式化时间
 	Date.prototype.fmt = function(d) {
 		var o = {
 			"M+": this.getMonth() + 1, //月份 
@@ -139,39 +167,6 @@ if (!Date.prototype.fmt) {
 				d = d.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
 		}
 		return d;
-	}
-}
-
-// 特殊方式替换字符串
-/*
- * arrs = {name:"loogn",age:22,sex:['man', 'woman']}
- * var result0 = "我是{$name}，{$sex.0}，今年{$age}了".fmt(arrs)
- *
- */
-if (!String.prototype.fmt) {
-	String.prototype.fmt = function(args, r) {
-		if (typeof args === "string")
-			return this.replace(/\{\$s\}/g, args);
-		if (typeof args !== "object" && typeof args !== "array")
-			return this;
-		var re = this;
-		r = r || ''
-		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
-		if (/\{\$([a-z0-9\.\-\_]+)}/gi.test(re)) {
-			re = re
-				// 子项是数组{$name.t1.0}
-				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
-					// 如果子项是数组轮循
-					var tmp = m2.indexOf('.') === 0 ? args[m1][m2] : m.replace(new RegExp('\\{\\$' + m1 + '\\.', 'g'), '\{\$').fmt(args[m1], r)
-					return (typeof tmp === "array") ? tmp.join(r) : tmp || m
-				})
-				// 子项
-				.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-					var tmp = args[m1] !== null ? args[m1] : ''
-					return (typeof tmp === "array") ? tmp.join(r) : tmp
-				})
-		}
-		return re;
 	}
 }
 

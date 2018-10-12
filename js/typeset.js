@@ -39,7 +39,7 @@ function doSplit(str, sm, bm){
 			// 测试一下全英文状态防止出错
 			var testTmp = tmp
 				.replace(/[\w]/g, '')
-				.replace(configs.Space, '')
+				.space()
 				.replace(configs.HWPunctuation, '')
 				.replace(configs.FWPunctuation, '')
 				.length === 0;
