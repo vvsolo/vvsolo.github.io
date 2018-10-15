@@ -10,7 +10,7 @@
   <!-- Bootstrap core CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-  html,body{font-size:12px;min-width:960px}#TextareaEditor{margin:0;font-family:Consolas,Monaco,Courier New,monospace,serif;font-size:14px;line-height:1.5;min-height:500px;width:100%;height:100%}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:200px}#c-right{left:200px}.form-control[type="text"]{font-weight:600}.form-control::placeholder{opacity:0.3;font-weight:400}
+  html,body{font-size:12px;min-width:960px}#TextareaEditor{margin:0;font-family:Consolas,Monaco,Courier New,monospace,serif;font-size:14px;line-height:1.5;min-height:500px;width:100%;height:100%;color:#fff}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:200px}#c-right{left:200px}.form-control[type="text"]{font-weight:600}.form-control::placeholder{opacity:0.3;font-weight:400}
   </style>
 </head>
 <body>
@@ -135,16 +135,16 @@
             <span class="font-weight-light copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！">点击复制标题到剪贴板</span>
           </div>
           <div class="col-5 text-right editor-message">
-            <span class="badge badge-warning" id="AlertMsg">填写作者等相关信息后，“一键整理” → “排版输出”.</span>
+            <span class="badge badge-warning" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</span>
           </div>
         </div>
         <hr class="bg-secondary" />
         <div class="row">
           <div class="col-8">
             <button type="button" class="btn btn-light" title="隐藏或显示左侧栏" id="floatTool" data-tip="显|隐">隐</button>
-            <button type="button" class="btn btn-success" title="一键整理" id="onCleanUp">一键整理</button>
-            <button type="button" class="btn btn-success" title="排版输出" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版输出</button>
-            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板" data-tip="文档已复制到剪贴板！">复制文档</button>
+            <button type="button" class="btn btn-success" title="一键整理文档" id="onCleanUp">整理</button>
+            <button type="button" class="btn btn-success" title="排版输出文档" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版</button>
+            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板" data-tip="文档已复制到剪贴板！">复制</button>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换简体" id="toSimp">简</button>
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换繁体" id="toTrad">繁</button>
