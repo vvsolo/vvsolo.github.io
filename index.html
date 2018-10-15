@@ -15,7 +15,7 @@
 </head>
 <body>
   <div class="bg-light text-dark" id="c-left">
-    <nav class="navbar mb-4">
+    <nav class="navbar mb-2">
       <a class="navbar-brand font-weight-bold" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub">排版助手（在线版）</a>
       <ul class="navbar-nav justify-content-end">
         <li class="nav-item active">
@@ -24,25 +24,25 @@
       </ul>
     </nav>
     <div class="container-fluid">
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="input-group-prepend">
           <div class="input-group-text">书名</div>
         </div>
         <input type="text" class="form-control" id="inputBookName" placeholder="小说名称">
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="input-group-prepend">
           <div class="input-group-text">章节</div>
         </div>
         <input type="text" class="form-control" id="inputChapter" placeholder="更新章节">
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="input-group-prepend">
           <div class="input-group-text">作者</div>
         </div>
         <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="input-group-prepend">
           <span class="input-group-text">
             <input type="checkbox" class="mr-1" id="Check_0" title="是否首发" checked="checked">
@@ -51,70 +51,69 @@
         </div>
         <input type="text" class="form-control" id="inputSite" placeholder="首发站点" aria-label="首发站点">
       </div>
-      <hr />
-      <div class="input-group mb-2">
+       <hr />
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_1">
           <label class="form-check-label" for="Check_1">修正 HTML 字符实体</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_2">
           <label class="form-check-label" for="Check_2">修正 Unicode</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_3">
           <label class="form-check-label" for="Check_3">修正变体字母</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_4">
           <label class="form-check-label" for="Check_4">修正变体序号</label>
         </div>
       </div>
       <hr />
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_5" checked>
           <label class="form-check-label" for="Check_5">全角标点符号</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_6" checked>
           <label class="form-check-label" for="Check_6">半角字母数字</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_11" checked>
           <label class="form-check-label" for="Check_11">英文首字大写</label>
         </div>
       </div>
-      <hr />
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_7" checked>
           <label class="form-check-label" for="Check_7">修正章节标题</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_8" checked>
           <label class="form-check-label" for="Check_8">修正汉字空格</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_9" checked>
           <label class="form-check-label" for="Check_9">修正分隔符号</label>
         </div>
       </div>
-      <div class="input-group mb-2">
+      <div class="input-group mb-1">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_10" checked>
           <label class="form-check-label" for="Check_10">修正引用符号</label>
@@ -123,6 +122,17 @@
       <hr />
       <div class="input-group mb-2">
         <button type="button" class="btn btn-primary" title="保存设置" id="SaveConfig" data-tip="设置已保存！">保存设置</button>
+      </div>
+      <hr />
+      <div class="alert alert-success" role="alert">
+        <span class="alert-heading">快捷键</span>
+        <hr class="mt-1 mb-1" />
+        <p class="mb-0">保存文档：Ctrl+S</p>
+        <p class="mb-0">还原文档：Ctrl+R</p>
+        <p class="mb-0">新建文档：Ctrl+N</p>
+        <p class="mb-0">整理文档：F8</p>
+        <p class="mb-0">排版文档：F9</p>
+        <p class="mb-0">复制文档：F10</p>
       </div>
     </div>
   </div>
@@ -142,9 +152,9 @@
         <div class="row">
           <div class="col-8">
             <button type="button" class="btn btn-light" title="隐藏或显示左侧栏" id="floatTool" data-tip="显|隐">隐</button>
-            <button type="button" class="btn btn-success" title="一键整理文档" id="onCleanUp">整理</button>
-            <button type="button" class="btn btn-success" title="排版输出文档" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版</button>
-            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板" data-tip="文档已复制到剪贴板！">复制</button>
+            <button type="button" class="btn btn-success" title="一键整理文档；快捷键: F8" id="onCleanUp">整理</button>
+            <button type="button" class="btn btn-success" title="排版输出文档；快捷键: F9" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版</button>
+            <button type="button" class="btn btn-secondary copy-content" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复制</button>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换简体" id="toSimp">简</button>
               <button type="button" class="btn btn-outline-secondary font-weight-bold" title="转换繁体" id="toTrad">繁</button>
@@ -160,9 +170,9 @@
             </div>
           </div>
           <div class="col-4 text-right">
-            <button type="button" class="btn btn-secondary" title="新建文档" id="CreateEditor">新建</button>
-            <button type="button" class="btn btn-primary" title="缓存临时文档" id="SaveEditor" data-tip="文档已保存！">缓存</button>
-            <button type="button" class="btn btn-info" title="还原临时文档" id="RestoreEditor" data-tip="文档已还原！">还原</button>
+            <button type="button" class="btn btn-secondary" title="新建文档；快捷键: Ctrl+N" id="CreateEditor">新建</button>
+            <button type="button" class="btn btn-primary" title="缓存临时文档；快捷键: Ctrl+S" id="SaveEditor" data-tip="文档已保存！">缓存</button>
+            <button type="button" class="btn btn-info" title="还原临时文档；快捷键: Ctrl+R" id="RestoreEditor" data-tip="文档已还原！">还原</button>
             <button type="button" class="btn btn-danger" title="清空临时文档" id="ClearEditor" data-tip="文档已清空！">清空</button>
           </div>
         </div>

@@ -15,13 +15,12 @@ $(function() {
 			isLanguage.html(tipVal[0]);
 		}
 	}
-	// 编辑区域全屏占，修正编辑器高度
 	// 提示信息
 	function showMessage(r) {
 		$('#AlertMsg').html($(r).attr('data-tip'))
-		$('.editor-message').eq(0).show().delay(5000).fadeOut(400)
+		$('.editor-message').eq(0).hide().show().delay(5000).fadeOut(400)
 	}
-	// 编辑器高度
+	// 编辑区域全屏占，修正编辑器高度
 	function getEditorHeight() {
 		editorTitleHeight = $('.editor-title').eq(0).outerHeight()
 		tEditor.height(parseInt($(this).outerHeight() - editorTitleHeight))
@@ -131,9 +130,17 @@ $(function() {
 		var sVal = sEditor.getValue()
 		if (sVal.length > 0) {
 			storage.set('tmpContent', sVal)
+			sEditor.getUndoManager().markClean();
 			showMessage(this)
 		}
 		editor.focus()
+	});
+	editor.commands.addCommand({
+		name: "__save",
+		exec: function() {
+			$('#SaveEditor').trigger('click')
+		},
+		bindKey: { win: "ctrl-s", mac: "cmd-s" }
 	});
 	// 还原文档
 	$('#RestoreEditor').click(function() {
@@ -144,10 +151,24 @@ $(function() {
 			showMessage(this)
 		}
 	});
+	editor.commands.addCommand({
+		name: "__restore",
+		exec: function() {
+			$('#RestoreEditor').trigger('click')
+		},
+		bindKey: { win: "ctrl-r", mac: "cmd-r" }
+	});
 	// 新建文档
 	$('#CreateEditor').click(function() {
 		sEditor.setValue('')
 		editor.focus()
+	});
+	editor.commands.addCommand({
+		name: "__create",
+		exec: function() {
+			$('#CreateEditor').trigger('click')
+		},
+		bindKey: { win: "ctrl-n", mac: "cmd-n" }
 	});
 	// 清空文档
 	$('#ClearEditor').click(function() {
@@ -164,6 +185,13 @@ $(function() {
 			editor.focus()
 		}
 	});
+	editor.commands.addCommand({
+		name: "__cleanup",
+		exec: function() {
+			$('#onCleanUp').trigger('click')
+		},
+		bindKey: { win: "f8", mac: "f8" }
+	});
 	// 一键排版
 	$('#onTypeSet').click(function() {
 		var sVal = sEditor.getValue()
@@ -174,6 +202,14 @@ $(function() {
 			editor.focus()
 		}
 	});
+	editor.commands.addCommand({
+		name: "__typeset",
+		exec: function() {
+			$('#onTypeSet').trigger('click')
+		},
+		bindKey: { win: "f9", mac: "f9" }
+	});
+	// 绑定快捷键
 	// 简单UBB
 	$('.btn[data-ubbcode]').each(function() {
 		var $this = $(this)
@@ -209,5 +245,12 @@ $(function() {
 	clipboardText.on('success', function(e) {
 		e.clearSelection()
 		showMessage($('.copy-content'))
+	});
+	editor.commands.addCommand({
+		name: "__copydoc",
+		exec: function(){
+			$('.copy-content').trigger('click')
+		},
+		bindKey: { win: "f10", mac: "f10" }
 	});
 });
