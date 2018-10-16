@@ -1,4 +1,4 @@
-﻿/**
+/**
  * typesetting for EverEdit
  * 注意：修改后请切记压缩方可生效！
  */
@@ -51,9 +51,9 @@ Object.extend(String.prototype, {
 			// 英文首写全大写
 			.toUpper(/\b([a-zA-Z])/g, true)
 			// 引用的全转小写
-			.replace(/[《“‘「『【\"（]([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\'\n]{2,})[》”’」】』\"）]/gm, function(m, m1) {
+			.replace(/[《“‘「『【\"（]([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\'\n]{2,})[》”’」】』\"）]/g, function(m, m1) {
 				// 全是英文时全部首字大写
-				if((m1.match(/[…！？。\!\?\.]$/g) || m1.match(/[，：；＆\,\:\;\&\']/g)) && m1.match(/\w/g)){
+				if(m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\'])/g) && m1.match(/\w/g)){
 					return m
 						.toUpper(/[，\, ][A-Z]/g, false)
 						.replaces(configs.halfSymbol)
@@ -65,13 +65,10 @@ Object.extend(String.prototype, {
 			.replace(/^([\w ！（），：；？–…。＆＠＃\!\(\)\,\:\;\?\-\.\&\@\#\']{2,})$/gm, function(m) {
 				return m.toUpper(/[， ][A-Z]/g, false)
 			})
-			// 处理单词全是英文和数字时
-			.replace(/\b([A-Za-z\d]+)\b/g, function(m) {
+			// 处理单词全是英文和数字时，型号类全大写
+			.replace(/\b([\w\-\~～]+)\b/g, function(m) {
 				return m.match(/\d/) ? m.toUpperCase() : m
 			})
-			
-			// 型号类全大写
-			.toUpper(/([a-zA-Z]+[\-—\~～]\d|\d[\-—\~～][a-zA-Z]+)/g, true)
 			// 处理连续的英语
 			.toUpper(/\b(a{2,}|b{2,}|c{2,}|d{2,}|e{2,}|f{2,}|g{2,}|h{2,}|i{2,}|j{2,}|k{2,}|l{2,}|m{2,}|n{2,}|o{2,}|p{2,}|q{2,}|r{2,}|s{2,}|t{2,}|u{2,}|v{2,}|w{2,}|x{2,}|y{2,}|z{2,})\b/gi, true)
 			// 处理英语中的 ' 标点符号
@@ -343,7 +340,7 @@ Object.extend(String.prototype, {
 		re = re.replaceBorder(regVal.t3).replace(regStr, function(m0, m1, m2, m3) {
 			return (fBreak + '第' + m2 + m1 + handleTitle(m3) + eBreak)
 		})
-		/****** chapter 22/ chapter 55 abcd ******/
+		/****** chapter 22/ chapter 55 abcd******/
 		regStr = rr('^{$f}{$t6}(?:{$s})({$e}|$)$')
 		re = re.replaceBorder(regVal.t6).replace(regStr, function(m0, m1, m2) {
 			return (fBreak + '第' + m1 + '章' + handleTitle(m2) + eBreak)
