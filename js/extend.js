@@ -10,14 +10,14 @@ if (!isType) {
 	var isObject = isType("Object");
 }
 
-// å¯¹è±¡æ‰¹é‡èµ‹å€¼
+// ¶ÔÏóÅúÁ¿¸³Öµ
 Object.extend = function(a, b) {
 	for (var i in b)
 		if (!a[i]) a[i] = b[i];
 	return a;
 }
 
-// å¾ªç¯æ›¿æ¢
+// Ñ­»·Ìæ»»
 var __fmts = function(re, args) {
 	if (isArray(re) || isObject(re)) {
 		for(var item in re) {
@@ -31,52 +31,52 @@ Array.prototype.fmts = function(args) {
 	return __fmts(this, args)
 }
 
-// åˆ é™¤å­—ç¬¦é¦–å°¾ç©ºæ ¼
+// É¾³ı×Ö·ûÊ×Î²¿Õ¸ñ
 var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
 var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 
-// ***** æ‰©å±•å­—ç¬¦å¤„ç† *****
+// ***** À©Õ¹×Ö·û´¦Àí *****
 Object.extend(String.prototype, {
-	// å¤„ç†ä¸ºæ­£åˆ™å­—ç¬¦ä¸²
+	// ´¦ÀíÎªÕıÔò×Ö·û´®
 	regSafe: function() {
 		return String(this).replace(regEscape, '\$1').replace(/[\\]{2,}/, '\\\\')
 	},
-	// å®‰å…¨è½¬æ¢æ­£åˆ™
+	// °²È«×ª»»ÕıÔò
 	getReg: function(m) {
 		return new RegExp(this.regSafe(), m || 'g')
 	},
-	// ä¿®æ­£æ‰€æœ‰æ¢è¡Œä¸º UNIX æ ‡å‡†
+	// ĞŞÕıËùÓĞ»»ĞĞÎª UNIX ±ê×¼
 	toUNIX: function() {
 		return String(this).replace(/(\r\n|\n\r|\r)/g, '\n')
 	},
-	// æ ¼å¼åŒ–æ‰€æœ‰ç©ºæ ¼æ ·å¼ä¸ºæ ‡å‡†
+	// ¸ñÊ½»¯ËùÓĞ¿Õ¸ñÑùÊ½Îª±ê×¼
 	space: function() {
 		return String(this).replace(new RegExp("[" + Space + ']', 'g'), ' ').toUNIX()
 	},
-	// åˆ é™¤å­—ç¬¦é¦–å°¾ç©ºæ ¼
+	// É¾³ı×Ö·ûÊ×Î²¿Õ¸ñ
 	trim: function() {
 		var ws = "[" + Space + "]+"
 		return String(this).replace(new RegExp("^" + ws + "|" + ws + '$', 'gm'), '')
 	},
-	// å»é™¤æ‰€æœ‰ç©ºæ ¼åçš„é•¿åº¦
+	// È¥³ıËùÓĞ¿Õ¸ñºóµÄ³¤¶È
 	checkEmpty: function() {
 		return this.replace(allSpace, '').length === 0
 	},
-	// å¾ªç¯æ­£åˆ™æ›¿æ¢
+	// Ñ­»·ÕıÔòÌæ»»
 	replaces: function(arr) {
 		var re = this, i;
 		for (i in arr)
 			re = re.replace(arr[i][0], arr[i][1]);
 		return re;
 	},
-	// å–åŒå­—èŠ‚ä¸å•å­—èŠ‚æ··æ’æ—¶çš„çœŸå®å­—æ•°
+	// È¡Ë«×Ö½ÚÓëµ¥×Ö½Ú»ìÅÅÊ±µÄÕæÊµ×ÖÊı
 	len: function() {
 		return this.replace(/[^\x00-\xff]/g, '**').length
 	},
-	// æŒ‰çœŸå®å­—æ•°è¿›è¡Œåˆ†éš”
+	// °´ÕæÊµ×ÖÊı½øĞĞ·Ö¸ô
 	realSubstring: function(start, len) {
 		var str = this || ''
 		if (str.length === 0) return str
@@ -87,39 +87,39 @@ Object.extend(String.prototype, {
 			c = str.charCodeAt(i)
 			cl = c > 0xff ? 2 : 1
 			byteL += cl
-			//è¿˜ä¸åˆ°å¼€å§‹ä½
+			//»¹²»µ½¿ªÊ¼Î»
 			if (start >= byteL) continue
 
 			if (
-				(len == str.len()) //å–å®Œ
+				(len == str.len()) //È¡Íê
 				||
-				((len -= cl) >= 0) //å–æœ¬å­—æ—¶ä¸è¶…è¿‡
+				((len -= cl) >= 0) //È¡±¾×ÖÊ±²»³¬¹ı
 			) {
 				sub += String.fromCharCode(c)
-			} else { //å–è¶…äº†
+			} else { //È¡³¬ÁË
 				break
 			}
 		}
 		return sub
 	},
-	// é‡å¤è¿æ¥å­—ç¬¦ä¸²
+	// ÖØ¸´Á¬½Ó×Ö·û´®
 	times: function(m) {
 		return m < 1 ? '' : new Array(m + 1).join(this);
 	},
-	// å–æ­£åˆ™æŸ¥è¯¢åŒ¹é…çš„æ¬¡æ•°
+	// È¡ÕıÔò²éÑ¯Æ¥ÅäµÄ´ÎÊı
 	findCount: function(reg) {
 		return this.match(reg) ? this.match(reg).length : 0;
 	},
-	// æ­£åˆ™å­—æ¯å¤§å°å†™
+	// ÕıÔò×ÖÄ¸´óĞ¡Ğ´
 	toUpper: function(reg, t) {
 		return this.replace(reg, function(m) {
 			return (t == true) ? m.toUpperCase() : m.toLowerCase()
 		})
 	},
-	// ç‰¹æ®Šæ–¹å¼æ›¿æ¢å­—ç¬¦ä¸²
+	// ÌØÊâ·½Ê½Ìæ»»×Ö·û´®
 	/*
 	 * arrs = {name:"loogn",age:22,sex:['man', 'woman']}
-	 * var result0 = "æˆ‘æ˜¯{$name}ï¼Œ{$sex.0}ï¼Œä»Šå¹´{$age}äº†".fmt(arrs)
+	 * var result0 = "ÎÒÊÇ{$name}£¬{$sex.0}£¬½ñÄê{$age}ÁË".fmt(arrs)
 	 */
 	fmt: function(args, r) {
 		if (isString(args))
@@ -128,16 +128,16 @@ Object.extend(String.prototype, {
 			return this;
 		var re = this;
 		r = r || ''
-		// ç‰¹æ®Šæ ‡è®° /\{\$([a-z0-9\.]+)}/gi
+		// ÌØÊâ±ê¼Ç /\{\$([a-z0-9\.]+)}/gi
 		if (/\{\$([a-z0-9\.\-\_]+)}/gi.test(re)) {
 			re = re
-				// å­é¡¹æ˜¯æ•°ç»„{$name.t1.0}
+				// ×ÓÏîÊÇÊı×é{$name.t1.0}
 				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
-					// å¦‚æœå­é¡¹æ˜¯æ•°ç»„è½®å¾ª
+					// Èç¹û×ÓÏîÊÇÊı×éÂÖÑ­
 					var tmp = !m2.match(/\./g) ? args[m1][m2] : m.replace(new RegExp('\\{\\$' + m1 + '\\.', 'g'), '\{\$').fmt(args[m1], r)
 					return isArray(tmp) ? tmp.join(r) : (tmp != null ? tmp : m)
 				})
-				// å­é¡¹
+				// ×ÓÏî
 				.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
 					var tmp = args[m1] != null ? args[m1] : m
 					return isArray(tmp) ? tmp.join(r) : tmp
@@ -147,18 +147,18 @@ Object.extend(String.prototype, {
 	}
 });
 
-// ***** æ‰©å±•æ—¶é—´å¤„ç† *****
+// ***** À©Õ¹Ê±¼ä´¦Àí *****
 if(!Date.prototype.fmt) {
-	// æ ¼å¼åŒ–æ—¶é—´
+	// ¸ñÊ½»¯Ê±¼ä
 	Date.prototype.fmt = function(d) {
 		var o = {
-			"M+": this.getMonth() + 1, //æœˆä»½ 
-			"d+": this.getDate(), //æ—¥ 
-			"h+": this.getHours(), //å°æ—¶ 
-			"m+": this.getMinutes(), //åˆ† 
-			"s+": this.getSeconds(), //ç§’ 
-			"q+": Math.floor((this.getMonth() + 3) / 3), //å­£åº¦ 
-			"S": this.getMilliseconds() //æ¯«ç§’ 
+			"M+": this.getMonth() + 1, //ÔÂ·İ 
+			"d+": this.getDate(), //ÈÕ 
+			"h+": this.getHours(), //Ğ¡Ê± 
+			"m+": this.getMinutes(), //·Ö 
+			"s+": this.getSeconds(), //Ãë 
+			"q+": Math.floor((this.getMonth() + 3) / 3), //¼¾¶È 
+			"S": this.getMilliseconds() //ºÁÃë 
 		};
 		if (/(y+)/.test(d))
 			d = d.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -170,10 +170,10 @@ if(!Date.prototype.fmt) {
 	}
 }
 
-// æ ¼å¼åŒ–æ•°å­— 12,553.00
+// ¸ñÊ½»¯Êı×Ö 12,553.00
 if (!Number.prototype.fmt) {
 	Number.prototype.fmt = function() {
-		// éªŒè¯è¾“å…¥çš„å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—
+		// ÑéÖ¤ÊäÈëµÄ×Ö·ûÊÇ·ñÎªÊı×Ö
 		if (isNaN(this)) return this
 		return this.toLocaleString().replace(/\.00$/, '')
 	}

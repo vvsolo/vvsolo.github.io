@@ -1,15 +1,15 @@
 
 // 截取分段
 function doSplit(str, sm, bm){
-	var tmpstr = ''
-	// 分隔字数
-	var cutNum = configs.Linenum*2
-	if(str.match(/^　{2,}/)) return str + '\n\n'
-	str = str.trim()
-	if(str.len() === 0) return str
+	if(str.trim().len() === 0) return str;
+	if(/^　{2,}/gm.test(str) || str === '＊'.times(35))
+		return str + '\n\n';
 	
-	var text = '',
-		linestr = (str === '＊'.times(35)) ? str : '　　' + str
+	// 分隔字数
+	var cutNum = configs.Linenum*2,
+		tmpstr = '',
+		text = '',
+		linestr = '　　' + str
 
 	// 小于每行最大字数时直接返回
 	if(linestr.len() > cutNum){
@@ -42,7 +42,7 @@ function doSplit(str, sm, bm){
 				.space()
 				.replace(configs.HWPunctuation, '')
 				.replace(configs.FWPunctuation, '')
-				.length === 0;
+				.length === 0
 			if((tmp.len() < cutNum) && !testTmp){
 				if(tmp.match(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/)){
 					tmp = tmp.replace(/([\u4e00-\u9fa0！（），．：；？‘’“”。『』「」])([0-9a-zA-Z])/, '$1 $2')
@@ -62,6 +62,7 @@ function doSplit(str, sm, bm){
 	return tmpstr
 }
 
+
 // 排版
 function doTidy(str) {
 	// 引号替换
@@ -69,15 +70,15 @@ function doTidy(str) {
 		[/“/g, '「'],
 		[/”/g, '」'],
 		[/‘/g, '『'],
-		[/’/g, '』']
+		[/’/g, '』'],
+		// 清除原数据
+		[/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '']
 	]
 	// 结尾的文字，编辑user.js文件
 	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm')
 
 	// 执行整理
 	var str = str
-		// 清除原数据
-		.replace(/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '')
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -88,27 +89,33 @@ function doTidy(str) {
 		//.convertInitial()
 		// 修正分隔符号
 		.replaceSeparator()
+		// 结尾居中
+		.replace(eStrs, function(m){
+			return m.setAlign('', '', 'center')
+		})
+		// 文章标题居中
+		.replace(configs.novelTitle, function(m){
+			return m.setAlign('', '', 'center')
+		})
+		// 分隔符居中
+		.replace((configs.Separator).getReg('gm'), function(m){
+			return m.setAlign('', '', 'center')
+		})
+		// 标题居中
+		.replaceTitle('\n', '\n', 'center')
 
 	var words = str.split('\n')
-	var count = words.length
 
 	// 开始进行分隔
 	var re = ''
-	for (var i = 0; i < count; i++)
-		re += doSplit(words[i].trim(), '\n', '\n\n')
+	for (var i = 0; i < words.length; i++)
+		re += doSplit(words[i], '\n', '\n\n');
 
 	re = re
-		// 修正结尾
-		.replace(eStrs, function(m) {
-			return m.toTitleCenter('', '', true)
-		})
-		// 标题居中
-		.replaceTitle('', '', true)
 		// 去除多余空行
 		.replace(/^([ 　]+)$\n/gm, '')
 		.replace(/\n{3,}$/gm, '\n\n')
-		.replace(/^\n{2,}/gm, '\n')
-	re = '\n' + re
+		.replace(/^\n{2,}/gm, '\n');
 
 	// 插入标头
 	var headStr = ($('#chinese').html() !== '简') ? '作者：{$w}\n\
@@ -140,7 +147,7 @@ function doTidy(str) {
 	else
 		inputBookInfo = headStr
 	**/
-	return headStr + re
+	return headStr + '\n' + re
 }
 
 // 一键整理
