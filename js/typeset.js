@@ -84,20 +84,16 @@ function doTidy(str) {
 		//.convertInitial()
 		// 修正分隔符号
 		.replaceSeparator()
-		// 结尾居中
-		.replace(eStrs, function(m){
-			return m.setAlign('', '', 'center')
-		})
-		// 文章标题居中
-		.replace(configs.novelTitle, function(m){
-			return m.setAlign('', '', 'center')
-		})
 		// 分隔符居中
-		.replace((configs.Separator).getReg('gm'), function(m){
+		.replace(('^' + configs.Separator + '$').getReg('gm'), function(m) {
+			return m.setAlign('', '', 'center')
+		})
+		// 结尾居中
+		.replace(eStrs, function(m) {
 			return m.setAlign('', '', 'center')
 		})
 		// 标题居中
-		.replaceTitle('\n', '\n', 'center')
+		.replaceTitle('', '', 'center')
 
 	var words = str.split('\n')
 
@@ -107,10 +103,17 @@ function doTidy(str) {
 		re += doSplit(words[i], '\n', '\n\n');
 
 	re = re
-		// 去除多余空行
+		// 作者类居左
+		.replace(configs.novelAuthor, function(m) {
+			return m.trim()
+		})
 		.replace(/^([ 　]+)$\n/gm, '')
-		.replace(/\n{3,}$/gm, '\n\n')
-		.replace(/^\n{2,}/gm, '\n');
+		.replace(/\n{3,}/gm, '\n\n')
+		// 文章标题居中
+		.replace(configs.novelTitle, function(m) {
+			return m.setAlign('', '\n', 'center')
+		})
+		.replace(/\n{4,}/gm, '\n\n\n')
 
 	// 插入标头
 	var headStr = ($('#chinese').html() !== '简') ?
