@@ -36,13 +36,13 @@ var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
-var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
+var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!\^\$])/g
 
 // ***** 扩展字符处理 *****
 Object.extend(String.prototype, {
 	// 处理为正则字符串
 	regSafe: function() {
-		return String(this).replace(regEscape, '\$1').replace(/[\\]{2,}/, '\\\\')
+		return String(this).replace(regEscape, '\$1').replace(/([\\]{2,})/g, '$1')
 	},
 	// 安全转换正则
 	getReg: function(m) {
@@ -54,12 +54,12 @@ Object.extend(String.prototype, {
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
-		return String(this).replace(new RegExp("[" + Space + ']', 'g'), ' ').toUNIX()
+		return String(this).replace(('[' + Space + ']+').getReg(), ' ').toUNIX()
 	},
 	// 删除字符首尾空格
 	trim: function() {
-		var ws = "[" + Space + "]+"
-		return String(this).replace(new RegExp("^" + ws + "|" + ws + '$', 'gm'), '')
+		var ws = '[' + Space + ']+'
+		return String(this).replace(('^' + ws + '|' + ws + '$').getReg('gm'), '')
 	},
 	// 去除所有空格后的长度
 	checkEmpty: function() {
@@ -134,7 +134,7 @@ Object.extend(String.prototype, {
 				// 子项是数组{$name.t1.0}
 				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
 					// 如果子项是数组轮循
-					var tmp = !m2.match(/\./g) ? args[m1][m2] : m.replace(new RegExp('\\{\\$' + m1 + '\\.', 'g'), '\{\$').fmt(args[m1], r)
+					var tmp = !m2.match(/\./g) ? args[m1][m2] : m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(args[m1], r)
 					return isArray(tmp) ? tmp.join(r) : (tmp != null ? tmp : m)
 				})
 				// 子项
@@ -144,6 +144,9 @@ Object.extend(String.prototype, {
 				})
 		}
 		return re;
+	},
+	fmtReg: function(args, f, r) {
+		return this.fmt(args, r).getReg(f)
 	}
 });
 
