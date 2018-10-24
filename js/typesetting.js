@@ -50,31 +50,31 @@ Object.extend(String.prototype, {
 			// 转换英文小写
 			.toLowerCase()
 			// 英文首写全大写
-			.toUpper(/\b([a-zA-Z])/g, true)
+			.matchUpper(/\b([a-zA-Z])/g)
 			// 引用的全转小写
 			.replace('[《“‘「『【\\"（]([{$zz}\n]{2,})[》”’」】』\\"）]'.fmtReg(regStr), function(m, m1) {
 				// 全是英文时全部首字大写
-				if (m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\'])/g) && m1.match(/\w/g)) {
+				if (m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\']|\w)/g)) {
 					return m
-						.toUpper(/[，\,][ ][A-Z]/g, false)
 						.replaces(configs.halfSymbol)
-						.toUpper(/[\.\?\!\:\&][ ]?[a-z]/g, true)
+						.matchLower(/[\, ][A-Z]/g)
+						.matchUpper(/[\.\?\!\:\&][ ]?[a-z]/g)
 				}
 				return m
 			})
 			// 独占一行的全英文小写
 			.replace('^([{$zz}]{2,})$'.fmtReg(regStr, 'gm'), function(m) {
-				return m.toUpper(/[，\,][ ][A-Z]/g, false)
+				return m.matchLower(/[， ][A-Z]/g)
 			})
 			// 处理单词全是英文和数字时，型号类全大写
 			.replace(/\b([\w\-\~～]+)\b/g, function(m) {
 				return m.match(/\d/) ? m.toUpperCase() : m
 			})
 			// 处理连续的英语
-			.toUpper(('\\b(' + 'abcdefghijklmnopqrstuvwxyz'.split('').join('{2,}|') + '{2,})\\b').getReg('gi'), true)
+			.matchUpper(('\\b(' + 'abcdefghijklmnopqrstuvwxyz'.split('').join('{2,}|') + '{2,})\\b').getReg('gi'))
 			// 处理英语中的 ' 标点符号
 			.replace('([a-z]+)(?:[{$enSep}])([a-z]+)'.fmtReg(regCommon, 'gi'), function(m0, m1, m2) {
-				return m1.toUpper(/\b[a-z]/g, true) + "'" + m2.toLowerCase()
+				return m1.matchUpper(/\b[a-z]/g) + "'" + m2.toLowerCase()
 			})
 			// 处理英语中网址
 			.replace(/([0-9a-zA-Z]+)[。\.]([\w—\-]+)[。\.](com|net|org|gov)/gi, function(m) {
@@ -312,24 +312,22 @@ Object.extend(String.prototype, {
 		/****** 非常规标题 ******/
 		var regStr = rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|')
 		re = re.replaceBorder(regVal.t1.join('|')).replace(regStr, function(m0, m1, m2) {
-			// 防止错误判断一下标题
-			if (m2.match(/^[！？。]{1,3}$/g)) return m0
+			// 防止错误，有句号不转；全标点不转
+			if (m0.match(/[。]/g) || m2.match(/^[！？。]{1,3}$/g)) return m0
 			return (m1 + handleTitle(m2)).setAlign(fBreak, eBreak, center)
 		})
 		/****** 一章/第一章/一章：标题/第一章：标题 ******/
 		regStr = rr('^{$f}{$t2}({$sn})({$e}|$)$')
 		// m1 章节 m2 间隔 m3 标题
 		re = re.replaceBorder(regVal.t2).replace(regStr, function(m0, m1, m2, m3) {
-			// 防止错误判断一下标题：——开头，或全是标点
-			if (m2.match(/^[\-—]{1,4}/g) || m3.match(/^[！？。…]{1,3}$/g))
+			// 防止错误，有句号不转；——开头不转；全标点不转
+			if (m0.match(/[。]/g) || m2.match(/^[\-—]{1,4}/g) || m3.match(/^[！？。…]{1,3}$/g))
 				return m0
-			
+			// 防止错误，没有间隔符情况下
 			if (!m2.match(rSeparatorLeft)) {
-				// 防止错误判断一下标题：第一部电影很好，很成功。
-				if (m3.match(/[，]|[！？。…’”』」]{1,3}$/g))
-					return m0
-				// 防止错误判断一下标题：一回头、一幕幕
-				if (m0.match(configs.regSkipTitle))
+				// 如：第一部电影很好，很成功。
+				// 如：一回头、一幕幕
+				if (m3.match(/[，]|[！？。…’”』」]{1,3}$/g) || m0.match(configs.regSkipTitle))
 					return m0
 			}
 			return ('第' + m1.replace(/(^[第]+| )/g, '') + handleTitle(m3)).setAlign(fBreak, eBreak, center)
@@ -337,6 +335,8 @@ Object.extend(String.prototype, {
 		/****** （一）/（一）标题 ******/
 		regStr = rr('^{$f}{$t5}({$e}|$)$')
 		re = re.replaceBorder(regVal.t5).replace(regStr, function(m0, m1, m2) {
+			// 防止错误，有句号不转
+			if (m0.match(/[。]/g)) return m0
 			return (m1 + handleTitle(m2, 'no')).setAlign(fBreak, eBreak, center)
 		})
 		// 如果是居中返回
@@ -347,19 +347,19 @@ Object.extend(String.prototype, {
 		re = re.replaceBorder(regVal.t3).replace(regStr, function(m0, m1, m2, m3) {
 			return (fBreak + '第' + m2 + m1 + handleTitle(m3) + eBreak)
 		})
-		/****** chapter 22/ chapter 55 abcd******/
+		/****** chapter 22/ chapter 55 abcd ******/
 		regStr = rr('^{$f}{$t6}(?:{$s})({$e}|$)$')
 		re = re.replaceBorder(regVal.t6).replace(regStr, function(m0, m1, m2) {
 			return (fBreak + '第' + m1 + '章' + handleTitle(m2) + eBreak)
 		})
-		/****** 一/一、/一、标题 ******/
+		/****** 01/01./01.标题/一/一、/一、标题 ******/
 		var pattern = configs.regSkipTitle1
-		regStr = rr('^{$f}{$t4}({$s}|{$s}{$e}|$)$')
+		regStr = rr('^{$f}{$t4}({$s}|{$s}{$es}|$)$')
 		re = re.replaceBorder(regVal.t4).replace(regStr, function(m0, m1, m2) {
-			// 全是标点不处理
-			if (m2.match(/^[！？。…]{1,3}$/g))
+			// 防止错误，有句号不转；全标点不转
+			if (m0.match(/[。]/g) || m2.match(/^[！？。…]{1,3}$/g))
 				return m0
-			// 章节是数字格式
+			// 章节是数字格式情况下
 			if (m1.match(/^[\d０-９]+/gm)) {
 				// 没有间隔符，以句号结尾不处理
 				if (m2.match(/[！？。]$/g))

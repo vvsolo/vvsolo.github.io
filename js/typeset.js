@@ -68,9 +68,9 @@ function doTidy(str) {
 		[/’/g, '』'],
 		// 清除原数据
 		[/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '']
-	]
-	// 结尾的文字，编辑user.js文件
-	var eStrs = new RegExp('^[ 　]*([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$', 'gm')
+	],
+		// 结尾的文字，编辑user.js文件
+		eStrs = ('^([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$').getReg('gm')
 
 	// 执行整理
 	var str = str

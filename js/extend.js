@@ -13,7 +13,7 @@ if (!isType) {
 // 对象批量赋值
 Object.extend = function(a, b) {
 	for (var i in b)
-		if (!a[i]) a[i] = b[i];
+		a[i] = b[i];
 	return a;
 }
 
@@ -110,10 +110,16 @@ Object.extend(String.prototype, {
 	findCount: function(reg) {
 		return this.match(reg) ? this.match(reg).length : 0;
 	},
-	// 正则字母大小写
-	toUpper: function(reg, t) {
+	// 正则字母大写
+	matchUpper: function(reg) {
 		return this.replace(reg, function(m) {
-			return (t == true) ? m.toUpperCase() : m.toLowerCase()
+			return m.toUpperCase()
+		})
+	},
+	// 正则字母小写
+	matchLower: function(reg) {
+		return this.replace(reg, function(m) {
+			return m.toLowerCase()
 		})
 	},
 	// 特殊方式替换字符串
