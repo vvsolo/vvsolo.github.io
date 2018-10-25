@@ -36,13 +36,14 @@ var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
-var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!\^\$])/g
+//var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!\^\$])/g
+var regEscape = /([.?*+^$[\]\\(){}|-])/g
 
 // ***** 扩展字符处理 *****
 Object.extend(String.prototype, {
 	// 处理为正则字符串
 	regSafe: function() {
-		return String(this).replace(regEscape, '\$1').replace(/([\\]{2,})/g, '$1')
+		return String(this).replace(/\\+/g, "\\")
 	},
 	// 安全转换正则
 	getReg: function(m) {
@@ -50,7 +51,7 @@ Object.extend(String.prototype, {
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return String(this).replace(/(\r\n|\n\r|\r)/g, '\n')
+		return String(this).replace(/\r\n|\n\r|\r/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
@@ -63,7 +64,7 @@ Object.extend(String.prototype, {
 	},
 	// 去除所有空格后的长度
 	checkEmpty: function() {
-		return this.replace(allSpace, '').length === 0
+		return this.replace(('[' + allSpace + ']+').getReg(), '').length === 0
 	},
 	// 循环正则替换
 	replaces: function(arr) {
@@ -71,6 +72,12 @@ Object.extend(String.prototype, {
 		for (i in arr)
 			re = re.replace(arr[i][0], arr[i][1]);
 		return re;
+	},
+	// 字符串定位替换
+	replaceAt: function(arr) {
+		return this.replace(('([' + arr[0] + '])').getReg(), function(m) {
+			return arr[1].charAt(arr[0].indexOf(m))
+		})
 	},
 	// 取双字节与单字节混排时的真实字数
 	len: function() {
