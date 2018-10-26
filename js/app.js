@@ -1,10 +1,10 @@
 //sEditor.setMode("ace/mode/novel");
 $(function() {
-	// 简繁互换
-	var isLanguage = $('#chinese')
-	var tEditor = $('#TextareaEditor')
-	var editorTitleHeight = 50
+	var isLanguage = $('#chinese'),
+		tEditor = $('#TextareaEditor'),
+		editorTitleHeight = 50
 
+	// 简繁互换
 	function setLanguage() {
 		var tipVal = isLanguage.data('default').split('|')
 		if (tipVal[0] == isLanguage.html()) {
@@ -38,6 +38,7 @@ $(function() {
 		// 折行
 		wrap: 'free',
 		indentedSoftWrap: false,
+		//autoScrollEditorIntoView: true,
 		// 字体
 		fontSize: 14,
 		// 打印线
@@ -105,6 +106,7 @@ $(function() {
 		}, 300)
 		var tipVal = $(this).attr('data-tip').split('|')
 		$(this).html(cLeft ? tipVal[0] : tipVal[1])
+		
 	})
 	// 转简体
 	$('#toSimp').on('click', function() {

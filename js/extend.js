@@ -1,14 +1,12 @@
 
-if (!isType) {
-	function isType(type) {
-		return function(obj) {
-			return {}.toString.call(obj) == "[object " + type + "]";
-		}
+function isType(type) {
+	return function(obj) {
+		return {}.toString.call(obj) == "[object " + type + "]";
 	}
-	var isArray = isType("Array");
-	var isString = isType("String");
-	var isObject = isType("Object");
 }
+var isArray = isType("Array");
+var isString = isType("String");
+var isObject = isType("Object");
 
 // 对象批量赋值
 Object.extend = function(a, b) {
@@ -36,8 +34,8 @@ var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
-//var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!\^\$])/g
-var regEscape = /([.?*+^$[\]\\(){}|-])/g
+var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
+//var regEscape = /([.?*+^$[\]\\(){}|-])/g
 
 // ***** 扩展字符处理 *****
 Object.extend(String.prototype, {

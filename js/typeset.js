@@ -60,24 +60,16 @@ function doSplit(str, sm, bm) {
 
 // 排版
 function doTidy(str) {
-	// 引号替换
-	var others = [
-		[/“/g, '「'],
-		[/”/g, '」'],
-		[/‘/g, '『'],
-		[/’/g, '』'],
-		// 清除原数据
-		[/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '']
-	],
-		// 结尾的文字，编辑user.js文件
-		eStrs = ('^([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$').getReg('gm')
+	// 结尾的文字，编辑user.js文件
+	var eStrs = ('^([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$').getReg('gm')
 
 	// 执行整理
 	var str = str
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
-		.replaces(others)
+		.replaceAt(configs.cnQuotes)
+		.replace(/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 英文首字大写
