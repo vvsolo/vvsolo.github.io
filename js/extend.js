@@ -4,15 +4,14 @@ function isType(type) {
 		return {}.toString.call(obj) == "[object " + type + "]";
 	}
 }
-var isArray = isType("Array");
-var isString = isType("String");
-var isObject = isType("Object");
+var isArray = isType("Array"),
+	isString = isType("String"),
+	isObject = isType("Object")
 
 // 对象批量赋值
 Object.extend = function(a, b) {
-	for (var i in b)
-		a[i] = b[i];
-	return a;
+	for (var i in b) a[i] = b[i]
+	return a
 }
 
 // 循环替换
@@ -66,10 +65,14 @@ Object.extend(String.prototype, {
 	},
 	// 循环正则替换
 	replaces: function(arr) {
-		var re = this, i;
-		for (i in arr)
-			re = re.replace(arr[i][0], arr[i][1]);
-		return re;
+		var re = this, i
+		for (i in arr) {
+			var tm = arr[i][0]
+			// 判断是否正则
+			isString(tm) && (tm = tm.getReg())
+			re = re.replace(tm, arr[i][1])
+		}
+		return re
 	},
 	// 字符串定位替换
 	replaceAt: function(arr) {
@@ -156,6 +159,7 @@ Object.extend(String.prototype, {
 		}
 		return re;
 	},
+	// 替换并返回正则式
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f)
 	}
