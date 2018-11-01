@@ -53,6 +53,8 @@ Object.extend(String.prototype, {
 			.matchUpper(/\b([a-z])/g)
 			// 引用的全转小写
 			.replace('[《“‘「『【\\"（]([{$zz}\n]{2,})[》”’」】』\\"）]'.fmtReg(regStr), function(m, m1) {
+				// 全是标点
+				if(m1.match(/([？！…～])/)) return m
 				// 全是英文时全部首字大写
 				return m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\'])/) ?
 					m.replaces(configs.halfSymbol)
@@ -229,7 +231,7 @@ Object.extend(String.prototype, {
 		var regVal = configs.regTitle
 		regVal.t = tit
 		regVal.b = configs.regTitleBorder
-		var regBorder = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$s})?[{$b.0}]?({$e}|$)[{$b.1}]?$'.fmtReg(regVal, 'gm')
+		var regBorder = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$sn})[{$b.0}]?({$s}{$e}|$)[{$b.1}]?$'.fmtReg(regVal, 'gm')
 		return this.replace(regBorder, function(m) {
 			return m.replace(('[' + regVal.b.join('') + ']').getReg('gm'), '')
 		})
@@ -245,7 +247,7 @@ Object.extend(String.prototype, {
 			rSeparatorAll = ('^' + regVal.s + '$').getReg()
 
 		// 非严格限定
-		if (relax === true) {
+		if (relax) {
 			// 标题间隔符（非严格限定）
 			regVal.s = regVal.sn
 			// 行尾（非严格限定）
@@ -286,13 +288,13 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t2)
 			.replace(rr('^{$f}{$t2}({$sn})({$e}|$)$'), function(m0, m1, m2, m3) {
 				// 防止错误，有句号不转；——开头不转；全标点不转
-				if (m0.match(/[。]/g) || m1.match(/^[\-\—]{2,4}/g) || m3.match(/^[！？。…]{1,3}$/g))
+				if (m0.match(/[。]/g) || m1.match(/^[\-\—]{2,4}/g) || (!relax && m3.match(/^[！？。…]{1,3}$/g)))
 					return m0
 				// 防止错误，没有间隔符情况下
 				if (!m2.match(rSeparatorLeft)) {
 					// 如：第一部电影很好，很成功。
 					// 如：一回头、一幕幕
-					if (m3.match(/[，]|[！？。…’”』」]{1,3}$/g) || m0.match(configs.regSkipTitle))
+					if ((!relax && m3.match(/[，]|[！？。…’”』」]{1,3}$/g)) || m0.match(configs.regSkipTitle))
 						return m0
 				}
 				return ('第' + m1.replace(/(^[第]+| )/g, '') + handleTitle(m3)).setAlign(fBreak, eBreak, center)
