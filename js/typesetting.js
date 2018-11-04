@@ -52,9 +52,9 @@ Object.extend(String.prototype, {
 			// 英文首写全大写
 			.matchUpper(/\b([a-z])/g)
 			// 引用的全转小写
-			.replace('[《“‘「『【\\"（]([{$zz}\n]{2,})[》”’」】』\\"）]'.fmtReg(regStr), function(m, m1) {
+			.replace('[《“‘「『【\\"（]([{$zz}]{2,})[》”’」】』\\"）]'.fmtReg(regStr), function(m, m1) {
 				// 全是标点
-				if(m1.match(/([？！…～])/)) return m
+				if(m1.match(/^([？！…～]+)$/, 'm')) return m
 				// 全是英文时全部首字大写
 				return m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\'])/) ?
 					m.replaces(configs.halfSymbol)
@@ -76,8 +76,8 @@ Object.extend(String.prototype, {
 			.replace('\\b([a-z]+)[{$enSep}]([a-z]+)\\b'.fmtReg(regCommon, 'gi'), function(m, m1, m2) {
 				return m1.matchUpper(/\b[a-z]/g) + "'" + m2.toLowerCase()
 			})
-			// 处理英语中称呼缩写
-			.replace(/\b(Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq)[。]/gi, function(m, m1) {
+			// 处理英语中称呼缩写，非行尾的
+			.replace('\\b({$zz})。(?!$)'.fmtReg(configs.honorWord, 'gmi'), function(m, m1) {
 				return m1.matchUpper(/\b[a-z]/g) + "."
 			})
 			// 处理英语中网址
@@ -143,15 +143,18 @@ Object.extend(String.prototype, {
 	// Unicode转换
 	converUnicode: function() {
 		return this
-			.replace(/\\u?([0-9a-f]{4})/gi, function(m) {
+			.replace(/\\u?([\da-f]{4})/gi, function(m) {
 				return unescape(m.replace(/\\u?/gi, '%u'))
 			})
 			.replace(/([＆&]#(\d+)[;；])/gi, function(m) {
 				return String.fromCharCode(m.replace(/[＆&#;；]/g, ''))
 			})
-		//.replace(/([%％][\da-f]{2})+/gi, function(m) {
-		//	return decodeURIComponent(m.replace(/％/g, '%')) || decodeURI(m.replace(/％/g, '%')) || m;
-		//})
+			.replace(/([%％][\da-f]{2})+/gi, function(m) {
+				try {
+					m = decodeURIComponent(m.replace(/％/g, '%'))
+				}catch(err) {}
+				return m
+			})
 	},
 	// html转义符转换
 	converHtmlEntity: function() {
@@ -161,7 +164,7 @@ Object.extend(String.prototype, {
 	},
 	// 转换变体字母
 	convertVariant: function() {
-		return this.replaces(configs.sVariant)
+		return this.replaceAt(configs.sVariants)
 	},
 	// 转换变体序号
 	convertSerialNumber: function() {

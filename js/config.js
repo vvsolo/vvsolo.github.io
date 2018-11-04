@@ -39,7 +39,7 @@ var configs = {
 	// 排版时每行最大字数（按双字节计算）
 	Linenum: 35,
 	// 约定英语，用|分隔
-	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|CDMA|DIY|EMS|EQ|IQ|PDA|BBC|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|I|NDE|XXOO|YY|PM|VCD|DVD|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|JJ|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA',
+	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|BBC|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP',
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 文章标题正则设定 ******/
@@ -109,33 +109,9 @@ var configs = {
 	],
 	/****** 其他替换设定 ******/
 	// 变体字母
-	sVariant: [
-		[/[ÀÁÂÃÄÅ]/g, 'A'],
-		[/[àáâãäåāǎɑа]/g, 'a'],
-		[/[ß]/g, 'B'],
-		[/[ьЪъ]/g, 'b'],
-		[/[Ç]/g, 'C'],
-		[/[ç]/g, 'c'],
-		[/[Ð]/g, 'D'],
-		[/[ÈÉÊË]/g, 'E'],
-		[/[èéêëēě]/g, 'e'],
-		[/[ん]/g, 'h'],
-		[/[ÌÍÎÏ]/g, 'I'],
-		[/[ìíîïīǐΙι]/g, 'i'],
-		[/[м]/g, 'm'],
-		[/[ΝÑ]/g, 'N'],
-		[/[ñńňиη]/g, 'n'],
-		[/[ÒÓÔÕÖ]/g, 'O'],
-		[/[òóôõöōǒøо]/g, 'o'],
-		[/[Þ]/g, 'P'],
-		[/[þρ]/g, 'p'],
-		[/[τ]/g, 't'],
-		[/[ÙÚÛÜ]/g, 'U'],
-		[/[ùúûüūǔǖǘǚǜüυ]/g, 'u'],
-		[/[ⅴν]/g, 'v'],
-		[/[щω]/g, 'w'],
-		[/[Ýγ]/g, 'Y'],
-		[/[ýÿ]/g, 'y']
+	sVariants: [
+		'ÀÁÂÃÄÅĀАǍⱭàáâãäåāǎɑаßЬЪьъÇçÐÈÉÊËĒĚèéêëēěΗんÌÍÎÏĪǏΙìíîïīǐιМмΝÑŃŇИñńňиηÒÓÔÕÖŌǑØОòóôõöōðǒøоÞΡþρΤτÙÚÛÜŪǓǕǗǙǛυùúûüūǔǖǘǚǜⅤⅴνЩщωΥÝŸγýÿ', 
+		'AAAAAAAAAaaaaaaaaaaaBbbbbCcDEEEEEEeeeeeeHhIIIIIIIiiiiiiiMmmNNNNNnnnnnOOOOOOOOOooooooooooPPppTtUUUUUUUUUUuuuuuuuuuuuVvvWwwYYYyyy'
 	],
 	// 变体序号
 	sSerialNumber: [
@@ -149,8 +125,8 @@ var configs = {
 	// 半角标点符号
 	halfSymbol: [
 		[/[！\!]/g, '! '],
-		[/[（\(]/g, ' ('],
-		[/[）\)]/g, ') '],
+		//[/[（\(]/g, ' ('],
+		//[/[）\)]/g, ') '],
 		[/[，\,]/g, ', '],
 		[/[：:]/g, ': '],
 		[/[；;]/g, '; '],
@@ -160,8 +136,11 @@ var configs = {
 		[/[＆&]/g, ' & '],
 		[/  +/g, ' '],
 		// 修复错误
-		[/[ ]+(?=[…\!\?\.])/g, ''],
-		[/([\.\?\!])[ ]?([》”’」』\"])/g, '$1$2'],
+		[/([》”’」】』）])\./g, '$1。'],
+		[/([》”’」】』）])\?/g, '$1？'],
+		[/([》”’」】』）])\!/g, '$1！'],
+		[/[ ]+(?=[…\!\?\.！？。])/g, ''],
+		[/([\.\?\!！？。])[ ]?([》”’」』\"])/g, '$1$2'],
 		[/([A-Z])[ ]?[＆&][ ]?([A-Z])/g, '$1&$2']
 	],
 	// 异体标点
@@ -311,6 +290,8 @@ var configs = {
 	// 法式引号 fr：'‘’“”'
 	// 中式引号 cn：'『』「」'
 	cnQuotes: ['‘’“”', '『』「」'],
+	// 称谓单词前缀
+	honorWord: 'Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq',
 	// 修正所有数字和英文字母间的标点和空格
 	nwSymbol : [
 		// 修正数字间的全角
@@ -328,7 +309,7 @@ var configs = {
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.]([0-9]{1,2})\b/gi, 'NO.$1'],
 		// 处理 E。T。 -> E.T.
-		[/\b[。]\b/g, '.'],
+		[/\b([a-z])[。]([a-z])\b/gi, '$1.$2'],
 		[/(?:[。\.])([a-z])(?:[。\.])/gi, '.$1.']
 		// &标记的
 		//[/([a-zA-Z]{2,})[ ]?[＆&][ ]?([a-zA-Z]{2,})/g, '$1 & $2']

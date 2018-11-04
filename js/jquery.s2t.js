@@ -13,33 +13,33 @@
 
 	// 转换
 	function convert(str, ss, tt){
-		var re = '';
-		for (var i = 0; i < str.length; i++) {
-			var nowStr = str.charAt(i);
-			if (str.charCodeAt(i) > 10000 && ss.indexOf(nowStr) != -1)
-				re += tt.charAt(ss.indexOf(nowStr));
-			else re += nowStr;
+		var re = '', i = 0
+		for (; i < str.length; i++) {
+			var tmp = str.charAt(i);
+			if (str.charCodeAt(i) > 10000 && ss.indexOf(tmp) != -1)
+				re += tt.charAt(ss.indexOf(tmp));
+			else re += tmp;
 		}
 		return re;
 	}
 	//转繁体
 	function Traditionalized(str){
 		// 共用
-		var bval = dicBasic()
-		// 补充
-		var aval = dicS2T()
-		var ss = bval[1] + aval[1]
-		var tt = bval[0] + aval[0]
+		var bval = dicBasic(),
+			// 补充
+			aval = dicS2T()
+		var ss = bval[1] + aval[1],
+			tt = bval[0] + aval[0]
 		return convert(str, ss, tt)
 	}
 	//转简体
 	function Simplized(str){
 		// 共用
-		var bval = dicBasic()
-		// 补充
-		var aval = dicT2S()
-		var ss = bval[1] + aval[1]
-		var tt = bval[0] + aval[0]
+		var bval = dicBasic(),
+			// 补充
+			aval = dicT2S()
+		var ss = bval[1] + aval[1],
+			tt = bval[0] + aval[0]
 		return convert(str, tt, ss)
 	}
 	// 繁转简补充部分
@@ -85,8 +85,7 @@
 	 * @param {Boolean} toT - 是否转换成繁体
 	 */
 	function tranElement(element, toT) {
-		var i;
-		var childNodes;
+		var i, childNodes;
 
 		if (element.nodeType !== 1) {
 			return;
