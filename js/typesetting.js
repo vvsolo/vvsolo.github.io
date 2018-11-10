@@ -328,7 +328,7 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t4)
 			.replace(rr('^{$f}{$t4}({$s}|{$s}{$es}|$)$'), function(m0, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m0.match(/[。]/g) || m2.match(/^[！？。…]{1,3}$/g))
+				if (m0.match(/[。]$/g) || m2.match(/^[！？。…]{1,3}$/g))
 					return m0
 				// 章节是数字格式情况下
 				if (m1.match(/^[\d０-９]+/gm)) {
