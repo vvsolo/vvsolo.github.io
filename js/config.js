@@ -39,7 +39,7 @@ var configs = {
 	// 排版时每行最大字数（按双字节计算）
 	Linenum: 35,
 	// 约定英语，用|分隔
-	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|BBC|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP',
+	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT',
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 文章标题正则设定 ******/
@@ -248,14 +248,14 @@ var configs = {
 	rSeparator: [
 		[/[ ]+(?=[＊#＃§☆★○●◎◇◆□■△▲※〓＝﹡＋@\*×\—\-－─=~～])/g, ''],
 		[/[`＊&×xX]{5,}/g, '@@@@'],
-		[/[#＃§☆★○●◎◇◆□■△▲※〓＝﹡＋]{3,}/g, '@@@@'],
+		[/[#＃§☆★○●◎◇◆□■△▲※〓＝﹡＋@]{3,}/g, '@@@@'],
 		[/^[＊×]{3,}/gm, '@@@@'],
 		[/^[\—\-－─=]{4,}/gm, '@@@@'],
 		[/[\—\-－─=]{4,}$/gm, '@@@@'],
 		[/^.+分割线$/gm, '@@@@'],
 		[/^[—]*分割线[—]{2,}$/gm, '@@@@'],
 		[/^[\—\-－─=~～]{2,}$/gm, '@@@@'],
-		[/^\*\*{5,}$/gm, '@@@@'],
+		[/^\*\*{2,}$/gm, '@@@@'],
 		// 修正车牌号
 		[/([a-z][\-\—])@@@@/gi, '$1XXXXX'],
 		// 修正数字和某些标点后的*号
@@ -274,15 +274,17 @@ var configs = {
 		// 修正单引号
 		[/'([^\'\n]+)'/g, '‘$1’'],
 		[/^([　]*)'/gm, '$1‘'],
+		[/’([^‘’]+)’/g, '’$1‘'],
 		[/'/g, '’'],
 		[/^([　]*)’/gm, '$1‘'],
 		[/‘$/g, '’'],
 		[/：’/g, '：‘'],
 		[/※@※/g, '\''],
-		// 修正大引号
+		// 修正双引号
 		[/"([^\"\n]+)"/g, '“$1”'],
 		[/^([ 　]*)"/gm, '$1“'],
 		[/"/g, '”'],
+		[/”([^“”]+)”/g, '”$1“'],
 		[/^([ 　]*)”/gm, '$1“'],
 		[/“$/g, '”'],
 		[/：”/g, '：“']
@@ -296,9 +298,10 @@ var configs = {
 	nwSymbol : [
 		// 修正数字间的全角
 		[/(\d)[。·](\d)/g, '$1.$2'],
+		[/(\d)[。·](\d)/g, '$1.$2'],
 		[/(\d)：(\d)/g, '$1:$2'],
 		[/(\d)：(\d)/g, '$1:$2'],
-		[/\b[-—～─]{1,3}|[-—～─]{1,3}\b/g, '-'], // 英文间
+		[/([\d\.]+)[-—～─]{1,3}([\d\.]+)/g, '$1-$2'], // 英文间
 		[/(\d)[％]/g, '$1%'],
 		// 处理 ABCDE90.5％ -> Abcde 90.5%
 		//[/([a-zA-Z]+)([\d。\.]+[\%％‰℃°])/g, '$1 $2'],

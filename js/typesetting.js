@@ -81,7 +81,7 @@ Object.extend(String.prototype, {
 				return m1.matchUpper(/\b[a-z]/g) + "."
 			})
 			// 处理英语中网址
-			.replace(/([0-9a-z]+)[。\.]([\w—\-]+)[。\.](com|net|org|gov)/gi, function(m) {
+			.replace(/([0-9a-z]+[。\.])?([\w—\-]+)[。\.](com|net|org|gov)/gi, function(m) {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
 			// 处理常用英语书写
