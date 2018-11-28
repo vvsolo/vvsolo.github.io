@@ -87,11 +87,11 @@ function doTidy(str) {
 		// 标题居中
 		.replaceTitle('', '', 'center')
 
-	var words = str.split('\n')
+	var words = str.split('\n'),
+		re = '', i = 0
 
 	// 开始进行分隔
-	var re = ''
-	for (var i = 0; i < words.length; i++)
+	for (; i < words.length; i++)
 		re += doSplit(words[i], '\n', '\n\n');
 
 	re = re

@@ -234,9 +234,9 @@ Object.extend(String.prototype, {
 		var regVal = configs.regTitle
 		regVal.t = tit
 		regVal.b = configs.regTitleBorder
-		var regBorder = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$sn})[{$b.0}]?({$s}{$e}|$)[{$b.1}]?$'.fmtReg(regVal, 'gm')
-		return this.replace(regBorder, function(m) {
-			return m.replace(('[' + regVal.b.join('') + ']').getReg('gm'), '')
+		var r = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$sn})[{$b.0}]?({$e}|$)[{$b.1}]?$'.fmtReg(regVal, 'gm')
+		return this.replace(r, function(m) {
+			return m.replace(('[' + regVal.b.join('') + ']').getReg(), ' ')
 		})
 	},
 	// 修正章节标题
@@ -328,7 +328,7 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t4)
 			.replace(rr('^{$f}{$t4}({$s}|{$s}{$es}|$)$'), function(m0, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m0.match(/[。]$/g) || m2.match(/^[！？。…]{1,3}$/g))
+				if (m0.match(/[。]$/g) || m2.match(/^[！？。…]{1,3}$/gm))
 					return m0
 				// 章节是数字格式情况下
 				if (m1.match(/^[\d０-９]+/gm)) {
@@ -336,7 +336,7 @@ Object.extend(String.prototype, {
 					if (m2.match(/[！？。]$/g)) return m0
 				} else {
 					// 全是标点不处理
-					if (m2.match(/[，,]|[！？。…’”』」]$/g)) return m0
+					if (m2.match(/[！？。…’”』」]$/g)) return m0
 				}
 				// 其他处理过滤
 				for (var i = 0; i < pattern.length; i++)
