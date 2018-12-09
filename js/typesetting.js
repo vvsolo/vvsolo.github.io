@@ -278,6 +278,11 @@ Object.extend(String.prototype, {
 		// 正则标题
 		
 		re = re
+			/****** 非常规标题·无后续主体 ******/
+			.replaceBorder(regVal.t0)
+			.replace(rr('^{$f}({$t0})({$s}|$)$'), function(m0, m1) {
+				return m1.setAlign(fBreak, eBreak, center)
+			})
 			/****** 非常规标题 ******/
 			.replaceBorder(regVal.t1.join('|'))
 			.replace(rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|'), function(m0, m1, m2) {
