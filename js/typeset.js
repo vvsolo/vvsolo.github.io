@@ -154,8 +154,12 @@ function editorCleanUp(str) {
 	if ($('#Check_6').is(':checked'))
 		str = str.convertNumberLetter()
 	// 修正章节标题
-	if ($('#Check_7').is(':checked'))
-		str = str.replaceTitle()
+	if ($('#Check_7').is(':checked')) {
+		// 修正错误标题
+		str = str
+			.replaceTitle()
+			.replaceTitleError()
+	}
 	// 全角标点符号
 	if ($('#Check_5').is(':checked'))
 		str = str.convertPunctuation()
