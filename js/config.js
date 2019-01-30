@@ -39,11 +39,11 @@ var configs = {
 	// 排版时每行最大字数（按双字节计算）
 	Linenum: 35,
 	// 约定英语，用|分隔
-	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC',
+	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA',
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 文章标题正则设定 ******/
-	'novelTitle': /^([ 　]*)(《([^》]+)》(.*?)|[书書]名[：\:](.+))$/m,
+	'novelTitle': /^([ 　]*)(《([^》]+)》(.*[^。？！…]|$)|[书書]名[：\:](.+))$/m,
 	'novelAuthor': /^([ 　]*)(([作编译編譯]者|排版)[：\:](.+))$/gm,
 	/****** 标题正则设定 ******/
 	// 标题正则
@@ -318,7 +318,7 @@ var configs = {
 		[/(\d)〈(\d)/g, '$1<$2'],
 		[/(\d)＝(\d)/g, '$1=$2'],
 		// 英文连接符–，暂弃用
-		[/([\d\.a-z]+)[-—～─]{1,3}([\d\.]+)/gi, '$1-$2'],
+		[/([\d\.a-z]+)[-—～─]{1,3}([\d\.a-z]+)/gi, '$1-$2'],
 		[/(\d)[％]/g, '$1%'],
 		// 处理 Sid·Meier -> Sid Meier
 		[/[·](?=[a-z]+)/gi, ' '],
@@ -328,8 +328,9 @@ var configs = {
 		[/\bno[。\.](\d{1,2})\b/gi, 'NO.$1'],
 		// 处理 E。T。 -> E.T.
 		[/\b([a-z])[。]([a-z])\b/gi, '$1.$2'],
-		[/[。\.][ ]?([a-z])[。\.][ ]?/gi, '.$1.']
+		//[/[。\.][ ]?([a-z])[。\.][ ]?/gi, '.$1.']
 		// &标记的
-		//[/([a-zA-Z]{2,})[ ]?[＆&][ ]?([a-zA-Z]{2,})/g, '$1 & $2']
+		//[/([a-zA-Z]{2,})[ ]?[＆&][ ]?([a-zA-Z]{2,})/g, '$1 & $2'],
+		''
 	]
 }

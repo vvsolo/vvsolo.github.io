@@ -61,7 +61,7 @@ Object.extend(String.prototype, {
 			.replaces(configs.rSeparator)
 			// 还原注释标记
 			.replace(/!@!@!@!@!/g, '＊'.times(35))
-			.replace(/@@@@/g, configs.Separator)
+			.replace(/@{4}/g, configs.Separator)
 	},
 	// 引号修正
 	replaceQuotes: function() {
@@ -110,9 +110,9 @@ Object.extend(String.prototype, {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
 			// 处理常用英语书写
-			.replace(('\\b(' + pWord + ')(?:[0-9]*)\\b').getReg('gi'), function(m, m1) {
+			.replace(('\\b(' + pWord + ')([0-9]*)\\b').getReg('gi'), function(m, m1, m2) {
 				var item = ('|' + pWord.toLowerCase() + '|').indexOf('|' + m1.toLowerCase() + '|') + 1
-				return ('|' + pWord + '|').substr(item, m1.length)
+				return ('|' + pWord + '|').substr(item, m1.length) + m2
 			})
 	},
 	// 全角半角字母数字，ve=1时全角
