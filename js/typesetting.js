@@ -96,7 +96,7 @@ Object.extend(String.prototype, {
 				return m.match(/\d/) ? m.toUpperCase() : m
 			})
 			// 处理连续的英语
-			.matchUpper(('\\b(aa+|bb+|cc+|dd+|ee+|ff+|gg+|hh+|ii+|jj+|kk+|ll+|mm+|nn+|oo+|pp+|qq+|rr+|ss+|tt+|uu+|vv+|ww+|xx+|yy+|zz+)\\b').getReg('gi'))
+			.matchUpper(/\b(aa+|bb+|cc+|dd+|ee+|ff+|gg+|hh+|ii+|jj+|kk+|ll+|mm+|nn+|oo+|pp+|qq+|rr+|ss+|tt+|uu+|vv+|ww+|xx+|yy+|zz+)\b/gi)
 			// 处理英语中的 ' 标点符号
 			.replace('\\b([a-z]+)[{$enSep}]([a-z]+)\\b'.fmtReg(regCommon, 'gi'), function(m, m1, m2) {
 				return m1.matchUpper(/\b[a-z]/g) + "'" + m2.toLowerCase()
@@ -171,13 +171,13 @@ Object.extend(String.prototype, {
 			.replace(/\\u?([\da-f]{4})/gi, function(m) {
 				return unescape(m.replace(/\\u?/gi, '%u'))
 			})
-			.replace(/([＆&]#(\d+)[;；])/gi, function(m) {
-				return String.fromCharCode(m.replace(/[＆&#;；]/g, ''))
+			.replace(/[＆&]#(\d+)[;；]/g, function(m, m1) {
+				return String.fromCharCode(m1)
 			})
 			.replace(/([%％][\da-f]{2})+/gi, function(m) {
 				try {
 					m = decodeURIComponent(m.replace(/％/g, '%'))
-				}catch(err) {}
+				} catch(err) {}
 				return m
 			})
 	},
@@ -234,8 +234,9 @@ Object.extend(String.prototype, {
 		regVal.t = tit
 		regVal.b = configs.regTitleBorder
 		var r = '^{$f}[{$b.0}]?({$t})[{$b.1}]?({$sn})[{$b.0}]?({$e}|$)[{$b.1}]?$'.fmtReg(regVal, 'gm')
+		var t = ('[' + regVal.b.join('') + ']').getReg()
 		return this.replace(r, function(m) {
-			return m.replace(('[' + regVal.b.join('') + ']').getReg(), ' ')
+			return m.replace(t, ' ')
 		})
 	},
 	// 修正章节标题
