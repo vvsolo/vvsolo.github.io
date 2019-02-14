@@ -84,6 +84,7 @@ color: yellow;\
 .ace-novel .ace_title2 { background-color: #733730; color: #fff; }\
 .ace-novel .ace_endstr { background-color: #245580; color: #fff; }\
 .ace-novel .ace_number { color: #9D81DF; }\
+.ace-novel .ace_halfpun { color: #3087CA; }\
 .ace-novel .ace_quotes { color: #80FF80; }\
 .ace-novel .ace_cnPunctuation { font-family: NSimSun, SimSun; font-size: 15px; }\
 .ace-novel .ace_indent-guide {\

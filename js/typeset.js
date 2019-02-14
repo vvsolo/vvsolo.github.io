@@ -1,61 +1,63 @@
 
+var tmpRegs = [
+	'[{$hwPun}{$fwPun}\w ]'.fmtReg(regCommon),
+	'([{$han}{$fwPun}])([0-9a-z])'.fmtReg(regCommon, 'i'),
+	'([0-9a-z])([{$han}{$fwPun}])'.fmtReg(regCommon, 'i')
+]
 // 截取分段
 function doSplit(str, sm, bm) {
 	if (str.trim().len() === 0)
-		return str
+		return str + bm
 	if (/^　{2,}/gm.test(str) || str === '＊'.times(35))
-		return str + '\n\n'
+		return str + bm
 
-	var tmpstr = text = '',
-		linestr = '　　' + str.trim(), j
+	var text = '',
+		linestr = '　　' + str.trim(),
+		j = 0
 	var cutNum = cutNum || configs.Linenum * 2
-
+	
 	// 小于每行最大字数时直接返回
-	if (linestr.len() > cutNum) {
-		var oNum = Math.floor(linestr.len() / cutNum) + 1
-		for (j = 0; j < oNum; j++) {
-			// 预分段
-			var tmp = linestr.realSubstring(0, cutNum)
-			// 判断并处理行尾限制字符
-			tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(word) {
-				linestr += word
-				return ''
-			})
-			// 剩下部分
-			linestr = linestr.realSubstring(tmp.len())
-			// 判断并处理行首限制字符
-			// 处理两个字符，因为经过整理过的标点只留两个
-			linestr = linestr.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(word) {
-				tmp += word
-				return ''
-			});
-			// 处理单个连续标点
-			linestr = linestr.replace(/^([…～－])$/gm, function(word) {
-				tmp += word
-				return ''
-			});
-			// 如果有英文并奇数位，英文前加空格补齐
-			// 测试一下全英文状态防止出错
-			var testTmp = tmp
-				.replace('[{$hwPun}{$fwPun}\w ]'.fmtReg(regCommon), '')
-				.length > 0
-			if ((tmp.len() < cutNum) && testTmp) {
-				var rStr = '([{$han}{$fwPun}])([0-9a-z])'.fmtReg(regCommon, 'i')
-				if (tmp.match(rStr)) {
-					tmp = tmp.replace(rStr, '$1 $2')
-				} else {
-					tmp = tmp.replace('([0-9a-z])([{$han}{$fwPun}])'.fmtReg(regCommon, 'i'), '$1 $2')
-				}
-				tmp = tmp.replace(/([“‘『「][0-9a-z ]+[」』’”])/i, function(m) {
+	if (cutNum > linestr.len())
+		return linestr + bm
+	
+	var oNum = Math.floor(linestr.len() / cutNum) + 1
+	for (; j < oNum; j++) {
+		// 预分段
+		var tmp = linestr.realSubstring(0, cutNum)
+		// 判断并处理行尾限制字符
+		tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(m) {
+			linestr += m
+			return ''
+		})
+		// 剩下部分
+		linestr = linestr.realSubstring(tmp.len())
+		// 判断并处理行首限制字符
+		// 处理两个字符，因为经过整理过的标点只留两个
+		.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(m) {
+			tmp += m
+			return ''
+		})
+		// 处理单个连续标点
+		.replace(/^([…～－])$/gm, function(m) {
+			tmp += m
+			return ''
+		});
+		// 如果有英文并奇数位，英文前加空格补齐
+		// 测试一下全英文状态防止出错
+		var testTmp = tmp
+			.replace(tmpRegs[0], '')
+			.length > 0
+		if ((tmp.len() < cutNum) && testTmp) {
+			var rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
+			tmp = tmp
+				.replace(rStr, '$1 $2')
+				.replace(/([“‘『「][0-9a-z ]+[」』’”])/i, function(m) {
 					return m.replace(/ /g, '') + ' '
 				})
-			}
-			text += tmp + '\n'
 		}
-		tmpstr += text + sm
-	} else
-		tmpstr += linestr + bm
-	return tmpstr
+		text += tmp + '\n'
+	}
+	return text + sm
 }
 
 // 排版
@@ -69,7 +71,7 @@ function doTidy(str) {
 		.replaceInit()
 		// 引号替换
 		.replaceAt(configs.cnQuotes)
-		.replace(/作者：(.*?)\n([\d\/]*)(发表于|發表於)：(.*?)\n是否(首发|首發)：(.*?)\n字[数數]：(.*?)\n/gm, '')
+		.replace(/作者：.*?\n[\d\/]*(发表于|發表於)：.*?\n是否(首发|首發)：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 英文首字大写

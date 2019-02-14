@@ -39,7 +39,7 @@ var configs = {
 	// 排版时每行最大字数（按双字节计算）
 	Linenum: 35,
 	// 约定英语，用|分隔
-	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ing',
+	pWord: 'iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ing',
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 文章标题正则设定 ******/
@@ -89,7 +89,7 @@ var configs = {
 	// 标题无用的外框
 	regTitleBorder: ['〖【\\[', '\\]】〗'],
 	// 全角数字标题
-	regSBCNumberTitle: '([第\\(（][０-９]+[{$c}\\)）])'.fmt(regChapterCut),
+	regSBCNumberTitle: '([第\\(（][０-９]{1,9}[{$c}\\)）])'.fmt(regChapterCut),
 	// 标题忽略
 	regSkipTitle: {
 		't1': /^(序[长词战兴常稿歌秩次传述長詞戰興傳])/g,
@@ -284,7 +284,8 @@ var configs = {
 	],
 	// 引号修正
 	rQuotes: [
-		['([a-z])[{$enSep}]([a-z])'.fmtReg(regCommon, 'gi'), '$1※@※$2'],
+		['([a-z])[{$enSep}]'.fmtReg(regCommon, 'gi'), '$1※@※'],
+		['[{$enSep}]([a-z])'.fmtReg(regCommon, 'gi'), '※@※$1'],
 		[/[`＇‘’『』]/g, '\''],
 		// \[\]
 		[/[〝〞［］＂″｢｣“”「」]/g, '\"'],
@@ -321,10 +322,11 @@ var configs = {
 		[/(\d)〉(\d)/g, '$1>$2'],
 		[/(\d)〈(\d)/g, '$1<$2'],
 		[/(\d)＝(\d)/g, '$1=$2'],
+		// 时间 00:00:05，150
+		[/(\d{1,2}:\d{1,2}:\d{1,2})[，](\d{1,4})/g, '$1,$2'],
 		// 英文连接符–，暂弃用
-		[/[-—～─]([\d\.a-z]+)/gi, '-$1'],
-		[/([\d\.a-z]+)[-—～─]/gi, '$1-'],
-		[/(\d)[％]/g, '$1%'],
+		[/([^-—～─])[-—～─]([\d\.a-z]+)/gi, '$1-$2'],
+		[/([\d\.a-z]+)[-—～─]([^-—～─])/gi, '$1-$2'],
 		// 处理 Sid·Meier -> Sid Meier
 		[/[·](?=[a-z]+)/gi, ' '],
 		// 处理 Up / Down -> Up/Down
@@ -332,10 +334,11 @@ var configs = {
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.](\d{1,2})\b/gi, 'NO.$1'],
 		// 处理 E。T。 -> E.T.
-		[/\b([a-z])[。]([a-z])\b/gi, '$1.$2'],
-		//[/[。\.][ ]?([a-z])[。\.][ ]?/gi, '.$1.']
-		// &标记的
-		//[/([a-zA-Z]{2,})[ ]?[＆&][ ]?([a-zA-Z]{2,})/g, '$1 & $2'],
-		''
+		[/\b([a-z])[。]([a-z])\b/gi, '$1.$2']
+	],
+	rEnd: [
+		// 修正箭头
+		[/[ ]*[—\-]{1,2}>[ ]*/g, ' --> '],
+		[/[ ]*[＝=]{1,2}>[ ]*/g, ' => ']
 	]
 }

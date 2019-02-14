@@ -33,6 +33,10 @@ var TextileHighlightRules = function() {
                 regex : /[…～]/
             },
             {
+                token : "halfpun",
+                regex : /[\/\\\-\'\.\<\>\[\]\!\(\)\,\:\;\?~`&@#%=]/
+            },
+            {
                 token : "number",
                 regex : "([0-9a-zA-Z]+)"
             }, {

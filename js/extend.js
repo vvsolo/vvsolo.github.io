@@ -33,14 +33,18 @@ var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
 	"\u2029\uE4C6\uF8F5\uE004\uF04A\uFEFF"
 var allSpace = Space + '\x0A\x0D\xA0'
-var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
-//var regEscape = /([.?*+^$[\]\\(){}|-])/g
+//var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
+var regEscape = /([.?*+^$[\]\\(){}|-])/g
 
 // ***** 扩展字符处理 *****
 Object.extend(String.prototype, {
 	// 处理为正则字符串
+	regEscape: function() {
+		return this.replace(regEscape, "\\$1").replace(/\\+/g, "\\")
+	},
+	// 处理为正则字符串
 	regSafe: function() {
-		return String(this).replace(/\\+/g, "\\")
+		return this.replace(/\\+/g, "\\")
 	},
 	// 安全转换正则
 	getReg: function(m) {
@@ -48,20 +52,20 @@ Object.extend(String.prototype, {
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return String(this).replace(/\r\n|\n\r|\r/g, '\n')
+		return this.replace(/\r/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
-		return String(this).replace(('[' + Space + ']+').getReg(), ' ').toUNIX()
+		return String(this).replace(new RegExp('[' + Space + ']+', 'g'), ' ').toUNIX()
 	},
 	// 删除字符首尾空格
 	trim: function() {
 		var ws = '[' + Space + ']+'
-		return String(this).replace(('^' + ws + '|' + ws + '$').getReg('gm'), '')
+		return String(this).replace(new RegExp('^' + ws, 'gm'), '').replace(new RegExp(ws + '$', 'gm'), '')
 	},
 	// 去除所有空格后的长度
 	checkEmpty: function() {
-		return this.replace(('[' + allSpace + ']+').getReg(), '').length === 0
+		return this.replace(new RegExp('[' + allSpace + ']', 'g'), '').length === 0
 	},
 	// 循环正则替换
 	replaces: function(arr) {
@@ -116,7 +120,8 @@ Object.extend(String.prototype, {
 	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
-		return this.match(reg) ? this.match(reg).length : 0;
+		var re = this.match(reg)
+		return (re !== null) ? re.length : 0;
 	},
 	// 正则字母大写
 	matchUpper: function(reg) {
@@ -148,12 +153,12 @@ Object.extend(String.prototype, {
 				// 子项是数组{$name.t1.0}
 				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
 					// 如果子项是数组轮循
-					var tmp = !m2.match(/\./g) ? args[m1][m2] : m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(args[m1], r)
+					var tmp = !/\./g.test(m2) ? args[m1][m2] : m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(args[m1], r)
 					return isArray(tmp) ? tmp.join(r) : (tmp != null ? tmp : m)
 				})
 				// 子项
 				.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-					var tmp = args[m1] != null ? args[m1] : m
+					var tmp = (args[m1] != null) ? args[m1] : m
 					return isArray(tmp) ? tmp.join(r) : tmp
 				})
 		}
@@ -162,6 +167,19 @@ Object.extend(String.prototype, {
 	// 替换并返回正则式
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f)
+	}
+});
+
+// ***** 扩展数组处理 *****
+Object.extend(Array.prototype, {
+	// 随机打散数组
+	shuffle: function() {
+		for (var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
+		return this;
+	},
+	// 随机取数组
+	getRandom: function() {
+		return isArray(this) ? this[Math.floor(Math.random() * (this.length))] : '';
 	}
 });
 

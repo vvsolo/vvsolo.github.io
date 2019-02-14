@@ -16,7 +16,8 @@ Object.extend(String.prototype, {
 			// 去除所有多余空白行
 			.replace(/\n\n+/gm, '\n')
 			// 英文间单引号替换
-			.replace('[{$enSep}](?=\b[a-z])'.fmtReg(regCommon, 'gi'), '\'')
+			.replace('[{$enSep}]([a-z])'.fmtReg(regCommon, 'gi'), '\'$1')
+			.replace('([a-z])[{$enSep}]'.fmtReg(regCommon, 'gi'), '$1\'')
 			// 修正引号
 			.__amendQuotes()
 	},
@@ -25,6 +26,8 @@ Object.extend(String.prototype, {
 		return this
 			// 修正引号
 			.__amendQuotes()
+			// 其他修正
+			.replaces(configs.rEnd)
 			// 去除所有多余行
 			.replace(/\n\n{2,}/gm, '\n\n')
 			.replace(/^\n+/g, '')
@@ -47,7 +50,7 @@ Object.extend(String.prototype, {
 		var re = '[{$han}{$fwPun}]'.fmt(regCommon)
 		return this
 			// 修正汉字间的制表符为换行
-			.replace('[\t]+(?=[{$han}])'.fmtReg(regCommon), '\n')
+			//.replace('[\t]+(?=[{$han}])'.fmtReg(regCommon), '\n')
 			// 去除汉字间的空格
 			.replace(('[ ]+(?=' + re + ')').getReg(), '')
 			// 英文数字后跟全角标点
@@ -78,22 +81,26 @@ Object.extend(String.prototype, {
 			.matchUpper(/\b([a-z])/g)
 			// 引用的全转小写
 			.replace('[《“‘「『【\\"（]([{$zz}]{2,})[》”’」】』\\"）]'.fmtReg(regStr), function(m, m1) {
-				// 全是标点
-				if(m1.match(/^([？！…～]+|[？！…，\,。\d]+)$/, 'm')) return m
+				// 无空格，或全是数字
+				if(!/ /.test(m1) || /^[？！…，\,。\d]+$/m.test(m1)) return m
 				// 全是英文时全部首字大写
-				return m1.match(/([…！？。\!\?\.]$|[，：；＆\,\:\;\&\'])/) ?
+				return /[…！？。\!\?\.]$|[，：；＆\,\:\;\&\']/.test(m1) ?
 					m.replaces(configs.halfSymbol)
 						.matchLower(/[\, ][A-Z]/g)
 						.matchUpper(/[\.\?\!\:\&][ ]?[a-z]/g) :
-					m1.match(/[\w\- ]/) ? m.matchUpper(/\b([a-z])/g) : m
+					/[\w\- ]/.test(m1) ? m.matchUpper(/\b([a-z])/g) : m
 			})
 			// 独占一行的全英文小写
 			.replace('^([{$zz}]{2,})$'.fmtReg(regStr, 'gm'), function(m) {
 				return m.matchLower(/[， ][A-Z]/g)
 			})
+			// 括号内全是英文时，一般为缩拼大写
+			.replace(/（[a-z]{1,10}）/gi, function(m) {
+				return m.toUpperCase()
+			})
 			// 处理单词全是英文和数字时，型号类全大写
 			.replace(/\b([\w\-\~～]+)\b/g, function(m) {
-				return m.match(/\d/) ? m.toUpperCase() : m
+				return /\d/.test(m) ? m.toUpperCase() : m
 			})
 			// 处理连续的英语
 			.matchUpper(/\b(aa+|bb+|cc+|dd+|ee+|ff+|gg+|hh+|ii+|jj+|kk+|ll+|mm+|nn+|oo+|pp+|qq+|rr+|ss+|tt+|uu+|vv+|ww+|xx+|yy+|zz+)\b/gi)
@@ -280,38 +287,38 @@ Object.extend(String.prototype, {
 		re = re
 			/****** 非常规标题·无后续主体 ******/
 			.replaceBorder(regVal.t0)
-			.replace(rr('^{$f}({$t0})({$s}|$)$'), function(m0, m1) {
+			.replace(rr('^{$f}({$t0})({$s}|$)$'), function(m, m1) {
 				return m1.setAlign(fBreak, eBreak, center)
 			})
 			/****** 非常规标题 ******/
 			.replaceBorder(regVal.t1.join('|'))
-			.replace(rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|'), function(m0, m1, m2) {
+			.replace(rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|'), function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m0.match(/[。]/g) || m2.match(/^[！？。]{1,3}$/g) || m0.match(configs.regSkipTitle.t1))
-					return m0
+				if (/[。]/.test(m) || /^[！？。]{1,3}$/.test(m2) || configs.regSkipTitle.t1.test(m))
+					return m
 				return (m1 + handleTitle(m2)).setAlign(fBreak, eBreak, center)
 			})
 			/****** 一章/第一章/一章：标题/第一章：标题 ******/
 			// m1 章节 m2 间隔 m3 标题
 			.replaceBorder(regVal.t2)
-			.replace(rr('^{$f}{$t2}({$sn})({$e}|$)$'), function(m0, m1, m2, m3) {
+			.replace(rr('^{$f}{$t2}({$sn})({$e}|$)$'), function(m, m1, m2, m3) {
 				// 防止错误，有句号不转；——开头不转；全标点不转
-				if (m0.match(/[。]/g) || m1.match(/^[\-\—]{2,4}/g) || (!relax && m3.match(/^[！？。…]{1,3}$/g)))
-					return m0
+				if (/[。]/.test(m) || /^[\-\—]{2,4}/.test(m1) || (!relax && /^[！？。…]{1,3}$/.test(m3)))
+					return m
 				// 防止错误，没有间隔符情况下
-				if (!m2.match(rSeparatorLeft)) {
+				if (!rSeparatorLeft.test(m2)) {
 					// 如：第一部电影很好，很成功。
 					// 如：一回头、一幕幕
-					if ((!relax && m3.match(/[，]|[！？。…’”』」]{1,3}$/g)) || m0.match(configs.regSkipTitle.t2))
-						return m0
+					if ((!relax && /[，]|[！？。…’”』」]{1,3}$/.test(m3)) || configs.regSkipTitle.t2.test(m))
+						return m
 				}
 				return ('第' + m1.replace(/(^[第]+| )/g, '') + handleTitle(m3)).setAlign(fBreak, eBreak, center)
 			})
 			/****** （一）/（一）标题 ******/
 			.replaceBorder(regVal.t5)
-			.replace(rr('^{$f}{$t5}({$e}|$)$'), function(m0, m1, m2) {
+			.replace(rr('^{$f}{$t5}({$e}|$)$'), function(m, m1, m2) {
 				// 防止错误，有句号不转
-				if (m0.match(/[。]/g)) return m0
+				if (/[。]/.test(m)) return m
 				return (m1 + handleTitle(m2, 'no')).setAlign(fBreak, eBreak, center)
 			})
 		// 标题居中直接返回
@@ -326,26 +333,26 @@ Object.extend(String.prototype, {
 			})
 			/****** chapter 22/ chapter 55 abcd ******/
 			.replaceBorder(regVal.t6)
-			.replace(rr('^{$f}{$t6}(?:{$s})({$e}|$)$'), function(m0, m1, m2) {
+			.replace(rr('^{$f}{$t6}(?:{$s})({$e}|$)$'), function(m, m1, m2) {
 				return (fBreak + '第' + m1 + '章' + handleTitle(m2) + eBreak)
 			})
 			/****** 01/01./01.标题/一/一、/一、标题 ******/
 			.replaceBorder(regVal.t4)
-			.replace(rr('^{$f}{$t4}({$s}|{$s}{$e}|$)$'), function(m0, m1, m2) {
+			.replace(rr('^{$f}{$t4}({$s}|{$s}{$e}|$)$'), function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m0.match(/[。]$/g) || m2.match(/^[！？。]{1,3}$/gm))
-					return m0
+				if (/[。]$/.test(m) || /^[！？。]{1,3}$/.test(m2))
+					return m
 				// 章节是数字格式情况下
-				if (m1.match(/^[\d０-９]+/gm)) {
+				if (/^[\d０-９]+/.test(m1)) {
 					// 没有间隔符，以句号结尾不处理
-					if (m2.match(/[！？。]$/g)) return m0
+					if (/[！？。]$/.test(m2)) return m
 				} else {
 					// 全是标点不处理
-					if (m2.match(/[！？。…’”』」]$/g)) return m0
+					if (/[！？。…’”』」]$/.test(m2)) return m
 				}
 				// 其他处理过滤
 				for (var i = 0; i < pattern.length; i++)
-					if (m0.match(pattern[i])) return m0
+					if (pattern[i].test(m)) return m
 				return (fBreak + '第' + m1 + '章' + handleTitle(m2) + eBreak)
 			})
 	},
@@ -359,7 +366,7 @@ Object.extend(String.prototype, {
 		// 第01章　连续
 		var parent = rr('(^[{$space}]*(第[0-9]{1,9}[{$c.2}])(：.{0,40}|$)$\\n+){2,}'),
 			p1, p2
-		if(re.match(parent)) {
+		if(parent.test(re)) {
 			p1 = rr('^第([0-9]{1,9})[{$c.2}]：')
 			p2 = rr('^第([0-9]{1,9})[{$c.2}]$')
 			re = re
@@ -373,7 +380,7 @@ Object.extend(String.prototype, {
 		}
 		// 第一章　连续
 		parent = rr('(^[{$space}]*(第{$n.3}{1,9}[{$c.2}])(：.{0,40}|$)$\\n+){2,}')
-		if(re.match(parent)) {
+		if(parent.test(re)) {
 			p1 = rr('^第({$n.3}{1,9})[{$c.2}]：')
 			p2 = rr('^第({$n.3}{1,9})[{$c.2}]$')
 			re = re
@@ -392,7 +399,7 @@ Object.extend(String.prototype, {
 		var re = this
 		// （01）　连续
 		var parent = '(\\n+^[{$space}]*(（{$n.1}{1,9}）)(.{0,40}|$)$\\n+){2,}'.fmtReg(regChapterCut, 'gm')
-		if(re.match(parent)) {
+		if(parent.test(re)) {
 			re = re
 				.replace(parent, function(m) {
 					return m.replace(/\n\n+/gm, '\n')
