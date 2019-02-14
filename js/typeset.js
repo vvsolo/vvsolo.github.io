@@ -107,6 +107,7 @@ function doTidy(str) {
 		.replace(configs.novelTitle, function(m) {
 			return m.setAlign('', '\n', 'center')
 		})
+		.replaces(configs.rEnd)
 		.replace(/\n{4,}/gm, '\n\n\n')
 
 	// 插入标头

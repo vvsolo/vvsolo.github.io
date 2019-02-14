@@ -89,7 +89,7 @@ var configs = {
 	// 标题无用的外框
 	regTitleBorder: ['〖【\\[', '\\]】〗'],
 	// 全角数字标题
-	regSBCNumberTitle: '([第\\(（][０-９]{1,9}[{$c}\\)）])'.fmt(regChapterCut),
+	regSBCNumberTitle: '([第\\(（][０-９]{1,9}[{$c}\\)）])'.fmtReg(regChapterCut),
 	// 标题忽略
 	regSkipTitle: {
 		't1': /^(序[长词战兴常稿歌秩次传述長詞戰興傳])/g,

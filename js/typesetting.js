@@ -149,7 +149,7 @@ Object.extend(String.prototype, {
 				return String.fromCharCode(m.charCodeAt(0) + 65248)
 			})
 			// 转换标题内的数字为半角
-			.replace(configs.regSBCNumberTitle.getReg(), function(m) {
+			.replace(configs.regSBCNumberTitle, function(m) {
 				return m.__convertDBCNumber()
 			}) :
 			this.__convertDBCNumber()
