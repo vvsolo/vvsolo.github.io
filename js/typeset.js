@@ -71,7 +71,7 @@ function doTidy(str) {
 		.replaceInit()
 		// 引号替换
 		.replaceAt(configs.cnQuotes)
-		.replace(/作者：.*?\n[\d\/]*(发表于|發表於)：.*?\n是否(首发|首發)：.*?\n字[数數]：.*?\n/gm, '')
+		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 英文首字大写
