@@ -52,7 +52,7 @@ Object.extend(String.prototype, {
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return this.replace(/\r/g, '\n')
+		return this.replace(/\r\n|\n\r|\r/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {

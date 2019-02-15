@@ -14,10 +14,10 @@ Object.extend(String.prototype, {
 			// 所有行尾加换行
 			.replace(/$/g, '\n')
 			// 去除所有多余空白行
-			.replace(/\n\n+/gm, '\n')
+			.replace(/\n\n+/g, '\n')
 			// 英文间单引号替换
-			.replace('[{$enSep}]([a-z])'.fmtReg(regCommon, 'gi'), '\'$1')
-			.replace('([a-z])[{$enSep}]'.fmtReg(regCommon, 'gi'), '$1\'')
+			.replace('([a-z])[{$enSep}]([a-z])'.fmtReg(regCommon, 'gi'), '$1\'$2')
+			//.replace('([a-z])[{$enSep}]'.fmtReg(regCommon, 'gi'), '$1\'')
 			// 修正引号
 			.__amendQuotes()
 	},
@@ -29,8 +29,8 @@ Object.extend(String.prototype, {
 			// 其他修正
 			.replaces(configs.rEnd)
 			// 去除所有多余行
-			.replace(/\n\n{2,}/gm, '\n\n')
-			.replace(/^\n+/g, '')
+			.replace(/\n\n{2,}/g, '\n\n')
+			.replace(/^\n+/, '')
 	},
 	// 修正引号
 	__amendQuotes: function() {
@@ -64,11 +64,12 @@ Object.extend(String.prototype, {
 			.replaces(configs.rSeparator)
 			// 还原注释标记
 			.replace(/!@!@!@!@!/g, '＊'.times(35))
-			.replace(/@{4}/g, configs.Separator)
+			.replace(/@@@@/g, configs.Separator)
 	},
 	// 引号修正
-	replaceQuotes: function() {
-		return this.replaces(configs.rQuotes)
+	replaceQuotes: function(m) {
+		var re = this.replaces(configs.rQuotes)
+		return (m === 'cn') ? re.replaceAt(configs.cnQuotes) : re
 	},
 	// 英文首字大写
 	convertInitial: function() {
@@ -94,14 +95,16 @@ Object.extend(String.prototype, {
 			.replace('^([{$zz}]{2,})$'.fmtReg(regStr, 'gm'), function(m) {
 				return m.matchLower(/[， ][A-Z]/g)
 			})
-			// 括号内全是英文时，一般为缩拼大写
-			.replace(/（[a-z]{1,10}）/gi, function(m) {
-				return m.toUpperCase()
-			})
 			// 处理单词全是英文和数字时，型号类全大写
 			.replace(/\b([\w\-\~～]+)\b/g, function(m) {
 				return /\d/.test(m) ? m.toUpperCase() : m
 			})
+			// 括号内全是英文时，一般为缩拼大写
+			//.replace(/（([a-z]{1,10})）/gi, function(m, m1) {
+			//	pWord += '|' + m1.toUpperCase()
+			//	return m.toUpperCase()
+			//})
+			.matchUpper(/（[a-z]{1,10}）/gi)
 			// 处理连续的英语
 			.matchUpper(/\b(aa+|bb+|cc+|dd+|ee+|ff+|gg+|hh+|ii+|jj+|kk+|ll+|mm+|nn+|oo+|pp+|qq+|rr+|ss+|tt+|uu+|vv+|ww+|xx+|yy+|zz+)\b/gi)
 			// 处理英语中的 ' 标点符号
@@ -113,13 +116,13 @@ Object.extend(String.prototype, {
 				return m1.matchUpper(/\b[a-z]/g) + "."
 			})
 			// 处理英语中网址
-			.replace(/([0-9a-z]+[。\.])?([\w—\-]+)[。\.](com|net|org|gov)/gi, function(m) {
+			.replace(/([0-9a-z]+[。\.])?[\w—\-]+[。\.](com|net|org|gov)/gi, function(m) {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
 			// 处理常用英语书写
-			.replace(('\\b(' + pWord + ')([0-9]*)\\b').getReg('gi'), function(m, m1, m2) {
+			.replace(('\\b(' + pWord + ')([0-9]{0,4}|[0-9]{1,4}[a-z]{0,6})\\b').getReg('gi'), function(m, m1, m2) {
 				var item = ('|' + pWord.toLowerCase() + '|').indexOf('|' + m1.toLowerCase() + '|') + 1
-				return ('|' + pWord + '|').substr(item, m1.length) + m2
+				return ('|' + pWord + '|').substr(item, m1.length) + m2.toUpperCase()
 			})
 	},
 	// 全角半角字母数字，ve=1时全角
