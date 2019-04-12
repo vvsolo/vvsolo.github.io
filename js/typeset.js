@@ -110,6 +110,8 @@ function doTidy(str) {
 		.replaces(configs.rEnd)
 		.replace(/\n{4,}/gm, '\n\n\n')
 
+	if ( $('#Check_AddTop').not(':checked') )
+		return re
 	// 插入标头
 	var headStr = ($('#chinese').html() !== '简') ?
 		'作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n' :
@@ -143,10 +145,10 @@ function editorCleanUp(str) {
 	str = str.replaceInit();
 	// HTML 字符实体转换
 	if ($('#Check_1').is(':checked'))
-		str = str.converHtmlEntity()
+		str = str.convertHtmlEntity()
 	// Unicode转换
 	if ($('#Check_2').is(':checked'))
-		str = str.converUnicode()
+		str = str.convertUnicode()
 	// 转换变体字母
 	if ($('#Check_3').is(':checked'))
 		str = str.convertVariant()
@@ -184,12 +186,13 @@ function editorCleanUp(str) {
 
 // 组合文章标题
 function setTitle(){
-	var iBookName = $('#inputBookName').val(),
+	var tmpReg = /(^[（【“「<]|[）】”」>]$)/g,
+		iBookName = $('#inputBookName').val(),
 		iChapter = $('#inputChapter').val(),
 		iBookInfo = ''
 	if(iBookName.length > 0)
-		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
+		iBookInfo = '【' + iBookName.trim().replace(tmpReg, '') + '】'
 	if(iChapter.length > 0)
-		iBookInfo += '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
+		iBookInfo += '（' + iChapter.trim().replace(tmpReg, '') + '）'
 	 $('#TitleMsg').html(iBookInfo || $('#TitleMsg').attr('data-tip'))
 }

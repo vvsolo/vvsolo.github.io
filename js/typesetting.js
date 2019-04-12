@@ -120,6 +120,7 @@ Object.extend(String.prototype, {
 				return m.replace(/。/g, '.').toLowerCase()
 			})
 			// 处理常用英语书写
+			.matchUpper(('\\b(' + configs.pWordUpper + ')\\b').getReg('gi'))
 			.replace(('\\b(' + pWord + ')([0-9]{0,4}|[0-9]{1,4}[a-z]{0,6})\\b').getReg('gi'), function(m, m1, m2) {
 				var item = ('|' + pWord.toLowerCase() + '|').indexOf('|' + m1.toLowerCase() + '|') + 1
 				return ('|' + pWord + '|').substr(item, m1.length) + m2.toUpperCase()
@@ -178,8 +179,8 @@ Object.extend(String.prototype, {
 	// Unicode转换
 	convertUnicode: function() {
 		return this
-			.replace(/\\u?([\da-f]{4})/gi, function(m) {
-				return unescape(m.replace(/\\u?/gi, '%u'))
+			.replace(/([＆&]#x|\\u?)[\da-f]{4}[;；]?/gi, function(m) {
+				return unescape(m.replace(/[＆&]#x|\\u?/g, '%u').replace(/[;；]/g, ''))
 			})
 			.replace(/[＆&]#(\d+)[;；]/g, function(m, m1) {
 				return String.fromCharCode(m1)

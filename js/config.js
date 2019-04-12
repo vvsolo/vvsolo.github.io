@@ -39,7 +39,9 @@ var configs = {
 	// 排版时每行最大字数（按双字节计算）
 	Linenum: 35,
 	// 约定英语，用|分隔
-	pWord: 'SIS|SexInSex|iPhone|iPad|iMac|iTv|iPod|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ing',
+	pWord: 'SexInSex|iPhone|iPhoneSE|iPhoneX|iPhoneXR|iPhoneXRMax|iPhoneXR|iPad|iPadPro|iPadAir|iMac|iTv|iPod|ing',
+	// 约定英语大写，用|分隔
+	pWordUpper: 'SIS|OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA',
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	endStrs: '待续|未完|未完待续|完|完结|全文完|全书完|待續|未完待續|完結|全書完',
 	/****** 文章标题正则设定 ******/
@@ -312,7 +314,7 @@ var configs = {
 	// 称谓单词前缀
 	honorWord: 'Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq',
 	// 修正所有数字和英文字母间的标点和空格
-	nwSymbol : [
+	nwSymbol: [
 		// 修正数字间的全角
 		[/(\d)[。·] ?(?=\d)/g, '$1.'],
 		[/(\d)\. (\d)/g, '$1.$2'],
@@ -335,6 +337,8 @@ var configs = {
 		[/([a-z])。(\b|。)/gi, '$1.$2']
 	],
 	rEnd: [
+		// 时间 11’44”
+		[/(\d{1,2})[‘’『』](\d{1,2})[“”「」]/g, '$1\'$2"'],
 		// 修正箭头
 		[/[ ]*[—\-]{1,2}>[ ]*/g, ' --> '],
 		[/[ ]*[＝=]{1,2}>[ ]*/g, ' => ']
