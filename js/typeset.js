@@ -110,7 +110,7 @@ function doTidy(str) {
 		.replaces(configs.rEnd)
 		.replace(/\n{4,}/gm, '\n\n\n')
 
-	if ( $('#Check_AddTop').not(':checked') )
+	if ( !$('#Check_AddTop').is(':checked') )
 		return re
 	// 插入标头
 	var headStr = ($('#chinese').html() !== '简') ?
