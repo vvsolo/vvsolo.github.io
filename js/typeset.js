@@ -51,9 +51,18 @@ function doSplit(str, sm, bm) {
 			var rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
 			tmp = tmp
 				.replace(rStr, '$1 $2')
-				.replace(/([“‘『「][0-9a-z ]+[」』’”])/i, function(m) {
-					return m.replace(/ /g, '') + ' '
+				.replace(/([“‘『「] .*[」』’”])/i, function(m) {
+					return m
+						.replace(/([“‘『「]) /g, '$1')
+						.replace(/ ([」』’”])/g, '$1')
+						 + ' '
 				})
+			if (tmp.len() < cutNum && testTmp) {
+				tmp = tmp
+					.replace(/ ?([0-9a-z]) ?/i, '$1')
+					.replace(/ ([“‘『「])/g, '$1')
+					.replace(/([」』’”]) /g, '$1')
+			}
 		}
 		text += tmp + '\n'
 	}

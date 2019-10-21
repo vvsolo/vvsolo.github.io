@@ -40,10 +40,10 @@ Object.extend(String.prototype, {
 			.replace(/^』/gm, '『')
 			.replace(/^”/gm, '“')
 			.replace(/^’/gm, '‘')
-			.replace(/「$/gm, '」')
-			.replace(/『$/gm, '』')
-			.replace(/“$/gm, '”')
-			.replace(/‘$/gm, '’')
+			.replace(/「([。！？]|……|——|~~)?$/gm, '」$1')
+			.replace(/『([。！？]|……|——|~~)?$/gm, '』$1')
+			.replace(/“([。！？]|……|——|~~)?$/gm, '”$1')
+			.replace(/‘([。！？]|……|——|~~)?$/gm, '’$1')
 	},
 	// 去除汉字间的空格
 	replaceSpace: function() {
@@ -280,11 +280,21 @@ Object.extend(String.prototype, {
 				.replace(/[ ](?=[\u4E00-\u9FA5])/g, '')
 				// 去除只有间隔符的情况
 				.replace(rSeparatorAll, '')
+				// 修正注释
+				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
+				// 修正结尾是数字的小标号
+				.replace(/\b(\d{1,2})$/, '（$1）')
 			return (str.length > 0 && sDiv) ? configs.Divide + str : str
 		}
 		// 返回正则
 		var rr = function(str, r) {
 			return str.fmtReg(regVal, 'gim', r)
+		}
+
+		// 过滤
+		var skips = configs.regSkipTitle
+		var checkSkip = function(str) {
+			return skips.t0.test(str)
 		}
 		// 正则标题
 		
@@ -298,7 +308,7 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t1.join('|'))
 			.replace(rr('^{$f}({$t1})(?:{$sn})({$e}|$)$', '|'), function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (/[。]/.test(m) || /^[！？。]{1,3}$/.test(m2) || configs.regSkipTitle.t1.test(m))
+				if (checkSkip(m) || /^[！？。]{1,3}$/.test(m2) || skips.t1.test(m))
 					return m
 				return (m1 + handleTitle(m2)).setAlign(fBreak, eBreak, center)
 			})
@@ -307,7 +317,7 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t2)
 			.replace(rr('^{$f}{$t2}({$sn})({$e}|$)$'), function(m, m1, m2, m3) {
 				// 防止错误，有句号不转；——开头不转；全标点不转
-				if (/[。]/.test(m) || /^[\-\—]{2,4}/.test(m1) || (!relax && /^[！？。…]{1,3}$/.test(m3)))
+				if (checkSkip(m) || /^[\-\—]{2,4}/.test(m1) || (!relax && /^[！？。…]{1,3}$/.test(m3)))
 					return m
 				// 防止错误，没有间隔符情况下
 				if (!rSeparatorLeft.test(m2)) {
@@ -322,13 +332,13 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t5)
 			.replace(rr('^{$f}{$t5}({$e}|$)$'), function(m, m1, m2) {
 				// 防止错误，有句号不转
-				if (/[。]/.test(m)) return m
+				if (checkSkip(m)) return m
 				return (m1 + handleTitle(m2, 'no')).setAlign(fBreak, eBreak, center)
 			})
 		// 标题居中直接返回
 		if (center === 'center' || center === 'break') return re
 		
-		var pattern = configs.regSkipTitle.t4
+		var pattern = skips.t4
 		return re
 			/****** 卷一/卷一：标题 ******/
 			.replaceBorder(regVal.t3)
@@ -344,7 +354,7 @@ Object.extend(String.prototype, {
 			.replaceBorder(regVal.t4)
 			.replace(rr('^{$f}{$t4}({$s}|{$s}{$e}|$)$'), function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (/[。]$/.test(m) || /^[！？。]{1,3}$/.test(m2))
+				if (checkSkip(m) || /^[！？。]{1,3}$/.test(m2))
 					return m
 				// 章节是数字格式情况下
 				if (/^[\d０-９]+/.test(m1)) {
