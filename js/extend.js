@@ -42,17 +42,13 @@ Object.extend(String.prototype, {
 	regEscape: function() {
 		return this.replace(regEscape, "\\$1").replace(/\\+/g, "\\")
 	},
-	// 处理为正则字符串
-	regSafe: function() {
-		return this.replace(/\\+/g, "\\")
-	},
 	// 安全转换正则
 	getReg: function(m) {
-		return new RegExp(this.regSafe(), m || 'g')
+		return new RegExp(this.replace(/\\+/g, "\\"), m || 'g')
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return this.replace(/\r\n|\n\r|\r/g, '\n')
+		return String(this).replace(/\r\n|\n\r|\r/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
@@ -60,18 +56,17 @@ Object.extend(String.prototype, {
 	},
 	// 删除字符首尾空格
 	trim: function() {
-		var ws = '[' + Space + ']+'
-		return String(this).replace(new RegExp('^' + ws, 'gm'), '').replace(new RegExp(ws + '$', 'gm'), '')
+		return this.space().replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '')
 	},
 	// 去除所有空格后的长度
 	checkEmpty: function() {
-		return this.replace(new RegExp('[' + allSpace + ']', 'g'), '').length === 0
+		return String(this).replace(new RegExp('[' + allSpace + ']', 'g'), '').length === 0
 	},
 	// 循环正则替换
 	replaces: function(arr) {
-		var re = this, i
+		var re = this, i, tm
 		for (i in arr) {
-			var tm = arr[i][0]
+			tm = arr[i][0]
 			// 判断是否正则
 			isString(tm) && (tm = tm.getReg())
 			re = re.replace(tm, arr[i][1])
@@ -80,8 +75,21 @@ Object.extend(String.prototype, {
 	},
 	// 字符串定位替换
 	replaceAt: function(arr) {
-		return this.replace(('([' + arr[0] + '])').getReg(), function(m) {
+		return this.replace( ('[' + arr[0] + ']').getReg(), function(m) {
 			return arr[1].charAt(arr[0].indexOf(m))
+		})
+	},
+	// 字符串定位替换 - 反向数组
+	replaceAtRev: function(arr) {
+		return this.replace( ('[' + arr[1] + ']').getReg(), function(m) {
+			return arr[0].charAt(arr[1].indexOf(m))
+		})
+	},
+	// 字符串定位数组替换
+	replaceAtSplit: function(arr, tpl) {
+		var t = isArray(arr[1]) ? arr[1] : arr[1].split('|')
+		return this.replace( ('[' + arr[0] + ']').getReg(), function(m) {
+			return tpl.fmt(t[arr[0].indexOf(m)] || '')
 		})
 	},
 	// 取双字节与单字节混排时的真实字数
@@ -141,14 +149,16 @@ Object.extend(String.prototype, {
 	 * var result0 = "我是{$name}，{$sex.0}，今年{$age}了".fmt(arrs)
 	 */
 	fmt: function(args, r) {
+		// 字符串时，直接替换任意标签
 		if (isString(args))
 			return this.replace(/\{\$zz\}/g, args);
 		if (!isObject(args) && !isArray(args))
 			return this;
 		var re = this;
+		// 数组连接符号
 		r = r || ''
 		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
-		if (/\{\$([a-z0-9\.\-\_]+)}/gi.test(re)) {
+		if (/\{\$[\w\.\-]+}/gi.test(re)) {
 			re = re
 				// 子项是数组{$name.t1.0}
 				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
@@ -172,11 +182,6 @@ Object.extend(String.prototype, {
 
 // ***** 扩展数组处理 *****
 Object.extend(Array.prototype, {
-	// 随机打散数组
-	shuffle: function() {
-		for (var j, x, i = this.length; i; j = parseInt(Math.random() * i), x = this[--i], this[i] = this[j], this[j] = x);
-		return this;
-	},
 	// 随机取数组
 	getRandom: function() {
 		return isArray(this) ? this[Math.floor(Math.random() * (this.length))] : '';

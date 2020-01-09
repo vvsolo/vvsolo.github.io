@@ -1,8 +1,8 @@
 
 var tmpRegs = [
-	'[{$hwPun}{$fwPun}\w ]'.fmtReg(regCommon),
-	'([{$han}{$fwPun}])([0-9a-z])'.fmtReg(regCommon, 'i'),
-	'([0-9a-z])([{$han}{$fwPun}])'.fmtReg(regCommon, 'i')
+	'[{$hwPun}{$fwPun}\w ]'.fmtReg(strCommon),
+	'([{$han}{$fwPun}])([0-9a-z])'.fmtReg(strCommon, 'i'),
+	'([0-9a-z])([{$han}{$fwPun}])'.fmtReg(strCommon, 'i')
 ]
 // 截取分段
 function doSplit(str, sm, bm) {
@@ -84,7 +84,7 @@ function doTidy(str) {
 		// 转换半角
 		.convertNumberLetter()
 		// 英文首字大写
-		//.convertInitial()
+		//.convertEnglish()
 		// 修正分隔符号
 		.replaceSeparator()
 		// 分隔符居中
@@ -186,9 +186,9 @@ function editorCleanUp(str) {
 	// 修正引号
 	if ($('#Check_10').is(':checked'))
 		str = str.replaceQuotes('fr')
-	// 英文首字大写
+	// 修正英文
 	if ($('#Check_11').is(':checked'))
-		str = str.convertInitial()
+		str = str.convertEnglish()
 	// 结束
 	return str.replaceEnd()
 }
