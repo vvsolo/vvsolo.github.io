@@ -6,8 +6,6 @@ Object.extend(String.prototype, {
 	// 排版初始化，去空格空行
 	replaceInit: function() {
 		return this
-			// 转换所有空格样式为标准
-			//.space()
 			// 去除首尾所有空格
 			.trim()
 			// 行尾加换行
@@ -32,6 +30,7 @@ Object.extend(String.prototype, {
 			// 去除所有多余行
 			.replace(/\n\n{2,}/g, '\n\n')
 			.replace(/^\n+/, '')
+			.replace(/\n\n+$/, '\n')
 	},
 	// 修正引号
 	__amendQuotes: function() {
@@ -62,14 +61,15 @@ Object.extend(String.prototype, {
 	},
 	// 引号修正
 	replaceQuotes: function(m) {
-		var re = this
-			.replaces(configs.rQuotes)
+		var re = this.replaces(configs.rQuotes)
 		return (m === 'cn') ? re.replaceAt(configs.cnQuotes) : re
 	},
 	// 单独一行英文
 	convertEngLine: function() {
 		return this
 			.replace(configs.findEngLine, function(m) {
+				// 如果是单词引用
+				if (/^[“「][a-z]{1,6}(?:[。]|[！？]{1,3}|……|——)[」”]$/mi.test(m)) return m
 				// 去除所有标点，数字
 				var tmp = m.replace(configs.findEngLineSkip, '')
 				// 小于2个字符
@@ -90,7 +90,7 @@ Object.extend(String.prototype, {
 			.toLowerCase()
 			// 英文首写全大写
 			.matchUpper(/\b[a-z]/g)
-			.matchLower(/[,， ][A-Z]/g)
+			//.matchLower(/[,， ][A-Z]/g)
 			// 独占一行的全英文小写
 			//.convertEngLine()
 			// 引用的全转小写

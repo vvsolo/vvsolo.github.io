@@ -131,6 +131,12 @@ Object.extend(String.prototype, {
 		var re = this.match(reg)
 		return (re !== null) ? re.length : 0;
 	},
+	// 用正则检查符号是否成对出现
+	checkDouble: function (r) {
+		var find = this.match(r),
+			findlen = (find === null) ? 0 : find.length
+		return ((findlen % 2) === 0)
+	},
 	// 正则字母大写
 	matchUpper: function(reg) {
 		return this.replace(reg, function(m) {

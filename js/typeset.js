@@ -12,8 +12,7 @@ function doSplit(str, sm, bm) {
 		return str + bm
 
 	var text = '',
-		linestr = '　　' + str.trim(),
-		j = 0
+		linestr = '　　' + str.trim()
 	var cutNum = cutNum || configs.Linenum * 2
 	
 	// 小于每行最大字数时直接返回
@@ -21,27 +20,29 @@ function doSplit(str, sm, bm) {
 		return linestr + bm
 	
 	var oNum = Math.floor(linestr.len() / cutNum) + 1
-	for (; j < oNum; j++) {
-		// 预分段
-		var tmp = linestr.realSubstring(0, cutNum)
-		// 判断并处理行尾限制字符
-		tmp = tmp.replace(/([「“《『‘（]){1,2}$/gm, function(m) {
-			linestr += m
-			return ''
-		})
-		// 剩下部分
-		linestr = linestr.realSubstring(tmp.len())
-		// 判断并处理行首限制字符
-		// 处理两个字符，因为经过整理过的标点只留两个
-		.replace(/^([，。：、；：？！．）》」』]{1,2})/gm, function(m) {
-			tmp += m
-			return ''
-		})
-		// 处理单个连续标点
-		.replace(/^([…～－])$/gm, function(m) {
-			tmp += m
-			return ''
-		});
+	for (var j = 0; j < oNum; j++) {
+		var tmp = linestr
+			// 预分段
+			.realSubstring(0, cutNum)
+			// 判断并处理行尾限制字符
+			.replace(/([「“《『‘（]){1,2}$/gm, function(m) {
+				linestr += m
+				return ''
+			})
+		linestr = linestr
+			// 剩下部分
+			.realSubstring(tmp.len())
+			// 判断并处理行首限制字符
+			// 处理两个字符，因为经过整理过的标点只留两个
+			.replace(/^[，。：、；：？！．）》」』]{1,2}/gm, function(m) {
+				tmp += m
+				return ''
+			})
+			// 处理单个连续标点
+			.replace(/^[…～－]$/gm, function(m) {
+				tmp += m
+				return ''
+			})
 		// 如果有英文并奇数位，英文前加空格补齐
 		// 测试一下全英文状态防止出错
 		var testTmp = tmp
@@ -51,16 +52,16 @@ function doSplit(str, sm, bm) {
 			var rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
 			tmp = tmp
 				.replace(rStr, '$1 $2')
-				.replace(/([“‘『「] .*[」』’”])/i, function(m) {
+				.replace(/[“‘『「] .*[」』’”]/i, function(m) {
 					return m
 						.replace(/([“‘『「]) /g, '$1')
-						.replace(/ ([」』’”])/g, '$1')
+						.replace(/ (?=[」』’”])/g, '')
 						 + ' '
 				})
 			if (tmp.len() < cutNum && testTmp) {
 				tmp = tmp
 					.replace(/ ?([0-9a-z]) ?/i, '$1')
-					.replace(/ ([“‘『「])/g, '$1')
+					.replace(/ (?=[“‘『「])/g, '')
 					.replace(/([」』’”]) /g, '$1')
 			}
 		}
@@ -99,10 +100,10 @@ function doTidy(str) {
 		.replaceTitle('', '', 'center')
 
 	var words = str.split('\n'),
-		re = '', i = 0
+		re = ''
 
 	// 开始进行分隔
-	for (; i < words.length; i++)
+	for (var i = 0; i < words.length; i++)
 		re += doSplit(words[i], '\n', '\n\n');
 
 	re = re
@@ -110,14 +111,14 @@ function doTidy(str) {
 		.replace(configs.novelAuthor, function(m) {
 			return m.trim()
 		})
-		.replace(/^([ 　]+)$\n/gm, '')
-		.replace(/\n{3,}/gm, '\n\n')
+		.replace(/^[ 　]+$\n/gm, '')
+		.replace(/\n\n{2,}/gm, '\n\n')
 		// 文章标题居中
 		.replace(configs.novelTitle, function(m) {
 			return m.setAlign('', '\n', 'center')
 		})
 		.replaces(configs.rEnd)
-		.replace(/\n{4,}/gm, '\n\n\n')
+		.replace(/\n\n{3,}/gm, '\n\n\n')
 
 	if ( !$('#Check_AddTop').is(':checked') )
 		return re
@@ -132,19 +133,6 @@ function doTidy(str) {
 		'd': new Date().fmt("yyyy/MM/dd"),
 		'n': (re.length - re.findCount(allSpace)).fmt()
 	})
-	/**
-	var iBookName = $('#inputBookName').val(),
-		iChapter = $('#inputChapter').val(),
-		iBookInfo = ''
-	if(iBookName.length > 0)
-		iBookInfo = '【' + iBookName.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '】'
-	if(iChapter.length > 0)
-		iBookInfo += '（' + iChapter.trim().replace(/(^[（【“「<]|[）】”」>]$)/g, '') + '）'
-	if(inputBookInfo.length > 0)
-		inputBookInfo = inputBookInfo + '\n\n' + headStr
-	else
-		inputBookInfo = headStr
-	**/
 	return headStr + '\n' + re
 }
 
@@ -195,7 +183,7 @@ function editorCleanUp(str) {
 
 // 组合文章标题
 function setTitle(){
-	var tmpReg = /(^[（【“「<]|[）】”」>]$)/g,
+	var tmpReg = /^[（【“「<]|[）】”」>]$/g,
 		iBookName = $('#inputBookName').val(),
 		iChapter = $('#inputChapter').val(),
 		iBookInfo = ''
