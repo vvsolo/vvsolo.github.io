@@ -74,6 +74,8 @@ Object.extend(String.prototype, {
 				var tmp = m.replace(configs.findEngLineSkip, '')
 				// 小于2个字符
 				if (tmp.length < 2) return m
+				// 没有逗号或空格
+				if (!/[,， ]/.test(m)) return m
 				return m
 					.replaces(configs.halfSymbol)
 					// 修正英文大小写
@@ -90,13 +92,15 @@ Object.extend(String.prototype, {
 			.toLowerCase()
 			// 英文首写全大写
 			.matchUpper(/\b[a-z]/g)
-			//.matchLower(/[,， ][A-Z]/g)
-			// 独占一行的全英文小写
-			//.convertEngLine()
+			.matchLower(/[\w][， ][A-Z]/g)
+			// 单个字母大写
+			.matchUpper(/\b[a-z]\b/g)
+			// 处理连续的英语
+			.matchUpper(configs.continuouWord)
 			// 引用的全转小写
 			.replace(configs.findEngQuote, function(m, m1) {
 				return (configs.findEngQuoteTest.test(m)) ?
-					m : m.matchUpper(/\b[a-z]/g).matchLower(/[,， ][A-Z]/g)
+					m : m.matchUpper(/\b[a-z]/g)
 			})
 			// 处理英语中的 ' 标点符号
 			.replace(configs.enSepQ, function(m, m1, m2) {
@@ -110,8 +114,6 @@ Object.extend(String.prototype, {
 			.replace(/\b[\w\-\~～]+\b/g, function(m) {
 				return /\d/.test(m) ? m.toUpperCase() : m
 			})
-			// 处理连续的英语
-			.matchUpper(configs.continuouWord)
 			// 处理英语中称呼缩写，非行尾的
 			.replace(configs.honorWord, function(m, m1) {
 				return m1.matchUpper(/\b[a-z]/g) + "."
@@ -250,23 +252,20 @@ Object.extend(String.prototype, {
 	},
 	// 处理标题的外框
 	replaceBorder: function(tit) {
-		regChapter.t = tit
-		var r = '^{$f}[{$b.0}]?(?:{$t})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmtReg(regChapter, 'gm')
-		var t = ('[{$b}]').fmtReg(regChapter)
+		var r = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmt(tit).chapReg()
 		return this.replace(r, function(m) {
-			return m.replace(t, ' ')
+			// 判断
+			if (/[。]/.test(m)) {
+				return m
+			}
+			return m.replace(('[{$b}]').fmtReg(regChapter), ' ')
 		})
 	},
 	// 处理标题
 	__Chapter: function(t, tpl, r, callback) {
-		// 返回正则
-		var rr = function(str, r) {
-			return str.fmtReg(regChapter , 'gim', r)
-		}
-		//alert(rr(tpl.fmt(t)))
 		return this
 			.replaceBorder(t)
-			.replace(rr(tpl.fmt(t), r), callback)
+			.replace(tpl.chapReg('gim', r), callback)
 	},
 	// 修正章节标题
 	replaceTitle: function(b1, b2, c, relax) {
@@ -275,9 +274,6 @@ Object.extend(String.prototype, {
 			re = this,
 			// 替换值
 			regVal = regChapter
-		var rSeparatorLeft = ('^' + regVal.s).getReg(),
-			rSeparatorRight = (regVal.s + '$').getReg(),
-			rSeparatorAll = ('^' + regVal.s + '$').getReg()
 
 		// 非严格限定
 		if (relax) {
@@ -293,12 +289,14 @@ Object.extend(String.prototype, {
 			sDiv = !sDiv ? true : false
 			str = str
 				.replace(/  +/g, ' ')
-				.replace(rSeparatorLeft, '')
+				.replace(('^' + regVal.s).chapReg(), '')
+				// 修正结尾是上下的小标号
+				.replace(/([^\d\.]) ([上中下])$/, '$1（$2）')
 				// 中文间空格转换为逗号
 				.replace(/ (?=[\u4E00-\u9FA5]{2,})/g, '，')
 				.replace(/ (?=[\u4E00-\u9FA5])/g, '')
 				// 去除只有间隔符的情况
-				.replace(rSeparatorAll, '')
+				.replace(('^' + regVal.s + '$').chapReg(), '')
 				// 修正注释
 				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
 				// 修正结尾是数字的小标号
@@ -306,11 +304,6 @@ Object.extend(String.prototype, {
 			return (str.length > 0 && sDiv) ? configs.Divide + str : str
 		}
 		
-		// 返回正则
-		var rr = function(str, r) {
-			return str.fmtReg(regVal , 'gim', r)
-		}
-
 		// 过滤
 		var checkSkip = function(str, t) {
 			t = t || 't0'
@@ -319,11 +312,11 @@ Object.extend(String.prototype, {
 		// 正则标题
 		re = re
 			/****** 非常规标题·无后续主体 ******/
-			.__Chapter(regVal.t0, '^{$f}({$zz})(?:{$s}|$)$', '', function(m, m1) {
+			.__Chapter(regVal.t0, '^{$f}({$t0})(?:{$s}|$)$', '', function(m, m1) {
 				return m1.setAlign(f, e, c)
 			})
 			/****** 非常规标题 ******/
-			.__Chapter(regVal.t1.join('|'), '^{$f}({$zz})(?:{$sn})({$e}|$)$', '|', function(m, m1, m2) {
+			.__Chapter(regVal.t1.join('|'), '^{$f}({$t1})(?:{$sn})({$e}|$)$', '|', function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
 				if (checkSkip(m) || /^[\!\?！？。]{1,3}$/.test(m2) || checkSkip(m, 't1'))
 					return m
@@ -331,12 +324,11 @@ Object.extend(String.prototype, {
 			})
 			/****** 01章/第02章/第02-18章/03章：标题/第０９章：标题 ******/
 			// m1 章节 m2 间隔 m3 标题
-			.__Chapter(regVal.t2, '^{$f}{$zz}({$sn})({$e}|$)$', '', function(m, m1, m2, m3) {
+			.__Chapter(regVal.t2, '^{$f}{$t2}({$sn})({$e}|$)$', '', function(m, m1, m2, m3) {
 				// 防止错误，有句号不转；——开头不转；全标点不转
 				if (checkSkip(m) || /^[\-\—]{2,4}/.test(m1) || (!relax && /^[！？。…]{1,3}$/.test(m3)))
 					return m
 				// 防止错误，没有间隔符情况下
-				//if (!rSeparatorLeft.test(m2)) {
 				if (!m2) {
 					// 如：第一部电影很好，很成功。
 					// 如：一回头、一幕幕
@@ -348,7 +340,7 @@ Object.extend(String.prototype, {
 				return (m1 + handleTitle(m3)).setAlign(f, e, c)
 			})
 			/****** （01）/（02）标题/（一）/（一）标题 ******/
-			.__Chapter(regVal.t3, '^{$f}{$zz}({$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(regVal.t3, '^{$f}{$t3}({$e}|$)$', '', function(m, m1, m2) {
 				// 防止错误，有句号不转
 				if (checkSkip(m)) return m
 				m1 = m1.__convertDBCNumber()
@@ -362,17 +354,17 @@ Object.extend(String.prototype, {
 		var pattern = configs.regSkipTitle.t6
 		return re
 			/****** 卷一/卷一：标题 ******/
-			.__Chapter(regVal.t4, '^{$f}{$zz}(?:{$sn})({$e}|$)$', '', function(m0, m1, m2, m3) {
+			.__Chapter(regVal.t4, '^{$f}{$t4}{$sn}({$e}|$)$', '', function(m, m1, m2, m3) {
 				return (f + '第' + m2 + m1 + handleTitle(m3) + e).__convertDBCNumber()
 			})
 			/****** chapter 22/ chapter 55 abcd ******/
-			.__Chapter(regVal.t5, '^{$f}{$zz}(?:{$s})({$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(regVal.t5, '^{$f}{$t5}{$s}({$e}|$)$', '', function(m, m1, m2) {
 				return (f + '第' + m1 + '章' + handleTitle(m2) + e).__convertDBCNumber()
 			})
 			/****** 01/01./01.标题/一/一、/一、标题 ******/
-			.__Chapter(regVal.t6, '^{$f}{$zz}({$s}|{$s}{$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(regVal.t6, '^{$f}{$t6}({$s}|{$s}{$e}|$)$', '', function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (checkSkip(m) || /^[！？。]{1,3}$/.test(m2))
+				if (checkSkip(m) || checkSkip(m, 't2') || /^[！？。]{1,3}$/.test(m2) || /[。]/.test(m))
 					return m
 				// 章节是数字格式情况下
 				if (/^[\d０-９]+/.test(m1)) {
@@ -391,46 +383,42 @@ Object.extend(String.prototype, {
 	// 修复错转的章节标题
 	replaceTitleError: function() {
 		var re = this
-		// 返回正则
-		var rr = function(str) {
-			return str.fmtReg(strChapter, 'gm')
-		}
 		// 第01章　连续
-		var parent = rr('(^[{$space}]*(第{$n1}[{$c.2}])(：.{0,40}|$)$\\n+){2,}'),
-			p1, p2
+		var parent ='(^{$f}第{$n1}[{$c.2}](?:[：].{0,40}|$)$\\n+|^{$f}{$n1}(?:[：、。\.\,].{0,40}|$)$\\n+){2,}'.chapReg(),
+			p1, p2, p3
 		if(parent.test(re)) {
-			p1 = rr('^第({$n1})[{$c.2}]：')
-			p2 = rr('^第({$n1})[{$c.2}]$')
+			p1 = '^{$f}第({$n1})[{$c.2}]：'.chapReg()
+			p2 = '^{$f}第({$n1})[{$c.2}]$'.chapReg()
+			p3 = '^{$f}({$n1})[：、。\.\,]'.chapReg()
 			re = re
 				.replace(parent, function(m) {
 					return m
 						.replace(p1, '$1、')
 						.replace(p2, '$1')
+						.replace(p3, '$1、')
+						.replace(/^0{1,4}/gm, '')
 						.replace(/\n\n+/gm, '\n')
 				})
-				.replace(rr('\\n\\n({$n1}、?)'), '$1')
+				.replace('\\n\\n({$n1}、?)'.chapReg(), '$1')
 		}
 		// 第一章　连续
-		parent = rr('(^[{$space}]*(第{$n3}[{$c.2}])(：.{0,40}|$)$\\n+){2,}')
+		parent = '(^{$f}(第{$n3}[{$c.2}])(?:[：].{0,40}|$)$\\n+|^{$f}{$n3}(?:[：、。\.\,].{0,40}|$)$\\n+){2,}'.chapReg()
 		if(parent.test(re)) {
-			p1 = rr('^第({$n3})[{$c.2}]：')
-			p2 = rr('^第({$n3})[{$c.2}]$')
+			p1 = '^{$f}第({$n3})[{$c.2}]：'.chapReg()
+			p2 = '^{$f}第({$n3})[{$c.2}]$'.chapReg()
+			p3 = '^{$f}({$n3})[：、。\.\,]'.chapReg()
 			re = re
 				.replace(parent, function(m) {
 					return m
 						.replace(p1, '$1、')
 						.replace(p2, '$1')
+						.replace(p3, '$1')
 						.replace(/\n\n+/gm, '\n')
 				})
-				.replace(rr('\\n\\n({$n3}、?)'), '$1')
+				.replace('\\n\\n({$n3}、?)'.chapReg(), '$1')
 		}
-		return re
-	},
-	// 修复错转的章节标题
-	replaceTitleErrorBracket: function() {
-		var re = this
 		// （01）　连续
-		var parent = '(\\n+^[{$space}]*（(?:{$n2}|{$n3})）(.{0,40}|$)$\\n+){2,}'.fmtReg(strChapter, 'gm')
+		parent = '(\\n+^{$f}（(?:{$n2}|{$n3})）(?:.{0,40}|$)$\\n+){2,}'.chapReg()
 		if(parent.test(re)) {
 			re = re
 				.replace(parent, function(m) {

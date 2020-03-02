@@ -14,24 +14,10 @@ Object.extend = function(a, b) {
 	return a
 }
 
-// 循环替换
-var __fmts = function(re, args) {
-	if (isArray(re) || isObject(re)) {
-		for(var item in re) {
-			var tmp = re[item]
-			re[item] = !isString(tmp) ? __fmts(tmp, args) : tmp.fmt(args);
-		}
-	}
-	return re;
-}
-Array.prototype.fmts = function(args) {
-	return __fmts(this, args)
-}
-
 // 删除字符首尾空格 \uF604
 var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
 	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
-	"\u2029\uE4C6\uF604\uF8F5\uE004\uF04A\uFEFF"
+	"\u2029\uE4C6\uF604\uF8F5\uE004\uF04A\uFEFF\u202e\u202c"
 var allSpace = Space + '\x0A\x0D\xA0'
 //var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 var regEscape = /([.?*+^$[\]\\(){}|-])/g
@@ -77,12 +63,6 @@ Object.extend(String.prototype, {
 	replaceAt: function(arr) {
 		return this.replace( ('[' + arr[0] + ']').getReg(), function(m) {
 			return arr[1].charAt(arr[0].indexOf(m))
-		})
-	},
-	// 字符串定位替换 - 反向数组
-	replaceAtRev: function(arr) {
-		return this.replace( ('[' + arr[1] + ']').getReg(), function(m) {
-			return arr[0].charAt(arr[1].indexOf(m))
 		})
 	},
 	// 字符串定位数组替换
@@ -169,7 +149,10 @@ Object.extend(String.prototype, {
 				// 子项是数组{$name.t1.0}
 				.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
 					// 如果子项是数组轮循
-					var tmp = !/\./g.test(m2) ? args[m1][m2] : m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(args[m1], r)
+					if (/\./g.test(m2)) {
+						return m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(args[m1], r)
+					}
+					var tmp = (args[m1] != null && args[m1][m2] != null) ? args[m1][m2] : m
 					return isArray(tmp) ? tmp.join(r) : (tmp != null ? tmp : m)
 				})
 				// 子项
@@ -183,14 +166,6 @@ Object.extend(String.prototype, {
 	// 替换并返回正则式
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f)
-	}
-});
-
-// ***** 扩展数组处理 *****
-Object.extend(Array.prototype, {
-	// 随机取数组
-	getRandom: function() {
-		return isArray(this) ? this[Math.floor(Math.random() * (this.length))] : '';
 	}
 });
 

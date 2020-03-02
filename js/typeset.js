@@ -73,7 +73,7 @@ function doSplit(str, sm, bm) {
 // 排版
 function doTidy(str) {
 	// 结尾的文字，编辑user.js文件
-	var eStrs = ('^([（【“「<]?)(' + configs.endStrs + ')([）】”」>]?)$').getReg('gm')
+	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm')
 
 	// 执行整理
 	var str = str
