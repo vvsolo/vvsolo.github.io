@@ -311,6 +311,10 @@ Object.extend(String.prototype, {
 		}
 		// 正则标题
 		re = re
+			/****** 修复标题间多余空格 ******/
+			.replace('^{$f}{$ts}'.chapReg(), function(m) {
+				return m.replace(/ /g, '')
+			})
 			/****** 非常规标题·无后续主体 ******/
 			.__Chapter(regVal.t0, '^{$f}({$t0})(?:{$s}|$)$', '', function(m, m1) {
 				return m1.setAlign(f, e, c)

@@ -50,12 +50,21 @@ Object.extend(String.prototype, {
 	},
 	// 循环正则替换
 	replaces: function(arr) {
-		var re = this, i, tm
+		var re = this, i, dim
 		for (i in arr) {
-			tm = arr[i][0]
-			// 判断是否正则
-			isString(tm) && (tm = tm.getReg())
-			re = re.replace(tm, arr[i][1])
+			dim = arr[i]
+			// 如果是数组
+			if (isArray(dim)) {
+				// 判断是否正则
+				isString(dim[0]) && (dim[0] = dim[0].getReg())
+				re = re.replace(dim[0], dim[1] || '')
+			}
+			// 如果非数组并且是正则
+			else {
+				// 判断是否正则
+				isString(dim) && (dim = dim.getReg())
+				re = re.replace(dim, '')
+			}
 		}
 		return re
 	},
@@ -166,6 +175,14 @@ Object.extend(String.prototype, {
 	// 替换并返回正则式
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f)
+	}
+});
+
+// ***** 扩展数组处理 *****
+Object.extend(Array.prototype, {
+	// 随机取数组
+	getRandom: function() {
+		return isArray(this) ? this[Math.floor(Math.random() * (this.length))] : '';
 	}
 });
 
