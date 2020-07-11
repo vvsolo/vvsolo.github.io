@@ -10,12 +10,11 @@
  */
 
 (function($) {
-
 	// 转换
 	function convert(str, ss, tt){
-		var re = '', i = 0
-		for (; i < str.length; i++) {
-			var tmp = str.charAt(i);
+		var re = '', i = 0, l = str.length, tmp
+		for (; i < l; i++) {
+			tmp = str.charAt(i);
 			if (str.charCodeAt(i) > 10000 && ss.indexOf(tmp) != -1)
 				re += tt.charAt(ss.indexOf(tmp));
 			else re += tmp;
@@ -85,15 +84,15 @@
 	 * @param {Boolean} toT - 是否转换成繁体
 	 */
 	function tranElement(element, toT) {
-		var i, childNodes;
-
 		if (element.nodeType !== 1) {
 			return;
 		}
 
+		var i, childNodes, l;
 		childNodes = element.childNodes;
+		l = childNodes.length
 
-		for (i = 0; i < childNodes.length; i++) {
+		for (i = 0; i < l; i++) {
 			var childNode = childNodes.item(i) || childNodes[i];
 
 			// 若为HTML Element节点

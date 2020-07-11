@@ -4,52 +4,71 @@ var tmpRegs = [
 	'([{$han}{$fwPun}])([0-9a-z])'.fmtReg(strCommon, 'i'),
 	'([0-9a-z])([{$han}{$fwPun}])'.fmtReg(strCommon, 'i')
 ]
+		// 保护码
+var saftLeftStr = '\u2620',
+	safeReg = '^{$zz}+'.fmtReg(saftLeftStr, 'm'),
+	cutNum = configs.Linenum * 2
+
 // 截取分段
 function doSplit(str, sm, bm) {
-	if (str.trim().len() === 0)
+	if (str.trim().len() === 0) {
 		return str + bm
-	if (/^　{2,}/gm.test(str) || str === '＊'.times(35))
+	}
+	if (/^　{2,}/gm.test(str) || /^＊{5,}/gm.test(str)) {
 		return str + bm
+	}
+	// 如果有保护码
+	if (safeReg.test(str.trim())) {
+		return str.replace(saftLeftStr.getReg(), '\n') + '\n'
+	}
 
-	var text = '',
-		linestr = '　　' + str.trim()
-	var cutNum = cutNum || configs.Linenum * 2
-	
+	var linestr = '　　' + str.trim()
 	// 小于每行最大字数时直接返回
 	if (cutNum > linestr.len())
 		return linestr + bm
 	
-	var oNum = Math.floor(linestr.len() / cutNum) + 1
-	for (var j = 0; j < oNum; j++) {
-		var tmp = linestr
+	var oNum = ~~(linestr.len() / cutNum) + 1,
+		text = '', tmp, testTmp, rStr
+	while (oNum--) {
+		tmp = linestr
 			// 预分段
-			.realSubstring(0, cutNum)
+			.realSubstr(0, cutNum)
 			// 判断并处理行尾限制字符
-			.replace(/([「“《『‘（]){1,2}$/gm, function(m) {
+			.replace(/[「“《『‘（]{1,2}$/gm, function(m) {
 				linestr += m
 				return ''
 			})
 		linestr = linestr
 			// 剩下部分
-			.realSubstring(tmp.len())
+			.realSubstr(tmp.len())
 			// 判断并处理行首限制字符
 			// 处理两个字符，因为经过整理过的标点只留两个
-			.replace(/^[，。：、；：？！．）》」』]{1,2}/gm, function(m) {
+			.replace(/^[，。：、；：？！．）》」』]{1,2}/, function(m) {
 				tmp += m
 				return ''
 			})
 			// 处理单个连续标点
-			.replace(/^[…～－]$/gm, function(m) {
+			.replace(/^[…～－]$/, function(m) {
 				tmp += m
 				return ''
 			})
+			// 处理首字符是字母的，为防止单词分隔，做提升处理
+			.replace(/^[a-zA-Z]{1,2}\b/, function(m) {
+				// 如果上一行尾部是英文的
+				if (/[a-zA-Z]$/.test(tmp)) {
+					tmp += m
+					return ''
+				} else {
+					return m
+				}
+			})
 		// 如果有英文并奇数位，英文前加空格补齐
 		// 测试一下全英文状态防止出错
-		var testTmp = tmp
+		testTmp = tmp
 			.replace(tmpRegs[0], '')
 			.length > 0
 		if ((tmp.len() < cutNum) && testTmp) {
-			var rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
+			rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
 			tmp = tmp
 				.replace(rStr, '$1 $2')
 				.replace(/[“‘『「] .*[」』’”]/i, function(m) {
@@ -60,7 +79,9 @@ function doSplit(str, sm, bm) {
 				})
 			if (tmp.len() < cutNum && testTmp) {
 				tmp = tmp
-					.replace(/ ?([0-9a-z]) ?/i, '$1')
+					// 如果提升英文，前端空格不过滤，防止还原时删除空格
+					//.replace(/ ?([0-9a-z]) ?/i, '$1')
+					.replace(/([0-9a-z]) ?/i, '$1')
 					.replace(/ (?=[“‘『「])/g, '')
 					.replace(/([」』’”]) /g, '$1')
 			}
@@ -76,7 +97,7 @@ function doTidy(str) {
 	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm')
 
 	// 执行整理
-	var str = str
+	str = str
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -84,8 +105,6 @@ function doTidy(str) {
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
-		// 英文首字大写
-		//.convertEnglish()
 		// 修正分隔符号
 		.replaceSeparator()
 		// 分隔符居中
@@ -97,27 +116,21 @@ function doTidy(str) {
 			return m.setAlign('', '', 'center')
 		})
 		// 标题居中
-		.replaceTitle('', '', 'center')
+		.replaceTitle('', '\n', 'center')
 
 	var words = str.split('\n'),
-		re = ''
+		re = '',
+		i = words.length
 
 	// 开始进行分隔
-	for (var i = 0; i < words.length; i++)
-		re += doSplit(words[i], '\n', '\n\n');
+	while (i--) {
+		re = doSplit(words[i], '\n\n', '\n\n') + re
+	}
 
-	re = re
-		// 作者类居左
-		.replace(configs.novelAuthor, function(m) {
-			return m.trim()
-		})
+	re = '\n' + re
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
-		// 文章标题居中
-		.replace(configs.novelTitle, function(m) {
-			return m.setAlign('', '\n', 'center')
-		})
-		.replaces(configs.rEnd)
+		.replaceEnd()
 		.replace(/\n\n{3,}/gm, '\n\n\n')
 
 	if ( !$('#Check_AddTop').is(':checked') )
@@ -127,8 +140,8 @@ function doTidy(str) {
 		'作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n' :
 		'作者：{$w}\n{$d}發表於：{$b}\n是否首發：{$y}\n字數：{$n} 字\n';
 	headStr = headStr.fmt({
-		'w': $('#inputAuthor').val().trim() || '',
-		'b': $('#inputSite').val().trim() || '',
+		'w': $('#inputAuthor').val().trim() || ' ',
+		'b': $('#inputSite').val().trim() || ' ',
 		'y': $('#Check_0').is(':checked') ? '是' : '否',
 		'd': new Date().fmt("yyyy/MM/dd"),
 		'n': (re.length - re.findCount(allSpace)).fmt()

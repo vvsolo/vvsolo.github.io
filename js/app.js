@@ -40,7 +40,7 @@ $(function() {
 		indentedSoftWrap: false,
 		//autoScrollEditorIntoView: true,
 		// 字体
-		fontSize: 14,
+		fontSize: 15,
 		// 打印线
 		printMarginColumn: 70,
 		// 显示空格

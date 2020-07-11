@@ -23,7 +23,7 @@ width: 0;\
 border-left: 1px dashed #4d4d4d;\
 }\
 .ace-novel {\
-color: #CFAF76;\
+color: #B7BDC8;\
 background-color: #1E1E1E;\
 }\
 .ace-novel .ace_invisible {\
