@@ -91,8 +91,8 @@ function doSplit(str, sm, bm) {
 	return text + sm
 }
 
-// 排版
-function doTidy(str) {
+// 分段排版
+function onTypeSetSplit(str) {
 	// 结尾的文字，编辑user.js文件
 	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm')
 
@@ -149,6 +149,25 @@ function doTidy(str) {
 	return headStr + '\n' + re
 }
 
+// 阅读排版
+function onTypeSetRead(str) {
+	return str
+		// 排版初始化，去空格空行
+		.replaceInit()
+		// 半角字母数字
+		.convertNumberLetter()
+		// 修正章节标题
+		.replaceTitle('\n\n', '', 'break')
+		// 修正分隔符号
+		.replaceSeparator()
+		// 修正作者后面未空行
+		.replace(configs.novelAuthor, '$1\n')
+		.replace(/^/gm, '　　')
+		.replace(/(^　　$\n)+/gm, '　　\n')
+		.replace(/\n{3,}/gm, '\n\n')
+		.replace(/^\n{2,}/, '\n')
+}
+
 // 一键整理
 function editorCleanUp(str) {
 	// 排版初始化，去空格空行
@@ -194,6 +213,47 @@ function editorCleanUp(str) {
 	return str.replaceEnd()
 }
 
+// 特殊整理
+function editorCleanUpEx(str) {
+	var safeStr = ['\n\u2620', '\u2620\n'],
+		// 结尾
+		endStr = ('^[\\(（【〖“「［<](?:' + configs.endStrs + ')[>］」”〗】）\\)]$').getReg('gm')
+	// 其他自定义修正
+	var Others = [
+		//****** 修正错误语句换行 ******/
+		[/([^。！？…”」\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
+		// 修正错误的换行
+		[/^((?![第][\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
+		[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
+		[/，([”」])\n+/gm, '，$1'],
+		// 修正被分隔的标点符号
+		[/…\n+…/gm, '……'],
+		[/\n+([”」])/gm, '$1'],
+		[/…([“「])/g, '…\n$1'],
+		[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
+		[/分卷阅读(\d+)/g, ''],
+		// 去除标题保护
+		[safeStr.join('|').getReg('gm'), '\n'],
+		//[/(^〖【|】〗$)/gm, '\n'],
+		[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
+		[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
+	]
+
+	str = str
+		// 排版初始化，去空格空行
+		.replaceInit()
+		// 去除汉字间的空格
+		.replaceSpace()
+		// 修正章节标题，加标题保护码
+		.replaceTitle(safeStr[0], safeStr[1])
+		// 修正引号
+		.replaceQuotes()
+		// 其他自定义修正
+		.replaces(Others)
+		.replace(endStr, '')
+
+	return editorCleanUp(str)
+}
 // 组合文章标题
 function setTitle(){
 	var tmpReg = /^[（【“「<]|[）】”」>]$/g,

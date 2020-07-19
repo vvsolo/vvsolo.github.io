@@ -194,22 +194,48 @@ $(function() {
 		},
 		bindKey: { win: "f8", mac: "f8" }
 	});
+	// 特殊整理
+	$('#onCleanUpEx').click(function() {
+		var sVal = sEditor.getValue()
+		if (sVal.length > 0) {
+			sVal = editorCleanUpEx(sVal)
+			sEditor.setValue(sVal)
+			editor.focus()
+		}
+	});
+	editor.commands.addCommand({
+		name: "__cleanup_ex",
+		exec: function() {
+			$('#onCleanUpEx').trigger('click')
+		},
+		bindKey: { win: "f7", mac: "f7" }
+	});
 	// 一键排版
-	$('#onTypeSet').click(function() {
+	$('#onTypeSetSplit').click(function() {
 		var sVal = sEditor.getValue()
 		if (sVal.length > 0) {
 			storage.set('tmpContent', sVal)
 			showMessage(this)
-			sEditor.setValue(doTidy(sVal))
+			sEditor.setValue(onTypeSetSplit(sVal))
 			editor.focus()
 		}
 	});
 	editor.commands.addCommand({
 		name: "__typeset",
 		exec: function() {
-			$('#onTypeSet').trigger('click')
+			$('#onTypeSetSplit').trigger('click')
 		},
 		bindKey: { win: "f9", mac: "f9" }
+	});
+	// 阅读排版
+	$('#onTypeSetRead').click(function() {
+		var sVal = sEditor.getValue()
+		if (sVal.length > 0) {
+			storage.set('tmpContent', sVal)
+			showMessage(this)
+			sEditor.setValue(onTypeSetRead(sVal))
+			editor.focus()
+		}
 	});
 	// 绑定快捷键
 	// 简单UBB

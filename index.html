@@ -137,9 +137,10 @@
         <p class="mb-0">保存：Ctrl+S</p>
         <p class="mb-0">还原：Ctrl+R</p>
         <p class="mb-0">新建：Ctrl+N</p>
-        <p class="mb-0">整理：F8</p>
-        <p class="mb-0">排版：F9</p>
-        <p class="mb-0">复制：F10</p>
+        <p class="mb-0">特殊整理：F7</p>
+        <p class="mb-0">全局整理：F8</p>
+        <p class="mb-0">分段排版：F9</p>
+        <p class="mb-0">复制文档：F10</p>
       </div>
     </div>
   </div>
@@ -148,8 +149,9 @@
       <div class="alert m-0 rounded-0 border-0 editor-title" role="alert">
         <div class="row">
           <div class="col-7 text-left">
-            <h4 class="alert-heading d-inline" id="TitleMsg" data-tip="此处标题">此处标题</h4>
-            <span class="font-weight-light copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！">点击复制标题到剪贴板</span>
+	        <span class="copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！" title="点击复制标题到剪贴板">
+                <h4 class="alert-heading d-inline" id="TitleMsg" data-tip="标题">标题</h4>
+            </span>
           </div>
           <div class="col-5 text-right editor-message">
             <span class="badge badge-warning" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</span>
@@ -159,8 +161,10 @@
         <div class="row">
           <div class="col-8">
             <button type="button" class="btn btn-light" title="隐藏或显示左侧栏" id="floatTool" data-tip="显|隐">隐</button>
-            <button type="button" class="btn btn-success" title="一键整理文档；快捷键: F8" id="onCleanUp">整理</button>
-            <button type="button" class="btn btn-success" title="排版输出文档；快捷键: F9" id="onTypeSet" data-tip="排版成功！重排请点击“还原”按钮！">排版</button>
+            <button type="button" class="btn btn-primary" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊整理</button>
+            <button type="button" class="btn btn-primary" title="全局一键整理；快捷键: F8" id="onCleanUp">全局整理</button>
+            <button type="button" class="btn btn-success" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit" data-tip="排版成功！重排请点击“还原”按钮！">分段排版</button>
+            <button type="button" class="btn btn-success" title="阅读样式排版" id="onTypeSetRead" data-tip="排版成功！重排请点击“还原”按钮！">阅读排版</button>
             <button type="button" class="btn btn-primary copy-content" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复制</button>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn btn-outline-info font-weight-bold" title="转为简体" id="toSimp">简</button>
