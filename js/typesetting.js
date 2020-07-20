@@ -265,6 +265,10 @@ Object.extend(String.prototype, {
 				// 修正结尾是数字的小标号
 				.replace(/([^\d\.])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
 				.replace(/([^\d\.]) ?\b(\d{1,2})$/, '$1（$2）')
+				// 修正结尾是希腊数字的小标号
+				.replace(/ ?\b([IVXC]{1,6})\b$/i, function(m) {
+					return '（' + m.toUpperCase() + '）'
+				})
 			return (str.length > 0 && sDiv) ? configs.Divide + str : str
 		}
 		

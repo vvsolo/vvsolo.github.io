@@ -135,6 +135,10 @@ Object.extend(String.prototype, {
 		var re = this.match(reg)
 		return (re !== null) ? parseInt(re.length) : 0;
 	},
+	// 用正则检查符号是否成对出现
+	checkDouble: function (r) {
+		return (this.findCount(r) % 2) === 0
+	},
 	// 正则字母大写
 	matchUpper: function(reg) {
 		return this.replace(reg, function(m) {
@@ -165,19 +169,23 @@ Object.extend(String.prototype, {
 		return this
 			// 子项是数组{$name.t1.0}
 			.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
-				if (val = args[m1]) {
+				if (!checkNull(args[m1])) {
+					val = args[m1]
 					// 如果子项是数组轮循
 					if (/\./g.test(m2))
 						return m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(val, r)
 
-					if (val = val[m2])
+					if (!checkNull(val[m2])) {
+						val = val[m2]
 						return isArray(val) ? val.join(r) : val
+					}
 				}
 				return m
 			})
 			// 子项
 			.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-				if (val = args[m1]) {
+				if (!checkNull(args[m1])) {
+					val = args[m1]
 					return isArray(val) ? val.join(r) : val
 				}
 				return m
