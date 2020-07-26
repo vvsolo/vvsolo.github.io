@@ -55,17 +55,9 @@ Object.extend(String.prototype, {
 	trim: function() {
 		return this.space().replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '')
 	},
-	// 删除字符首尾空格，不转换所有空格
-	trimn: function() {
-		return this.trim().replace(/\n/g, '')
-	},
 	// 删除字符首尾空格、换行
 	trims: function() {
 		return this.replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '').replace(/\n/g, '')
-	},
-	// 去除所有空格后的长度
-	checkEmpty: function() {
-		return this.replace(new RegExp('[' + allSpace + ']', 'g'), '').length === 0
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
@@ -135,21 +127,31 @@ Object.extend(String.prototype, {
 		var re = this.match(reg)
 		return (re !== null) ? parseInt(re.length) : 0;
 	},
-	// 用正则检查符号是否成对出现
-	checkDouble: function (r) {
-		return (this.findCount(r) % 2) === 0
-	},
-	// 正则字母大写
+	// 正则字母全大写
 	matchUpper: function(reg) {
 		return this.replace(reg, function(m) {
 			return m.toUpperCase()
 		})
+	},
+	// 正则首字母大写
+	matchFirstUpper: function(reg) {
+		return this.matchUpper(/\b[a-z]/g)
 	},
 	// 正则字母小写
 	matchLower: function(reg) {
 		return this.replace(reg, function(m) {
 			return m.toLowerCase()
 		})
+	},
+	// 整数补零
+	zeroize: function(b) {
+		var n = this.replace(/^0+/g, '')
+		if (b < 2) b = 2
+		if (!/^[0-9]+$/.test(n) || b < n.length)
+			return n
+
+		n = '0'.times(b * 2) + n
+		return n.substring(n.length - b)
 	},
 	// 特殊方式替换字符串
 	/*

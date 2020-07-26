@@ -7,6 +7,7 @@ var strCommon = {
 	// 英文间隔符
 	'enSep': '\\u0027`＇‘’『』',
 	// 中文
+	//(?:[\u3400-\u4DB5\u4E00-\u9FEA\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0])
 	'han': '\\u4e00-\\u9fa0',
 	// 所有拉丁字母，除去英文
 	// \u00A0-\u00FF\u0100-\u017F\u0180-\u024F
@@ -21,11 +22,7 @@ var strCommon = {
 	// 全角标点，无引号
 	'fwPun': '·・–—…、。〈〉《》【】〔〕〖〗〝〞（），．：；？！～￠-￥＆＠＃※',
 	// 全角标点，引号
-	'qfwPun': '‘’“”「」『』',
-	// 称谓单词前缀 或 缩拼
-	'honorWord': 'Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec',
-	// 特殊的连续单词 转大写
-	'continuouWord': 'aa+|bb+|cc+|dd+|ee+|ff+|gg+|hh+|ii+|jj+|kk+|ll+|mm+|nn+|oo+|pp+|qq+|rr+|ss+|tt+|uu+|vv+|ww+|xx+|yy+|zz+|abcd?e?f?g?|xyz'
+	'qfwPun': '‘’“”「」『』'
 }
 
 /****** 标题 - 正则设定 ******/
@@ -115,16 +112,14 @@ var configs = {
 	'Linenum': 35,
 	// 段落最大字数换行
 	'maxLinenum': 200,
-	// 约定英语，用|分隔
-	'pWord': 'SexInSex|iPhone|iPhoneSE|iPhoneX|iPhoneXR|iPhoneXRMax|iPhoneXR|iPad|iPadPro|iPadAir|iMac|iTv|iPod|ing|BiuBiu',
-	// 约定英语大写，用|分隔
-	'pWordUpper': 'SIS|OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|MMP|IBM|CPU|HDMI|GPU',
+	// 结尾的标识语，用于排版输出时居中，用|分隔
+	'endStrs': '待[续續]|未完|未完待[续續]|完|完[结結]|全[文书書][完终終]',
 	/****** 文章标题 - 正则设定 ******/
 	'novelTitle': /^[ 　]*(《([^》]+)》(.*[^。？！…]|$)|[书書]名[：\:](.+))$/m,
 	'novelAuthor': /^[ 　]*((?:[作编译編譯]者|排版|整理)[：\:].*)$/gm,
-	// 结尾的标识语，用于排版输出时居中，用|分隔
-	'endStrs': '待[续續]|未完|未完待[续續]|完|完[结結]|全[文书書][完终終]',
 	/****** 标题忽略 - 正则设定 ******/
+	// 全角数字标题
+	'regFullNumberTitle': '[第\\(（][０-９]{1,9}[{$c}\\)）]'.chapReg(),
 	'regSkipTitle': {
 		//'t0': /[。…—！？][」”]$/,
 		't0': /[。;；—]$/,
@@ -154,36 +149,38 @@ var configs = {
 			/^[0-9]{1,3}[、，：][0-9]{1,3}/m
 		]
 	},
-	// 全角数字标题
-	'regFullNumberTitle': '[第\\(（][０-９]{1,9}[{$c}\\)）]'.chapReg(),
 	/****** 英文处理 - 正则设定 ******/
-	// 英文间单引号样式
-	'enSep': '([a-z])[{$enSep}]|[{$enSep}]([ a-z])'.comReg('gi'),
-	// 英文间单引号样式替换
-	'enSepQ': '\\b([a-z]+)\\b[{$enSep}]( |\\b[a-z]+\\b)'.comReg('gi'),
+	'findEng': {
+		// 约定英语，用|分隔
+		'Word': 'SexInSex|iPhone|iPhoneSE|iPhoneX|iPhoneXR|iPhoneXRMax|iPhoneXR|iPad|iPadPro|iPadAir|iMac|iTv|iPod|ing|BiuBiu',
+		// 约定英语大写，用|分隔
+		'WordUpper': 'SIS|OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|MMP|IBM|CPU|HDMI|GPU',
+		// 特殊的连续单词 转大写
+		'Continuous': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|xyz)\b/gi,
+		// 所有除英文外的拉丁字母
+		'Latin': '[{$latin}][A-Z]'.comReg('g'),
+		// 引用中的英文
+		'Quote': '[（〈《【〔〖“‘「『]([\\w {$hwPun}{$qhwPun}{$fwPun}]{2,})[』」’”〗〕】》〉）]'.comReg('gmi'),
+		'QuoteTest': /[，。！？…]/,
+		// 英文间单引号样式替换
+		'Sep': '\\b([a-z]+)\\b[{$enSep}]( |\\b[a-z]+\\b)'.comReg('gi'),
+		// 括号中的英文
+		'Bracket': /[（〈《【〔〖][a-z ]+[〗〕】》〉）]/gi,
+		// 称谓单词前缀
+		'HonorWord': /\b(?:Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)\b。(?!$)/gmi,
+		// 网址
+		'Url': /(?:[0-9a-z]+[。\.])?[\w—\-]+[。\.](?:com|net|org|gov)/gi,
+		// 英文单独一行
+		'Line': '^[\\w {$hwPun}{$qhwPun}{$fwPun}{$qfwPun}]{2,}$'.comReg('gm'),
+		'LineSkip': '[\\d {$hwPun}{$qhwPun}{$fwPun}{$qfwPun}]'.comReg()
+	},
+	/****** 空格 - 正则设定 ******/
 	// 汉字间空格
 	'hanSpace': ' +(?=[{$han}{$fwPun}{$qfwPun}])'.comReg('g'),
 	// 英文间空格
 	'engSpace': '[{$han}{$fwPun}{$qfwPun}] +(?=[0-9a-zA-Z])'.comReg('g'),
-	// 英文单独一行
-	'findEngLine': '^[\\w {$hwPun}{$qhwPun}{$fwPun}{$qfwPun}]{2,}$'.comReg('gm'),
-	'findEngLineSkip': '[\\d {$hwPun}{$qhwPun}{$fwPun}{$qfwPun}]'.comReg(),
-	// 引用中的英文
-	'findEngQuote': '[（〈《【〔〖“‘「『]([\\w {$hwPun}{$qhwPun}{$fwPun}]{2,})[』」’”〗〕】》〉）]'.comReg('gmi'),
-	'findEngQuoteTest': /[，。！？…]/,
-	// 称谓单词前缀
-	'honorWord': '\\b({$honorWord})。(?!$)'.comReg('gmi'),
-	// 括号中的英文
-	'findEngBracket': /[（〈《【〔〖][a-z ]+[〗〕】》〉）]/gi,
-	// 网址
-	'findUrl': /(?:[0-9a-z]+[。\.])?[\w—\-]+[。\.](?:com|net|org|gov)/gi,
-	// 特殊的连续单词 转大写
-	'continuouWord': '\\b(?:{$continuouWord})\\b'.comReg('gi'),
-	// 所有除英文外的拉丁字母
-	'findLatin': '[{$latin}][A-Z]'.comReg('g'),
-	/****** 其他设定 ******/
-	// 半角标点符号
-	halfSymbol: [
+	/****** 半角标点符号 ******/
+	'halfSymbol': [
 		[/[‘’『』]/g, '\''],
 		[/[“”「」]/g, ' \u0022 '],
 		[/[。]/g, '.'],
@@ -202,6 +199,7 @@ var configs = {
 		[/\" *([^"]*[…,.!?~]) *\" */g, ' "$1" '],
 		[/\" *([^"]*) *\"/g, '"$1"'],
 		[/ +\" +/g, '" '],
+		[/(\d) ?\" ?(\d)/g, '$1"$2'],
 		[/ +(?=[…\!\?\.])/g, ''],
 		[/([\.\?\!]) *(?=[》】'"])/g, '$1'],
 		[/([A-Z]) *& *(?=[A-Z])/g, '$1&'],
@@ -210,11 +208,12 @@ var configs = {
 		[/(\w)……/g, '$1...'],
 		[/  +/g, ' ']
 	],
+	/****** 引用符号 ******/
 	// 法式引号 fr：'‘’“”'
 	// 中式引号 cn：'『』「」'
-	cnQuotes: ['‘’“”', '『』「」'],
+	'cnQuotes': ['‘’“”', '『』「」'],
 	// 引号修正
-	rQuotes: [
+	'rQuotes': [
 		['\\b([a-z]+)\\b[{$enSep}]( |\\b[a-z]+\\b)'.comReg('gi'), '$1※@※$2'],
 		// 修正单引号
 		[/[`＇‘’『』]/g, '\''],
@@ -237,10 +236,10 @@ var configs = {
 		//[/“$/g, '”'],
 		[/：”/g, '：“']
 	],
-	// 修正分隔符
+	/****** 分隔符 ******/
 	// !@!@!@!@! 注释符
 	// @@@@ 分隔符
-	rSeparator: [
+	'rSeparator': [
 		// 处理分隔符
 		[/ +(?=[＊#§☆★●◎◇◆□■△▲※〓＝﹡＋@\*×\—\-\+－─=~～])/g, ''],
 		// 注释标记※
@@ -279,23 +278,23 @@ var configs = {
 	],
 	/****** 其他替换设定 ******/
 	// 全半角字母
-	sNumberLetter: [
+	'sNumberLetter': [
 		'０１２３４５６７８９ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ',
 		'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 	],
 	// 变体字母
-	sVariants: [
+	'sVariants': [
 		'ÀÁÂÃÄÅĀАǍⱭàáâãäåāǎɑаßЬЪьъÇçÐÈÉÊËĒĚèéêëēěΗんÌÍÎÏĪǏΙìíîïīǐιМмΝÑŃŇИñńňиηÒÓÔÕÖŌǑØОòóôõöōðǒøоÞΡþρΤτÙÚÛÜŪǓǕǗǙǛυùúûüūǔǖǘǚǜⅤⅴνЩщωΥÝŸγýÿ',
 		'AAAAAAAAAaaaaaaaaaaaBbbbbCcDEEEEEEeeeeeeHhIIIIIIIiiiiiiiMmmNNNNNnnnnnOOOOOOOOOooooooooooPPppTtUUUUUUUUUUuuuuuuuuuuuVvvWwwYYYyyy'
 	],
 	// 变体序号
-	sSerialNumber: [
+	'sSerialNumber': [
 		'⓪⓿⒈①➀⓵➊❶⑴⒉②⓶➁➋❷⑵⒊③⓷➂➌❸⑶⒋④⓸➃➍❹⑷⒌⑤⓹➄➎❺⑸⒍⓺⑥➅➏❻⑹⒎⓻⑦➆➐❼⑺⒏⓼⑧➇➑❽⑻⒐⑨➈⓽➒❾⑼⒑⑩➉⓾➓❿⑽⒒⑪⑾⒓⑫⑿⒔⑬⒀⒕⑭⒁⒖⑮⒂⒗⑯⒃⒘⑰⒄⒙⑱⒅⒚⑲⒆⒛⑳⒇㊀㊁㊂㊃㊄㊅㊆㊇㊈㊉㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩',
 		'00|00|01|01|01|01|01|01|01|02|02|02|02|02|02|02|03|03|03|03|03|03|03|04|04|04|04|04|04|04|05|05|05|05|05|05|05|06|06|06|06|06|06|06|07|07|07|07|07|07|07|08|08|08|08|08|08|08|09|09|09|09|09|09|09|10|10|10|10|10|10|10|11|11|11|12|12|12|13|13|13|14|14|14|15|15|15|16|16|16|17|17|17|18|18|18|19|19|19|20|20|20|一|二|三|四|五|六|七|八|九|十|一|二|三|四|五|六|七|八|九|十'
 	],
 	// HTML 字符实体
-	regHtmlEntity: /[&＆]? ?([a-z]{2,7})[;；]/gi,
-	sHtmlEntity : {
+	'regHtmlEntity': /[&＆]? ?([a-z]{2,7})[;；]/gi,
+	'sHtmlEntity' : {
 		// 带有实体名称的 ASCII 实体
 		'quot': '"', 'apos': "'", 'amp': '&', 'lt': '<', 'gt': '>',
 		// ISO 8859-1 符号实体
@@ -324,6 +323,7 @@ var configs = {
 		'Ugrave': 'Ù', 'Uacute': 'Ú', 'Ucirc': 'Û', 'Uuml': 'Ü',
 		'yacute': 'ý', 'yuml': 'ÿ', 'Yacute': 'Ý'
 	},
+	/****** 标点符号 ******/
 	// 异体标点
 	// 角分′
 	// 角秒″
@@ -331,13 +331,13 @@ var configs = {
 	// 圆点．
 	// 省略号⋯ \u2026
 	// 间隔号•、●、
-	punSymbol: [
+	'punSymbol': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
 		'｀‐━―─－ーˉ﹣﹦~﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．﹒∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢＋／︱¦＂′＇',
 		'`———————－＝～！！@@##$$%%&&＊（（）），，。。。：：：：；；、？？………····〉｛｛｝｝““””””＜＞∧∨++/\u007c\u007c\u0022\u0027\u0027'
 	],
 	// 标点符号修正
-	amendSymbols: [
+	'amendSymbols': [
 		[/\-/g, '—'],
 		// 中文破折号 ──
 		//[/([\u4e00-\u9fa0])——+/g, '$1──'],
@@ -415,8 +415,8 @@ var configs = {
 		[/！！！+/g, '！！！'],
 		[/？？？+/g, '？？？']
 	],
-	// 修正所有数字和英文字母间的标点和空格
-	nwSymbol: [
+	/****** 修正数字和英文字母 ******/
+	'nwSymbol': [
 		// 修正数字间的全角
 		[/(\d)[。·] ?(?=\d)/g, '$1.'],
 		[/(\d)\. (?=\d)/g, '$1.'],
@@ -425,6 +425,8 @@ var configs = {
 		[/(\d)〈(?=\d)/g, '$1<'],
 		[/(\d)＝(?=\d)/g, '$1='],
 		[/(\d)＊(?=\d)/g, '$1*'],
+		// 修正多余空格
+		[/ *(?=[℃％‰℉%])/g, ''],
 		// 20,000.00
 		[/(?:\d{1,3}[,，]){1,3}\d{1,3}(?:[。\.]\d{1,3})?(?:[韩美日]?元|英镑|港币|新?台币|法郎|比索|人|[千万亿])/g, function(m){
 			return m.replace(/，/g, ',')
@@ -444,26 +446,23 @@ var configs = {
 		[/\b([a-z])\b[．。]/gi, '$1.'],
 		[/\b([a-z])\b\.$/gmi, '$1。']
 	],
-	rEnd: [
-		// 纬度/时间 11’44”
-		[/(\d{1,2}(?:\.\d{1,2})?)[‘’『』\'] *(\d{1,2}(?:\.\d{1,2})?)(?:[“”「」\"]|[‘’『』\']{2})/g, '$1\'$2"'],
-		[/(\d{1,2}(?:\.\d{1,2})?)[‘’『』\']{2}/g, '$1"'],
-		[/° *(\d{1,2}(?:\.\d{1,2})?)[‘’『』\']/g, '°$1\''],
+	/****** 结尾修正 ******/
+	// 经纬度
+	'fixLatitude': '\\b[\\d\\.。]{1,5} ?[\\"\\\'{$qfwPun}] ?[\\d\\.。]{1,5} ?[\\"\\\'{$qfwPun}]\\b'.comReg('g'),
+	// 小写的后缀
+	'fixLowerExt': /。(avi|jpg|bmp|png|com|net|org|gov|edu|uk|ru|cn|jp)\b/gi,
+	'rEnd': [
 		// 2018年9月6日4:11PM
-		[/\b((?:3[0-1]|[1-2]\d|0?[1-9])日) *\b((?:2[0-4]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)) *(AM|PM)/gi, '$1 $2$3'],
+		[/\b((?:31|30|[1-2]\d|0?[1-9])日) *\b((?:2[0-3]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)) *(AM|PM)/gi, '$1 $2$3'],
 		// 时间 00:00:05，150
 		[/(\d{1,2}[:：]\d{1,2}[:：]\d{1,2})，(?=\d{1,4})/g, '$1,'],
-		[/ ((?:2[0-4]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)(?:AM|PM))(?=[^。，\n])/gi, ' $1\n'],
+		[/ ((?:2[0-3]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)(?:AM|PM))(?=[^。，\n])/gi, ' $1\n'],
 		// 修正箭头
 		[/ *—{1,2}> */g, ' --> '],
 		[/ *—{1,2}> */g, ' => '],
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.](?=\d{1,2})/gi, 'NO.'],
 		// 公司简称
-		[/ ?Co。，? ?Ltd。?/gi, ' Co.,Ltd.'],
-		// 处理特殊情况
-		[/。(Avi|Jpg|Bmp|Png|Com|Net|Org|Gov|Edu|Uk|Ru|Cn|Jp)\b/g, function(m, m1) {
-			return '.' + m1.toLowerCase()
-		}]
+		[/ ?Co。，? ?Ltd。?/gi, ' Co.,Ltd.']
 	]
 }
