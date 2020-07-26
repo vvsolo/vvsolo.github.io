@@ -23,7 +23,8 @@ function isType(type) {
 
 var isArray = isType("Array"),
 	isString = isType("String"),
-	isObject = isType("Object")
+	isObject = isType("Object"),
+	isFunction = isType("Function")
 
 // 对象批量赋值
 Object.extend = function(a, b) {
@@ -226,7 +227,7 @@ Object.extend(Array.prototype, {
 	each: function(callback) {
 		var l = this.length, i = 0
 		for (; i < l; i++) {
-			if (callback.call(this[i], this[i], i) === false)
+			if (isFunction(callback) && callback.call(this[i], this[i], i) === false)
 				break;
 		}
 	},
