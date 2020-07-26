@@ -1,7 +1,7 @@
 {
   "name": "小说排版助手（PWA版）",
   "short_name": "小说排版助手",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fff",
   "theme_color": "#3eaf7c"
