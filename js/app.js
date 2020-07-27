@@ -60,11 +60,12 @@ $(function() {
 	sEditor.setValue(storage.get('tmpContent') || '')
 	isLanguage.html(storage.get('language') || '简')
 	// 读取保存的设置
-	var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite']
-	for (var i = 0; i < inputVals.length; i++) {
+	var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite'],
+		l = inputVals.length, i
+	for (i = 0; i < l; i++) {
 		$('#' + inputVals[i]).val(storage.get(inputVals[i]) || '')
 	}
-	for (var i = 0; i < 5; i++) {
+	for (i = 0; i < 5; i++) {
 		var tmp = 'Check_' + i;
 		$('#' + tmp).removeAttr('checked')
 		if (!storage.isEmpty(tmp))
@@ -72,14 +73,14 @@ $(function() {
 	}
 	// 保存设置
 	$('#SaveConfig').click(function() {
-		for (var i = 0; i < inputVals.length; i++) {
+		for (i = 0; i < l; i++) {
 			var tmp = inputVals[i]
 			if ($('#' + tmp).val().length > 0)
 				storage.set(tmp, $('#' + tmp).val())
 			else
 				storage.remove(tmp)
 		}
-		for (var i = 0; i < 5; i++) {
+		for (i = 0; i < 5; i++) {
 			var tmp = 'Check_' + i;
 			if ($('#' + tmp).is(':checked'))
 				storage.set(tmp, 'checked')

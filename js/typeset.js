@@ -1,8 +1,8 @@
 
 var tmpRegs = [
-	'[{$hwPun}{$fwPun}\w ]'.fmtReg(strCommon),
-	'([{$han}{$fwPun}])([0-9a-z])'.fmtReg(strCommon, 'i'),
-	'([0-9a-z])([{$han}{$fwPun}])'.fmtReg(strCommon, 'i')
+	'[{$hwPun}{$fwPun}\w ]'.comReg(),
+	'([{$han}{$fwPun}])([0-9a-z])'.comReg('i'),
+	'([0-9a-z])([{$han}{$fwPun}])'.comReg('i')
 ]
 		// 保护码
 var saftLeftStr = '\u2620',
