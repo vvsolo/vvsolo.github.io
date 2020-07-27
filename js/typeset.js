@@ -115,6 +115,10 @@ function onTypeSetSplit(str) {
 		.replace(eStrs, function(m) {
 			return m.setAlign('', '', 'center')
 		})
+		// 书名居中
+		.replace(configs.novelTitle, function(m) {
+			return m.setAlign('', '', 'center')
+		})
 		// 标题居中
 		.replaceTitle('', '\n', 'center')
 
@@ -130,6 +134,10 @@ function onTypeSetSplit(str) {
 	re = '\n' + re
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
+		// 作者类居左
+		.replace(configs.novelAuthor, function(m) {
+			return m.trim() + '\n'
+		})
 		.replaceEnd()
 		.replace(/\n\n{3,}/gm, '\n\n\n')
 
