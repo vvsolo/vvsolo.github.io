@@ -1,6 +1,5 @@
 // 空格 \uF604
-// \x09\x0B\x0C
-var Space = "\\x09\\x0B\\x0C\\x20\\x20\\u1680\\u180E\\u2000-\\u200B\\u202F\\u205F\\u3000\\u2028\\u2029\\uE4C6\\uF604\\uF8F5\\uE004\\uF04A\\uFEFF\\u202e\\u202c"
+var Space = "\\f\\t\\v\\x20\\u1680\\u180E\\u2000-\\u200B\\u202F\\u205F\\u3000\\u2028\\u2029\\uE4C6\\uF604\\uF8F5\\uE004\\uF04A\\uFEFF\\u202e\\u202c"
 var allSpace = Space + '\\x0A\\x0D\\xA0'
 //var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 // *.?+$^[](){}|\/
@@ -61,7 +60,7 @@ Object.extend(String.prototype, {
 	},
 	// 删除字符首尾空格、换行
 	trims: function() {
-		return this.trimSide().replace(/\r\n|\n\r|\r|\n/g, '')
+		return this.trimSide().replace(/\n/g, '')
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {

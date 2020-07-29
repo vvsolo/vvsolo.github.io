@@ -291,7 +291,7 @@ var configs = {
 		'00|00|01|01|01|01|01|01|01|02|02|02|02|02|02|02|03|03|03|03|03|03|03|04|04|04|04|04|04|04|05|05|05|05|05|05|05|06|06|06|06|06|06|06|07|07|07|07|07|07|07|08|08|08|08|08|08|08|09|09|09|09|09|09|09|10|10|10|10|10|10|10|11|11|11|12|12|12|13|13|13|14|14|14|15|15|15|16|16|16|17|17|17|18|18|18|19|19|19|20|20|20|一|二|三|四|五|六|七|八|九|十|一|二|三|四|五|六|七|八|九|十'
 	],
 	// HTML 字符实体
-	'regHtmlEntity': /[&＆]? ?([a-z]{2,7})[;；]/gi,
+	'regHtmlEntity': /[&＆]? ?([a-z1-4]{2,7})[;；]/gi,
 	'sHtmlEntity' : {
 		// 带有实体名称的 ASCII 实体
 		'quot': '"', 'apos': "'", 'amp': '&', 'lt': '<', 'gt': '>',
@@ -464,4 +464,13 @@ var configs = {
 		// 公司简称
 		[/ ?Co。，? ?Ltd。?/gi, ' Co.,Ltd.']
 	]
+}
+
+if (typeof user !== "undefined") {
+	configs.Separator = user.Separator
+	configs.Divide = user.Divide
+	configs.Linenum = user.Linenum
+	configs.maxLinenum = user.maxLinenum
+	configs.findEng.Word += '|' + user.pWord
+	configs.findEng.WordUpper += '|' + user.pWordUpper
 }
