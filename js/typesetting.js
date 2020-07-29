@@ -8,10 +8,10 @@ Object.extend(String.prototype, {
 		return this
 			// 去除首尾所有空格
 			.trim()
-			// 行尾加换行
-			.replace(/$/, '\n')
 			// 去除所有多余空白行
 			.replace(/\n\n+/g, '\n')
+			// 行尾加换行
+			.replace(/$/, '\n')
 	},
 	// 排版结束
 	replaceEnd: function() {
@@ -180,6 +180,7 @@ Object.extend(String.prototype, {
 				} catch(err) {}
 				return m
 			})
+			.trim()
 	},
 	// html转义符转换
 	convertHtmlEntity: function() {

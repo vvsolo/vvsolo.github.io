@@ -252,6 +252,14 @@ function editorCleanUpEx(str) {
 		.replaceInit()
 		// 去除汉字间的空格
 		.replaceSpace()
+		// 保护书名不换行
+		.replace(configs.novelTitle, function(m) {
+			return safeStr[0] + m + safeStr[1]
+		})
+		// 保护作者不换行
+		.replace(configs.novelAuthor, function(m) {
+			return safeStr[0] + m + safeStr[1]
+		})
 		// 修正章节标题，加标题保护码
 		.replaceTitle(safeStr[0], safeStr[1])
 		// 修正引号
@@ -262,6 +270,7 @@ function editorCleanUpEx(str) {
 
 	return editorCleanUp(str)
 }
+
 // 组合文章标题
 function setTitle(){
 	var tmpReg = /^[（【“「<]|[）】”」>]$/g,

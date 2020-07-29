@@ -1,11 +1,10 @@
 // 空格 \uF604
-var Space = "\x09\x0B\x0C\x20\u1680\u180E\u2000\u2001\u2002\u2003" +
-	"\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u200B\u202F\u205F\u3000\u2028" +
-	"\u2029\uE4C6\uF604\uF8F5\uE004\uF04A\uFEFF\u202e\u202c"
-var allSpace = Space + '\x0A\x0D\xA0'
+// \x09\x0B\x0C
+var Space = "\\x09\\x0B\\x0C\\x20\\x20\\u1680\\u180E\\u2000-\\u200B\\u202F\\u205F\\u3000\\u2028\\u2029\\uE4C6\\uF604\\uF8F5\\uE004\\uF04A\\uFEFF\\u202e\\u202c"
+var allSpace = Space + '\\x0A\\x0D\\xA0'
 //var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 // *.?+$^[](){}|\/
-var regEscape = /([.?*+^$[\]\\(){}|-])/g
+var regEscapes = /([.?*+^$[\]\\(){}|-])/g
 
 // 判断是否存在，可以为空
 var checkNull = function(obj) {
@@ -37,12 +36,12 @@ Object.extend = function(a, b) {
 Object.extend(String.prototype, {
 	// 处理为正则字符串
 	regEscape: function() {
-		return this.replace(regEscape, "\\$1").replace(/\\+/g, "\\")
+		return this.replace(regEscapes, "\\$1").replace(/\u005c\u005c+/g, "\\")
 	},
 	// 安全转换正则
 	getReg: function(m) {
-		if (typeof m === "undefined") m = 'g'
-		return new RegExp(this.replace(/\\+/g, "\\"), m)
+		checkNull(m) && (m = 'g')
+		return new RegExp(this.replace(/\u005c\u005c+/g, "\\"), m)
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
@@ -53,12 +52,16 @@ Object.extend(String.prototype, {
 		return this.replace(new RegExp('[' + Space + ']+', 'g'), ' ').toUNIX()
 	},
 	// 删除字符首尾空格
+	trimSide: function() {
+		return this.replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '')
+	},
+	// 删除字符首尾空格
 	trim: function() {
-		return this.space().replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '')
+		return this.space().trimSide()
 	},
 	// 删除字符首尾空格、换行
 	trims: function() {
-		return this.replace(/^[ 　]+/gm, '').replace(/[ 　]+$/gm, '').replace(/\n/g, '')
+		return this.trimSide().replace(/\r\n|\n\r|\r|\n/g, '')
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
