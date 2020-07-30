@@ -261,18 +261,24 @@ Object.extend(String.prototype, {
 
 		// 处理标题内容
 		var handleTitle = function(str, sDiv) {
-			if (str.length === 0) return ''
-			sDiv = !sDiv ? true : false
 			str = str
 				.replace(/  +/g, ' ')
-				.replace(('^' + regVal.s).chapReg(), '')
+				.replace(('^[{$sep}]+').chapReg(), '')
+
+			if (str.length === 0) return ''
+			// 去除只有间隔符+数字的情况
+			if (/^（?(\d{1,3})）?$/.test(str)) {
+				return str.replace(/^（?(\d{1,3})）?$/, function(v) {
+					return '（' + v.zeroize(2) + '）'
+				})
+			}
+
+			str = str
 				// 修正结尾是上下的小标号
 				.replace(/([^\d\.])[ ·]([上中下]|[一二三四五六七八九十百]{1,5})$/, '$1（$2）')
 				// 中文间空格转换为逗号
 				.replace(/ (?=[\u4E00-\u9FA5]{2,})/g, '，')
 				.replace(/ (?=[\u4E00-\u9FA5])/g, '')
-				// 去除只有间隔符的情况
-				.replace(('^' + regVal.s + '$').chapReg(), '')
 				// 修正注释
 				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
 				// 修正结尾是数字的小标号
@@ -282,7 +288,7 @@ Object.extend(String.prototype, {
 				.replace(/ ?\b([IVXC]{1,6})\b$/i, function(m) {
 					return '（' + m.toUpperCase() + '）'
 				})
-			return (str.length > 0 && sDiv) ? configs.Divide + str : str
+			return checkNull(sDiv) ? configs.Divide + str : str
 		}
 		
 		// 过滤
