@@ -1,15 +1,13 @@
 // 空格 \uF604
-var Space = "\\f\\t\\v\\x20\\u1680\\u180E\\u2000-\\u200B\\u202F\\u205F\\u3000\\u2028\\u2029\\uE4C6\\uF604\\uF8F5\\uE004\\uF04A\\uFEFF\\u202e\\u202c"
-var allSpace = Space + '\\x0A\\x0D\\xA0'
+var Space = '\\f\\t\\v\x20\u1680\u180E\u2000-\u200d\u202F\u205F\u3000\u2028\u2029\uE4C6\uF604\uF8F5\uE004\uF04A\uFEFF\u202e\u202c';
+var allSpace = Space + '\x0A\x0D\xA0';
 //var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
 // *.?+$^[](){}|\/
 var regEscapes = /([.?*+^$[\]\\(){}|-])/g
 
 // 判断是否存在，可以为空
 var checkNull = function(obj) {
-	if (typeof obj === "undefined") return true
-	if (obj === null) return true
-	return false
+	return (obj === undefined) || (obj === null) || false;
 }
 
 // 判断类型
@@ -21,8 +19,13 @@ function isType(type) {
 
 var isArray = isType("Array"),
 	isString = isType("String"),
-	isObject = isType("Object"),
+	//isObject = isType("Object"),
 	isFunction = isType("Function")
+	
+var isObject = function(value) {
+	var type = typeof value;
+	return value !== null && (type === 'object' || type === 'function');
+}
 
 // 对象批量赋值
 Object.extend = function(a, b) {
@@ -35,7 +38,9 @@ Object.extend = function(a, b) {
 Object.extend(String.prototype, {
 	// 处理为正则字符串
 	regEscape: function() {
-		return this.replace(regEscapes, "\\$1").replace(/\u005c\u005c+/g, "\\")
+		return this
+			.replace(regEscapes, "\\$1")
+			.replace(/\u005c\u005c+/g, "\\")
 	},
 	// 安全转换正则
 	getReg: function(m) {
@@ -44,7 +49,7 @@ Object.extend(String.prototype, {
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return this.replace(/\r\n|\n\r|\r/g, '\n')
+		return this.replace(/[\r\n]{1,2}/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
@@ -83,20 +88,21 @@ Object.extend(String.prototype, {
 	},
 	// 字符串定位替换
 	replaceAt: function(a, rev) {
-		if (rev) a = [a[1], a[0]]
+		rev && (a = [a[1], a[0]])
 		return this.replace(new RegExp('[' + a[0] + ']', 'g'), function(m) {
 			return a[1].charAt(a[0].indexOf(m))
 		})
 	},
 	// 正则去所有空格
-	cleanSpace: function(reg) {
+	cleanSpace: function(reg, greg) {
+		checkNull(greg) && (greg = /\s/g)
 		return reg ? this.replace(reg, function(m) {
-			return m.replace(/\s/g, '')
-		}) : this.replace(/\s/g, '')
+			return m.replace(greg, '')
+		}) : this.replace(greg, '')
 	},
 	// 取双字节与单字节混排时的真实字数
 	len: function() {
-		return this.replace(/[^\x00-\xff]/g, '**').length
+		return this.length + (this.match(/[^\x00-\xff]/g) || "").length;
 	},
 	// 按真实字数进行分隔
 	realSubstr: function(start, len) {
@@ -127,8 +133,12 @@ Object.extend(String.prototype, {
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
 		isString(reg) && (reg = reg.getReg())
-		var re = this.match(reg)
-		return (re !== null) ? parseInt(re.length) : 0;
+		var tmp = this.match(reg)
+		return tmp !== null ? tmp.length : 0
+	},
+	// search 判断简单方式
+	sr: function(reg) {
+		return this.match(reg) !== null
 	},
 	// 正则字母全大写
 	matchUpper: function(reg) {
@@ -148,13 +158,14 @@ Object.extend(String.prototype, {
 	},
 	// 整数补零
 	zeroize: function(b) {
-		var n = this.replace(/^0+/g, '')
-		if (b < 2) b = 2
-		if (!/^[0-9]+$/.test(n) || b < n.length)
-			return n
+		if (b < 2) b = 2;
+		if (this.sr(/^0+$/)) return '0'.times(b);
+		var n = this.replace(/^0+/g, '');
+		if (!n.sr(/^[0-9]+$/) || b < n.length)
+			return n;
 
-		n = '0'.times(b * 2) + n
-		return n.substring(n.length - b)
+		n = '0'.times(b + n.length) + n;
+		return n.substring(n.length - b);
 	},
 	// 特殊方式替换字符串
 	/*
@@ -167,11 +178,20 @@ Object.extend(String.prototype, {
 			return this.replace(/\{\$zz\}/g, args)
 		if (!isObject(args) && !isArray(args))
 			return this
-		var val
+		var val,
+			re = this
 		// 数组连接符号
 		r = r || ''
 		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
 		return this
+			// 子项
+			.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
+				if (!checkNull(args[m1])) {
+					val = args[m1]
+					return isArray(val) ? val.join(r) : val
+				}
+				return m
+			})
 			// 子项是数组{$name.t1.0}
 			.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
 				if (!checkNull(args[m1])) {
@@ -184,14 +204,6 @@ Object.extend(String.prototype, {
 						val = val[m2]
 						return isArray(val) ? val.join(r) : val
 					}
-				}
-				return m
-			})
-			// 子项
-			.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-				if (!checkNull(args[m1])) {
-					val = args[m1]
-					return isArray(val) ? val.join(r) : val
 				}
 				return m
 			})

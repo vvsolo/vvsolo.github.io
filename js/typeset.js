@@ -4,10 +4,8 @@ var tmpRegs = [
 	'([{$han}{$fwPun}])([0-9a-z])'.comReg('i'),
 	'([0-9a-z])([{$han}{$fwPun}])'.comReg('i')
 ]
-		// 保护码
-var saftLeftStr = '\u2620',
-	safeReg = '^{$zz}+'.fmtReg(saftLeftStr, 'm'),
-	cutNum = configs.Linenum * 2
+
+var cutNum = configs.Linenum * 2
 
 // 截取分段
 function doSplit(str, sm, bm) {
@@ -16,10 +14,6 @@ function doSplit(str, sm, bm) {
 	}
 	if (/^　{2,}/gm.test(str) || /^＊{5,}/gm.test(str)) {
 		return str + bm
-	}
-	// 如果有保护码
-	if (safeReg.test(str.trim())) {
-		return str.replace(saftLeftStr.getReg(), '\n') + '\n'
 	}
 
 	var linestr = '　　' + str.trim()
