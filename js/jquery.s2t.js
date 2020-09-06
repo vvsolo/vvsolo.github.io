@@ -12,8 +12,8 @@
 (function($) {
 	// 转换
 	function convert(str, ss, tt){
-		var re = '', i = 0, l = str.length, tmp
-		for (; i < l; i++) {
+		var re = '', i = -1, l = str.length, tmp
+		while (++i < l) {
 			tmp = str.charAt(i);
 			if (str.charCodeAt(i) > 10000 && ss.indexOf(tmp) != -1)
 				re += tt.charAt(ss.indexOf(tmp));
@@ -63,14 +63,14 @@
 	 * @param {Boolean} toT - 是否转换成繁体
 	 */
 	function tranAttr(element, attr, toT) {
-		var i, attrValue;
 
 		if (attr instanceof Array) {
-			for (i = 0; i < attr.length; i++) {
+			var i = -1, l = attr.length;
+			while (++i < l) {
 				tranAttr(element, attr[i], toT);
 			}
 		} else {
-			attrValue = element.getAttribute(attr);
+			var attrValue = element.getAttribute(attr);
 
 			if (attrValue !== "" && attrValue !== null) {
 				element.setAttribute(attr, tranStr(attrValue, toT));
@@ -88,11 +88,9 @@
 			return;
 		}
 
-		var i, childNodes, l;
-		childNodes = element.childNodes;
-		l = childNodes.length
-
-		for (i = 0; i < l; i++) {
+		var childNodes = element.childNodes;
+		var i = -1, l = childNodes.length;
+		while (++i < l) {
 			var childNode = childNodes.item(i) || childNodes[i];
 
 			// 若为HTML Element节点

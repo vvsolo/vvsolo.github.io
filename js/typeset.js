@@ -1,88 +1,90 @@
-
-var tmpRegs = [
-	'[{$hwPun}{$fwPun}\w ]'.comReg(),
-	'([{$han}{$fwPun}])([0-9a-z])'.comReg('i'),
-	'([0-9a-z])([{$han}{$fwPun}])'.comReg('i')
-]
-
-var cutNum = configs.Linenum * 2
+// 分隔字数、实际分隔字数
+var vNum = configs.Linenum,
+	cutNum = configs.Linenum * 2
 
 // 截取分段
 function doSplit(str, sm, bm) {
-	if (str.trim().len() === 0) {
+	if (str.len() < 1) {
 		return str + bm
 	}
-	if (/^　{2,}/gm.test(str) || /^＊{5,}/gm.test(str)) {
+	if (str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
 		return str + bm
 	}
 
-	var linestr = '　　' + str.trim()
+	var linestr = '　　' + str
 	// 小于每行最大字数时直接返回
-	if (cutNum > linestr.len())
+	if (cutNum >= linestr.len())
 		return linestr + bm
-	
-	var oNum = ~~(linestr.len() / cutNum) + 1,
-		text = '', tmp, testTmp, rStr
+
+	var oNum = ~~(linestr.length / vNum) + 1,
+		text = [], testTmp, rStr
+
+	// 查询单字节总数
+	var findEngStr = linestr.findCount(/[\x00-\xff]/g)
+	// 如果全是单字节
+	var findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1
 	while (oNum--) {
-		tmp = linestr
+		var sublen = 0, sinBytes, tmp,
+			FirstLine = true
+		// 如果全是单字节
+		if (findAllEngStr) {
+			// 如果是首次截取
+			if (FirstLine) {
+				sublen = vNum - 2
+				FirstLine = false
+			} else {
+				sublen = vNum
+			}
+		}
+		// 如果有英文
+		else if (findEngStr > 0) {
 			// 预分段
-			.realSubstr(0, cutNum)
-			// 判断并处理行尾限制字符
-			.replace(/[「“《『‘（]{1,2}$/gm, function(m) {
+			tmp = linestr.substr(0, vNum)
+			// 英文单字节数
+			if (sinBytes = tmp.findCount(/[\x00-\xff]/g)) {
+				// 预取补齐字符串，如果全是双字节
+				if (linestr.substr(vNum, sinBytes).len() === sinBytes*2) {
+					sublen = ~~(sinBytes/2)
+				} else {
+					// 预取英文半数
+					sublen = Math.round(sinBytes/2)
+					var i = sublen
+					while (i--) {
+						sublen++
+						if (linestr.substr(0, vNum + sublen).len() > cutNum) {
+							sublen--
+							break;
+						}
+					}
+				}
+			}
+		}
+		// 按修正后的字数截取字符串
+		tmp = linestr
+			.substr(0, vNum + sublen)
+			// 防止行尾限制标点，放置到下行
+			// 防止英文单词断行，放置到下行
+			// ［〔【｛·‘『“「〈《
+			//.replace(/[［〔【｛『「〈《]{1,2}$|\b\w+$/, function(m) {
+			.replace(/[［〔【｛『「〈《]{1,2}$/, function(m) {
 				linestr += m
 				return ''
 			})
+
+		// 剩下部分
 		linestr = linestr
-			// 剩下部分
-			.realSubstr(tmp.len())
+			.replace(tmp, '')
 			// 判断并处理行首限制字符
 			// 处理两个字符，因为经过整理过的标点只留两个
-			.replace(/^[，。：、；：？！．）》」』]{1,2}/, function(m) {
+			// ，、。：；？！）］〕】｝·’』”」〉》
+			.replace(/^[，、。：；？！）］〕】｝』」〉》…～—]{1,2}/, function(m) {
 				tmp += m
 				return ''
 			})
-			// 处理单个连续标点
-			.replace(/^[…～－]$/, function(m) {
-				tmp += m
-				return ''
-			})
-			// 处理首字符是字母的，为防止单词分隔，做提升处理
-			.replace(/^[a-zA-Z]{1,2}\b/, function(m) {
-				// 如果上一行尾部是英文的
-				if (/[a-zA-Z]$/.test(tmp)) {
-					tmp += m
-					return ''
-				} else {
-					return m
-				}
-			})
-		// 如果有英文并奇数位，英文前加空格补齐
-		// 测试一下全英文状态防止出错
-		testTmp = tmp
-			.replace(tmpRegs[0], '')
-			.length > 0
-		if ((tmp.len() < cutNum) && testTmp) {
-			rStr = (tmpRegs[1].test(tmp)) ? tmpRegs[1] : tmpRegs[2]
-			tmp = tmp
-				.replace(rStr, '$1 $2')
-				.replace(/[“‘『「] .*[」』’”]/i, function(m) {
-					return m
-						.replace(/([“‘『「]) /g, '$1')
-						.replace(/ (?=[」』’”])/g, '')
-						 + ' '
-				})
-			if (tmp.len() < cutNum && testTmp) {
-				tmp = tmp
-					// 如果提升英文，前端空格不过滤，防止还原时删除空格
-					//.replace(/ ?([0-9a-z]) ?/i, '$1')
-					.replace(/([0-9a-z]) ?/i, '$1')
-					.replace(/ (?=[“‘『「])/g, '')
-					.replace(/([」』’”]) /g, '$1')
-			}
-		}
-		text += tmp + '\n'
+			
+		text.push(tmp)
 	}
-	return text + sm
+	return text.join('\n') + bm
 }
 
 // 分段排版
@@ -223,7 +225,7 @@ function editorCleanUpEx(str) {
 	// 其他自定义修正
 	var Others = [
 		//****** 修正错误语句换行 ******/
-		[/([^。！？…”」\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
+		[/([^。！？…”」\.\!\?\~\u0022\u0027\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
 		// 修正错误的换行
 		[/^((?![第][\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
 		[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],

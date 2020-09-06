@@ -1,6 +1,6 @@
 ﻿/**
- * typesetting for EverEdit
- * 注意：修改后请切记压缩方可生效！
+ * typo is novel text typeseting tool
+ * author: vsolo 
  */
 Object.extend(String.prototype, {
 	// 排版初始化，去空格空行
@@ -9,7 +9,7 @@ Object.extend(String.prototype, {
 			// 去除首尾所有空格
 			.trim()
 			// 行尾加换行
-			.replace(/$/g, '\n')
+			.replace(/$/, '\n')
 			// 去除所有多余空白行
 			.replace(/\n\n+/g, '\n')
 	},
@@ -22,41 +22,13 @@ Object.extend(String.prototype, {
 			.replaces(configs.rEnd)
 			// 结尾特殊修正
 			.__endFixed()
-			// 去除所有多余行
-			.replace(/\n\n\n+/gm, '\n\n')
-			.replace(/^\n+/, '')
-			.replace(/\n\n+$/, '\n')
+			// 结尾修正
+			.replaceFinish()
 	},
-	// 一些特殊的修正
-	__endFixed: function() {
-		var arr1 = '」』”’',
-			arr2 = '「『“‘',
-			ef = configs.rEndFixed
+	// 结尾修正
+	replaceFinish: function() {
+		var arr1 = '」』”’', arr2 = '「『“‘'
 		return this
-			// 修正纬度
-			.replace(ef.Latitude, function(m) {
-				return m
-					.replace(/ /g, '')
-					.replaceAt(configs.halfPuns)
-			})
-			// 修正 数字间隔
-			.replace(('\\b\\d+\\b *[' + ef.Number[0] + '] *\\b\\d+\\b(?: *[' + ef.Number[0] + '] *\\b\\d+\\b)?').getReg('g'), function(m) {
-				return m
-					.replace(/ /g, '')
-					.replaceAt(ef.Number)
-			})
-			// 修正 时间
-			.replace(ef.Time, function(m) {
-				return m
-					.replace(/：/g, ':')
-					.replace(/，/g, ',')
-			})
-			// 修正 日期
-			.replace(ef.Date, function(m) {
-				return m
-					.replace(/：/g, ':')
-					.replace(/日 */g, '日 ')
-			})
 			// 段首引号替换
 			.replace(/^[」』”’]/gm, function(m) {
 				return arr2.charAt(arr1.indexOf(m))
@@ -64,11 +36,35 @@ Object.extend(String.prototype, {
 			.replace(/[「『“‘](?=。|！|？|……|——|~~|$)$/gm, function(m) {
 				return arr1.charAt(arr2.indexOf(m.charAt(0))) + m.substring(1)
 			})
+			// 去除所有多余行
+			.replace(/\n\n\n+/g, '\n\n')
+			.replace(/^\n+/, '')
+			.replace(/\n\n+$/, '\n')
+	},
+	// 一些特殊的修正
+	__endFixed: function() {
+		var ef = configs.rEndFixed
+		return this
+			// 修正纬度
+			.replace(ef.Latitude, function(m) {
+				return m.replaceAt(ef.LatitudeAt)
+			})
+			// 修正 数字间隔
+			.replace(ef.Number, function(m) {
+				return m.replaceAt(ef.NumberAt)
+			})
+			// 修正 时间
+			.replace(ef.Time, function(m) {
+				return m.replaceAt(ef.TimeAt).matchUpper(/[apm]/g)
+			})
+			// 修正 日期
+			.replace(ef.Date, function(m) {
+				return m.replaceAt(DateAt)
+			})
 	},
 	// 去除汉字间的空格
 	replaceSpace: function() {
-		return this
-			.cleanSpace(configs.hanSpace)
+		return this.cleanSpace(configs.hanSpace)
 	},
 	// 修正分隔符号
 	replaceSeparator: function() {
@@ -78,8 +74,27 @@ Object.extend(String.prototype, {
 	},
 	// 引号修正
 	replaceQuotes: function(m) {
-		var re = this.replaces(configs.rQuotes)
+		var re = this
+			.replace(configs.enSep, '$1〔※@※〕$2')
+			.replaces(configs.rQuotes)
+			.replace(/〔※@※〕/g, '\'')
 		return (m === 'cn') ? re.replaceAt(configs.cnQuotes) : re
+	},
+	// 正则字母全大写
+	matchUpper: function(reg) {
+		return this.replace(reg, function(m) {
+			return m.toUpperCase()
+		})
+	},
+	// 正则首字母大写
+	matchFirstUpper: function(reg) {
+		return this.matchUpper(/\b[a-z]/g)
+	},
+	// 正则字母小写
+	matchLower: function(reg) {
+		return this.replace(reg, function(m) {
+			return m.toLowerCase()
+		})
 	},
 	// 处理英文
 	__convertEnglish: function() {
@@ -92,15 +107,15 @@ Object.extend(String.prototype, {
 	},
 	// 单独一行英文
 	convertEngLine: function() {
-		var eng = configs.findEng
+		var eng = configs.findEng;
 		return this
 			.replace(eng.Line, function(m) {
 				// 如果是单词引用
-				if (/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi.test(m) ||
+				if (m.find(/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi) ||
 					m.findCount(eng.LineSkip) < 2 ||
-					!m.sr(/[,， ]/)
+					!m.find(/[,， ]/)
 				) return m;
-				return m.replaceAt(configs.halfPunsOther).__convertEnglish()
+				return m.replaceAt(configs.halfPunsOther).__convertEnglish();
 			})
 	},
 	// 修正英文大小写
@@ -133,12 +148,12 @@ Object.extend(String.prototype, {
 				return m.indexOf(' ') > -1 ? m : m.toUpperCase()
 			})
 			// 修正
-			.replace(configs.findEng.PunFix, function(m) {
+			.replace(eng.PunFix, function(m) {
 				return m.indexOf('\u0027') > -1 ? m.matchLower(/ [A-Z]/g) : m
 			})
 			// 处理单词全是英文和数字时，型号类全大写
 			.replace(/\b[\w\-\~～]+\b/g, function(m) {
-				return m.sr(/\d/) ? m.toUpperCase() : m
+				return m.find(/\d/) ? m.toUpperCase() : m
 			})
 			// 处理英语中称呼缩写，非行尾的
 			.replace(eng.HonorWord, function(m) {
@@ -154,7 +169,9 @@ Object.extend(String.prototype, {
 			.matchUpper(eng.Continuous)
 			// 修正小写后缀
 			.replace(eng.LowerExt, function(m) {
-				return m.toLowerCase().replace(/。/g, '.')
+				return m
+					.toLowerCase()
+					.replace(/。/g, '.')
 			})
 			// 修正 网址
 			.replace(eng.Site, function(m) {
@@ -164,8 +181,12 @@ Object.extend(String.prototype, {
 			})
 			// 修正特定英文
 			.replaces(eng.WordFix)
+			// 虚词小写
+			.matchLower(('\\b(?:' + eng.WordOnlyLower + ')\\b').getReg('gi'))
 			// 单个字母大写
-			.matchUpper(/ \b[a-z]\b /g)
+			.matchUpper(/\b[a-z]\b/g)
+			// 顶头字母大写
+			.matchUpper(/^[a-z]/gm)
 	},
 	// 半角字母数字
 	convertNumberLetter: function(r) {
@@ -236,9 +257,10 @@ Object.extend(String.prototype, {
 	setAlign: function(b1, b2, align) {
 		var lineLen = configs.Linenum * 2,
 			str = this.trims(),
-			strLen = str.len(), rema
-		checkNull(b1) && (b1 = '')
-		checkNull(b2) && (b2 = '')
+			strLen = str.len(),
+			rema
+		b1 = b1 || ''
+		b2 = b2 || ''
 
 		if (align === 'center') {
 			rema = (strLen % 4 === 0) ? ' ' : ''
@@ -258,19 +280,17 @@ Object.extend(String.prototype, {
 	__Chapter: function(t, tpl, r, callback) {
 		// 处理标题的外框
 		// 第一章：【标题】/【第一章：标题】
-		var rs = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmt(t).chapReg()
+		var pa = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmt(t).chapReg();
 		return this
-			.replace(rs, function(m) {
-				if (m.sr(/。/)) return m
-				return m
-					.replace('[{$b}]'.chapReg('g'), ' ')
+			.replace(pa, function(m) {
+				return m.indexOf('。') > -1 ? m : m.replace('[{$b}]'.chapReg('g'), ' ')
 			})
 			.replace(tpl.chapReg('gim', r), callback)
 	},
 	// 修正章节标题
-	replaceTitle: function(b1, b2, c, relax) {
-		var f = b1 || '\n\n',
-			e = b2 || '',
+	replaceTitle: function(f, e, c, relax) {
+		var f = f || '\n\n',
+			e = e || '',
 			re = this,
 			// 替换值
 			regVal = regChapter,
@@ -284,23 +304,33 @@ Object.extend(String.prototype, {
 			regVal.es = regVal.e
 		}
 
+		// 全角转半角数字
+		// 补零
+		var zero = function(n) {
+			return n
+				.replaceAt(configs.sNumber)
+				.replace(/\d+/, function(m) {
+					return (~~m < 10) ? '0' + ~~m : m
+				})
+		}
+
 		// 处理标题内容
 		var handleTitle = function(str, sDiv) {
 			str = str
 				.replace(/  +/g, ' ')
-				.replace(('^[{$sep}]+').chapReg(), '')
+				.replace('^[{$sep}]+'.chapReg(), '')
 
 			if (str.length === 0) return ''
 			// 去除只有间隔符+数字的情况
-			if (str.sr(/^（?(\d{1,3})）?$/)) {
-				return str.replace(/^（?(\d{1,3})）?$/, function(v) {
-					return '（' + v.zeroize(2) + '）'
+			if (str.search(/^（?\d{1,3}）?$/) > -1) {
+				return str.replace(/^（?(\d{1,3})）?$/, function(m, m1) {
+					return '（' + zero(m1) + '）'
 				})
 			}
 
 			str = str
 				// 修正结尾是上下的小标号
-				.replace(/([^\d\.])[ ·]([上中下]|[一二三四五六七八九十百]{1,5})$/, '$1（$2）')
+				.replace(/([^\d\.])[ ·]([上中下终完]|[一二三四五六七八九十百]{1,5})$/, '$1（$2）')
 				// 中文间空格转换为逗号
 				.replace(/ (?=[\u4E00-\u9FA5]{2,})/g, '，')
 				.replace(/ (?=[\u4E00-\u9FA5])/g, '')
@@ -309,6 +339,10 @@ Object.extend(String.prototype, {
 				// 修正结尾是数字的小标号
 				.replace(/([^\d\.])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
 				.replace(/([^\d\.]) ?\b(\d{1,2})$/, '$1（$2）')
+				// 补零
+				.replace(/（(\d{1,3})）$/, function(m) {
+					return zero(m)
+				})
 				// 修正结尾是希腊数字的小标号
 				.replace(/[ ·]?\b([IVXC]{1,6})\b$/i, function(m, m1) {
 					return '（' + m1.toUpperCase() + '）'
@@ -318,7 +352,7 @@ Object.extend(String.prototype, {
 		
 		// 过滤
 		var checkSkip = function(str, t) {
-			return str.sr(regSkip[t || 't0'])
+			return str.find(regSkip[t || 't0'])
 		}
 		// 正则标题
 		re = re
@@ -331,7 +365,7 @@ Object.extend(String.prototype, {
 			/****** 非常规标题·可有后续主体 ******/
 			.__Chapter(regVal.t1.join('|'), '^{$f}({$t1})({$s}{$e}|{$sn}$)$', '|', function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m2.sr(/^[\!\?！？。]{1,3}$/) || checkSkip(m) || checkSkip(m, 't1'))
+				if (m2.find(/^[\!\?！？。]{1,3}$/) || checkSkip(m) || checkSkip(m, 't1'))
 					return m
 				return (m1 + handleTitle(m2)).setAlign(f, e, c)
 			})
@@ -340,35 +374,27 @@ Object.extend(String.prototype, {
 			.__Chapter(regVal.t2, '^{$f}{$t2}({$sn})({$e}|$)$', '', function(m, m1, m2, m3) {
 				m3 = m3.trims()
 				// 如果是完结标记
-				if (m3.sr(/^(?:完|完结|待续|未完)$/)) {
+				if (m3.find(/^(?:完|完结|待续|未完|终)$/))
 					return ('【' + m1 + '·' + m3 + '】')
-				}
-				m1 = m1.__chapterFullNumber()
 				// 防止错误，有句号不转；——开头不转；全标点不转
-				if (checkSkip(m) || m1.sr(/^[\-\—]{2,4}/) || (!relax && m3.sr(/^[！？。…]{1,3}$/)))
+				if (m1.find(/^[\-\—]{2,4}/) || (!relax && m3.find(/^[！？。…]{1,3}$/)) || checkSkip(m))
 					return m
 				// 防止错误，没有间隔符情况下
-				if (!m2) {
-					// 如：第一部电影很好，很成功。
-					// 如：一回头、一幕幕
-					if (checkSkip(m, 't2') || (!relax && m3.sr(/[，]|[！？。…’”』」]{1,3}$/)))
-						return m
-				}
-				if (!m1.sr('{$n4}[{$c}]'.chapReg()))
+				// 如：第一部电影很好，很成功。
+				// 如：一回头、一幕幕
+				if (!m2 && ((!relax && m3.find(/，|[！？。…’”』」]{1,3}$/)) || checkSkip(m, 't2'))) 
+					return m
+
+				if (!m1.find('{$n4}[{$c}]'.chapReg()))
 					m1 = '第' + m1.replace(/^第+| /g, '')
-				// 数字补零
-				m1 = m1.replace(/[0-9]+/, function(v) {
-					return v.zeroize(2)
-				})
-				return (m1 + handleTitle(m3)).setAlign(f, e, c)
+
+				return (zero(m1) + handleTitle(m3)).setAlign(f, e, c)
 			})
 			/****** （01）/（02）标题/（一）/（一）标题 ******/
 			.__Chapter(regVal.t3, '^{$f}{$t3}({$e}|$)$', '', function(m, m1, m2) {
-				m1 = m1.__chapterFullNumber()
 				// 防止错误，有句号不转
 				if (checkSkip(m)) return m
-				m1 = m1.zeroize(2)
-				return (m1 + handleTitle(m2, 'no')).setAlign(f, e, c)
+				return (zero(m1) + handleTitle(m2, 'no')).setAlign(f, e, c)
 			})
 		
 		// 标题居中直接返回
@@ -384,38 +410,28 @@ Object.extend(String.prototype, {
 			})
 			/****** chapter 22/ chapter 55 abcd ******/
 			.__Chapter(regVal.t5, '^{$f}{$t5}{$sn}({$e}|$)$', '', function(m, m1, m2) {
-				m1 = m1.__chapterFullNumber().zeroize(2)
-				return (f + '第' + m1 + ctr + handleTitle(m2) + e)
+				return (f + '第' + zero(m1) + ctr + handleTitle(m2) + e)
 			})
 			/****** 01/01./01.标题/一/一、/一、标题 ******/
 			.__Chapter(regVal.t6, '^{$f}{$t6}({$s}|{$s}{$e}|$)$', '', function(m, m1, m2) {
 				m2 = m2.trims();
 				// 防止错误，有句号不转；全标点不转
 				var t = /^[！？。]{1,3}$/;
-				if (m.sr(/。/) || m2.sr(t) || checkSkip(m) || checkSkip(m, 't2'))
+				if (m.indexOf('。') > -1 || m2.find(t) || checkSkip(m) || checkSkip(m, 't2'))
 					return m
 				// 章节是数字格式情况下
-				m1 = m1.__chapterFullNumber()
-				t = m1.sr(/^\d+/) ? /[！？。]$/ : /[！？。…’”』」]$/;
-				if (m2.sr(t)) return m;
+				m1 = zero(m1)
+				t = m1.find(/^\d+/) ? /[！？。]$/ : /[！？。…’”』」]$/;
+				if (m2.find(t)) return m;
 				// 其他处理过滤
-				if (m.cleanSpace().eachRegTest(regSkip.t6))
+				if (m.cleanSpace().eachArrayRegTest(regSkip.t6))
 					 return m
-				// 数字补零
-				m1 = m1.zeroize(2)
+
 				return (f + '第' + m1 + ctr + handleTitle(m2) + e)
 			})
 	},
 	// 修复错转的章节标题
 	replaceTitleError: function() {
-		var getParrentArr = function(str, v) {
-			return str
-				.replace('^{$f}第({$zz})[{$crt}](?:：|$)'.fmt(v).chapReg(), '$1、')
-				.replace('^{$f}({$zz})[：、。\.\,]'.fmt(v).chapReg(), '$1、')
-				.replace(/^0{1,4}/gm, '')
-				.replace(/、$/gm, '')
-				.replace(/\n\n+/gm, '\n')
-		}
 		// 第01章　连续
 		var parent01 ='(?:^{$f}第{$n1}[{$crt}](?:：.{0,40}|$)$\\n+|^{$f}{$n1}(?:[：、。\\.\\,].{0,40}|$)$\\n+){2,}'.chapReg(),
 			// 第一章　连续
@@ -426,6 +442,15 @@ Object.extend(String.prototype, {
 			fix1 = '(^{$f}(?:{$w1}|{$w3})(?:[：、。\\.\\,].{0,40}|$)$\\n+)\\1'.chapReg('gm'),
 			fix2 = '(^{$f}（(?:{$w1}|{$w3})）(?:.{0,40}|$)$\\n+)\\1'.chapReg('gm')
 
+		var getParrentArr = function(str, v) {
+			return str
+				.replace('^{$f}第({$zz})[{$crt}](?:：|$)'.fmt(v).chapReg(), '$1、')
+				.replace('^{$f}({$zz})[：、。\.\,]'.fmt(v).chapReg(), '$1、')
+				.replace(/^0{1,4}/gm, '')
+				.replace(/、$/gm, '')
+				.replace(/\n\n+/g, '\n')
+		}
+		
 		return this
 			.replace(parent01, function(m) {
 				return getParrentArr(m, '{$n1}')
@@ -433,10 +458,10 @@ Object.extend(String.prototype, {
 			.replace(parent02, function(m) {
 				return getParrentArr(m, '{$n3}')
 			})
-			.replace('\\n\\n((?:{$n1}|{$n3})、?)'.chapReg(), '$1')
 			.replace(parent03, function(m) {
-				return m.replace(/\n+/gm, '\n')
+				return m.replace(/\n+/g, '\n')
 			})
+			.replace('\\n\\n((?:{$n1}|{$n3})、?)'.chapReg(), '$1')
 			.replace(fix1, function(m, m1) {
 				return m1.replaceTitle('\n\n', '')
 			})

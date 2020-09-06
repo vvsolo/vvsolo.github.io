@@ -1,84 +1,88 @@
-// ¿Õ¸ñ \uF604
+ï»¿// ç©ºæ ¼ \uF604
 var Space = '\\f\\t\\v\x20\u1680\u180E\u2000-\u200d\u202F\u205F\u3000\u2028\u2029\uE4C6\uF604\uF8F5\uE004\uF04A\uFEFF\u202e\u202c';
 var allSpace = Space + '\x0A\x0D\xA0';
-//var regEscape = /([\\`\*_\{\}\[\]\(\)\>\#\+\-\.\!])/g
-// *.?+$^[](){}|\/
-var regEscapes = /([.?*+^$[\]\\(){}|-])/g
 
-// ÅĞ¶ÏÊÇ·ñ´æÔÚ£¬¿ÉÒÔÎª¿Õ
+// åˆ¤æ–­æ˜¯å¦å­˜åœ¨ï¼Œå¯ä»¥ä¸ºç©º
 var checkNull = function(obj) {
-	return (obj === undefined) || (obj === null) || false;
+	return (obj === undefined) || (obj === null) || false
 }
 
-// ÅĞ¶ÏÀàĞÍ
-function isType(type) {
-	return function(obj) {
-		return Object.prototype.toString.call(obj) === "[object " + type + "]";
-	}
+// åˆ¤æ–­ç±»å‹
+var isString = function(val) {
+	return typeof val === 'string'
 }
 
-var isArray = isType("Array"),
-	isString = isType("String"),
-	//isObject = isType("Object"),
-	isFunction = isType("Function")
-	
-var isObject = function(value) {
-	var type = typeof value;
-	return value !== null && (type === 'object' || type === 'function');
+var isArray = function(val) {
+	return Object.prototype.toString.call(val) === "[object Array]"
 }
 
-// ¶ÔÏóÅúÁ¿¸³Öµ
+var isFunction = function(val) {
+	return typeof val === 'function'
+}
+
+var isObject = function(val) {
+	var type = typeof val
+	return val !== null && (type === 'object' || type === 'function')
+}
+
+// å¯¹è±¡æ‰¹é‡èµ‹å€¼
 Object.extend = function(a, b) {
 	for (var i in b) a[i] = b[i]
 	return a
 }
 
 
-// ***** À©Õ¹×Ö·û´¦Àí *****
+// ***** æ‰©å±•å­—ç¬¦å¤„ç† *****
 Object.extend(String.prototype, {
-	// ´¦ÀíÎªÕıÔò×Ö·û´®
+	// å­—ç¬¦ä¸²æ­£åˆ™ï¼ŒåŠ æ­£åˆ™ä¿æŠ¤
 	regEscape: function() {
+		var reRegExpChar = /[\\.*]/g
 		return this
-			.replace(regEscapes, "\\$1")
-			.replace(/\u005c\u005c+/g, "\\")
+			.replace(reRegExpChar, '\\$&')
+			.replace(/\u005c\u005c+/g, "\u005c\u005c") || ''
 	},
-	// °²È«×ª»»ÕıÔò
+	// å­—ç¬¦ä¸²ï¼ŒåŠ æ­£åˆ™ä¿æŠ¤
+	escapeRegExp: function() {
+		var reRegExpChar = /[\\^$.*+?()[\]{}|]/g
+		var reHasRegExpChar = new RegExp(reRegExpChar.source)
+		return (this && reHasRegExpChar.test(this))
+			? this.replace(reRegExpChar, '\\$&')
+			: (this || '')
+	},
+	// å®‰å…¨è½¬æ¢æ­£åˆ™
 	getReg: function(m) {
-		checkNull(m) && (m = 'g')
+		checkNull(m) && (m = 'gm')
 		return new RegExp(this.replace(/\u005c\u005c+/g, "\\"), m)
 	},
-	// ĞŞÕıËùÓĞ»»ĞĞÎª UNIX ±ê×¼
+	// ä¿®æ­£æ‰€æœ‰æ¢è¡Œä¸º UNIX æ ‡å‡†
 	toUNIX: function() {
-		return this.replace(/[\r\n]{1,2}/g, '\n')
+		return this.replace(/\r\n/g, '\n').replace(/\n\r/g, '\n').replace(/\r/g, '\n')
+		//return this.replace(/[\r\n]{1,2}/g, '\n')
 	},
-	// ¸ñÊ½»¯ËùÓĞ¿Õ¸ñÑùÊ½Îª±ê×¼
+	// æ ¼å¼åŒ–æ‰€æœ‰ç©ºæ ¼æ ·å¼ä¸ºæ ‡å‡†
 	space: function() {
 		return this.replace(new RegExp('[' + Space + ']+', 'g'), ' ').toUNIX()
 	},
-	// É¾³ı×Ö·ûÊ×Î²¿Õ¸ñ
+	// åˆ é™¤å­—ç¬¦é¦–å°¾ç©ºæ ¼
 	trimSide: function() {
-		return this.replace(/^[ ¡¡]+/gm, '').replace(/[ ¡¡]+$/gm, '')
+		return this.replace(/^[ ã€€]+/gm, '').replace(/[ ã€€]+$/g, '')
 	},
-	// É¾³ı×Ö·ûÊ×Î²¿Õ¸ñ
+	// åˆ é™¤å­—ç¬¦é¦–å°¾ç©ºæ ¼
 	trim: function() {
 		return this.space().trimSide()
 	},
-	// É¾³ı×Ö·ûÊ×Î²¿Õ¸ñ¡¢»»ĞĞ
+	// åˆ é™¤å­—ç¬¦é¦–å°¾ç©ºæ ¼ã€æ¢è¡Œ
 	trims: function() {
 		return this.trimSide().replace(/\n/g, '')
 	},
-	// Ñ­»·ÕıÔòÌæ»»£¬¿É´¦Àí¶ÔÏó
+	// å¾ªç¯æ­£åˆ™æ›¿æ¢ï¼Œå¯å¤„ç†å¯¹è±¡
 	replaces: function(arr) {
 		var re = this
 		if (isArray(arr)) {
 			arr.each(function(v) {
-				if (isArray(v)) {
-					isString(v[0]) && (v[0] = v[0].getReg())
-					re = re.replace(v[0], v[1] || '')
-				} else {
-					isString(v) && (v = v.getReg())
-					re = re.replace(v, '')
-				}
+				!isArray(v) && (v = [v, ''])
+				isString(v[0]) && (v[0] = v[0].getReg())
+				re = re.replace(v[0], v[1] || '')
 			})
 		} else if (isObject(arr)) {
 			for (var item in arr)
@@ -86,119 +90,91 @@ Object.extend(String.prototype, {
 		}
 		return re
 	},
-	// ×Ö·û´®¶¨Î»Ìæ»»
+	// å­—ç¬¦ä¸²å®šä½æ›¿æ¢
 	replaceAt: function(a, rev) {
 		rev && (a = [a[1], a[0]])
 		return this.replace(new RegExp('[' + a[0] + ']', 'g'), function(m) {
 			return a[1].charAt(a[0].indexOf(m))
 		})
 	},
-	// ÕıÔòÈ¥ËùÓĞ¿Õ¸ñ
+	// æ­£åˆ™å»æ‰€æœ‰ç©ºæ ¼
 	cleanSpace: function(reg, greg) {
-		checkNull(greg) && (greg = /\s/g)
+		greg = greg || /\s/g
 		return reg ? this.replace(reg, function(m) {
 			return m.replace(greg, '')
 		}) : this.replace(greg, '')
 	},
-	// È¡Ë«×Ö½ÚÓëµ¥×Ö½Ú»ìÅÅÊ±µÄÕæÊµ×ÖÊı
+	// å–åŒå­—èŠ‚ä¸å•å­—èŠ‚æ··æ’æ—¶çš„çœŸå®å­—æ•°
 	len: function() {
-		return this.length + (this.match(/[^\x00-\xff]/g) || "").length;
+		return this.length + (this.match(/[^\x00-\xff]/g) || "").length
 	},
-	// °´ÕæÊµ×ÖÊı½øĞĞ·Ö¸ô
-	realSubstr: function(start, len) {
-		var str = this || ''
-		if (str.length === 0) return str
-		start = start || 0
-		len = len || str.len()
-		var byteL = 0, sub = '',
-			i = c = cl = 0, l = str.length
-		for (; i < l; i++) {
-			c = str.charCodeAt(i)
-			cl = c > 0xff ? 2 : 1
-			byteL += cl
-			// »¹²»µ½¿ªÊ¼Î»
-			if (start >= byteL) continue
-			 // È¡Íê È¡±¾×ÖÊ±²»³¬¹ı
-			if (len == str.len() || (len -= cl) >= 0)
-				sub += String.fromCharCode(c)
-			else
-				break;
-		}
-		return sub
-	},
-	// ÖØ¸´Á¬½Ó×Ö·û´®
+	// é‡å¤è¿æ¥å­—ç¬¦ä¸²
 	times: function(m) {
-		return m < 1 ? '' : new Array(m + 1).join(this);
+		return m < 1 ? '' : new Array(m + 1).join(this)
 	},
-	// È¡ÕıÔò²éÑ¯Æ¥ÅäµÄ´ÎÊı
+	// å–æ­£åˆ™æŸ¥è¯¢åŒ¹é…çš„æ¬¡æ•°
 	findCount: function(reg) {
 		isString(reg) && (reg = reg.getReg())
 		var tmp = this.match(reg)
 		return tmp !== null ? tmp.length : 0
 	},
-	// search ÅĞ¶Ï¼òµ¥·½Ê½
-	sr: function(reg) {
-		return this.match(reg) !== null
+	// ç®€åŒ–æœç´¢æ–¹å¼
+	find: function(str) {
+		return this.search(str) > -1;
 	},
-	// ÕıÔò×ÖÄ¸È«´óĞ´
-	matchUpper: function(reg) {
-		return this.replace(reg, function(m) {
-			return m.toUpperCase()
-		})
-	},
-	// ÕıÔòÊ××ÖÄ¸´óĞ´
-	matchFirstUpper: function(reg) {
-		return this.matchUpper(/\b[a-z]/g)
-	},
-	// ÕıÔò×ÖÄ¸Ğ¡Ğ´
-	matchLower: function(reg) {
-		return this.replace(reg, function(m) {
-			return m.toLowerCase()
-		})
-	},
-	// ÕûÊı²¹Áã
+	// æ•´æ•°è¡¥é›¶
 	zeroize: function(b) {
-		if (b < 2) b = 2;
-		if (this.sr(/^0+$/)) return '0'.times(b);
-		var n = this.replace(/^0+/g, '');
-		if (!n.sr(/^[0-9]+$/) || b < n.length)
-			return n;
-
-		n = '0'.times(b + n.length) + n;
-		return n.substring(n.length - b);
-	},
-	// ÌØÊâ·½Ê½Ìæ»»×Ö·û´®
-	/*
-	 * arrs = {name:"loogn",age:22,sex:['man', 'woman']}
-	 * var result0 = "ÎÒÊÇ{$name}£¬{$sex.0}£¬½ñÄê{$age}ÁË".fmt(arrs)
-	 */
-	fmt: function(args, r) {
-		// ×Ö·û´®Ê±£¬Ö±½ÓÌæ»»ÈÎÒâ±êÇ©
-		if (isString(args))
-			return this.replace(/\{\$zz\}/g, args)
-		if (!isObject(args) && !isArray(args))
+		if (this.search(/^\d+$/) < 0) {
 			return this
-		var val,
-			re = this
-		// Êı×éÁ¬½Ó·ûºÅ
+		}
+
+		if (b < 2) b = 2
+		var n = ~~this
+		if (n === 0) {
+			return '0'.times(b)
+		}
+		var m = String(n).length
+		if (b < m) {
+			return n
+		}
+
+		n = '0'.times(b + m) + n
+		return n.substring(n.length - b)
+	},
+	// ç‰¹æ®Šæ–¹å¼æ›¿æ¢å­—ç¬¦ä¸²
+	/*
+	 * vals = {name:"loogn",age:22,sex:['man', 'woman']}
+	 * var result0 = "æˆ‘æ˜¯{$name}ï¼Œ{$sex.0}ï¼Œä»Šå¹´{$age}äº†".fmt(arrs)
+	 */
+	fmt: function(vals, r) {
+		// å­—ç¬¦ä¸²æ—¶ï¼Œç›´æ¥æ›¿æ¢ä»»æ„æ ‡ç­¾
+		if (isString(vals)) {
+			return this.replace(/\{\$zz\}/g, vals)
+		}
+		if (!isObject(vals) && !isArray(vals)) {
+			return this
+		}
+			
+		// æ•°ç»„è¿æ¥ç¬¦å·
 		r = r || ''
-		// ÌØÊâ±ê¼Ç /\{\$([a-z0-9\.]+)}/gi
+		// ç‰¹æ®Šæ ‡è®° /\{\$([a-z0-9\.]+)}/gi
 		return this
-			// ×ÓÏî
+			// å­é¡¹
 			.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-				if (!checkNull(args[m1])) {
-					val = args[m1]
+				if (!checkNull(vals[m1])) {
+					var val = vals[m1]
 					return isArray(val) ? val.join(r) : val
 				}
 				return m
 			})
-			// ×ÓÏîÊÇÊı×é{$name.t1.0}
+			// å­é¡¹æ˜¯æ•°ç»„{$name.t1.0}
 			.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
-				if (!checkNull(args[m1])) {
-					val = args[m1]
-					// Èç¹û×ÓÏîÊÇÊı×éÂÖÑ­
-					if (/\./g.test(m2))
+				if (!checkNull(vals[m1])) {
+					var val = vals[m1]
+					// å¦‚æœå­é¡¹æ˜¯æ•°ç»„è½®å¾ª
+					if (m2.indexOf('.') > -1) {
 						return m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(val, r)
+					}
 
 					if (!checkNull(val[m2])) {
 						val = val[m2]
@@ -208,66 +184,73 @@ Object.extend(String.prototype, {
 				return m
 			})
 	},
-	// Ìæ»»²¢·µ»ØÕıÔòÊ½
+	// æ›¿æ¢å¹¶è¿”å›æ­£åˆ™å¼
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f)
 	},
-	// Ñ­»·²âÊÔÕıÔò
+	// å¾ªç¯æµ‹è¯•æ­£åˆ™
+	eachArrayRegTest: function(arr) {
+		var l = arr.length
+		while (l--) {
+			if (this.search(arr[l]) > -1)
+				return true
+		}
+		return false
+	},
+	// å¾ªç¯æµ‹è¯•æ­£åˆ™
 	eachRegTest: function(arr) {
-		var isTrue = false, str = this
 		if (isArray(arr)) {
-			var l = arr.length, i = 0, v
-			for (; i < l; i++) {
-				v = arr[i]
-				isTrue = isArray(v) ? str.eachRegTest(v) : v.test(str)
-				if (isTrue)
-					break;
-			}
-		} else if (isObject(arr)) {
-			var tmp, v
-			for (v in arr) {
-				tmp = arr[v]
-				isTrue = isArray(tmp) ? str.eachRegTest(tmp) : tmp.test(str)
-				if (isTrue)
-					return isTrue
+			return this.eachArrayRegTest(arr)
+		}
+		if (isObject(arr)) {
+			for (var v in arr) {
+				var tmp = arr[v]
+				if (isArray(tmp) ? this.eachArrayRegTest(tmp) : this.search(tmp) > -1)
+					return true
 			}
 		}
-		return isTrue
+		return false
+	},
+	// åˆ¤æ–­æ˜¯å¦å¯¹è±¡æœ‰æ•ˆ Key
+	hasIn: function(object) {
+		return this in Object(object)
 	}
 });
 
-// ***** À©Õ¹Êı×é´¦Àí *****
+// ***** æ‰©å±•æ•°ç»„å¤„ç† *****
 Object.extend(Array.prototype, {
-	each: function(callback) {
-		var l = this.length, i = 0
-		for (; i < l; i++) {
-			if (isFunction(callback) && callback.call(this[i], this[i], i) === false)
+	each: function(func) {
+		var l = this.length, i = -1, back
+		while (++i < l) {
+			back = func(this[i], i, this)
+			if (back === '@next')
+				continue;
+			if (back === false)
 				break;
 		}
 	},
-	map: function(callback) {
-		var res = [], tmp
-		this.each(function(v, i) {
-			tmp = callback.call(v, v, i)
-			if (tmp != null)
-				res.push(tmp)
-		})
-		return res
+	map: function(func) {
+		var l = this.length, i = -1
+		var arr = new Array(l)
+		while (++i < l) {
+			arr[i] = func(this[i], i, this)
+		}
+		return arr
 	}
 });
 
-// ***** À©Õ¹Ê±¼ä´¦Àí *****
+// ***** æ‰©å±•æ—¶é—´å¤„ç† *****
 if(!Date.prototype.fmt) {
-	// ¸ñÊ½»¯Ê±¼ä
+	// æ ¼å¼åŒ–æ—¶é—´
 	Date.prototype.fmt = function(d) {
 		var o = {
-			"M+": this.getMonth() + 1, //ÔÂ·İ 
-			"d+": this.getDate(), //ÈÕ 
-			"h+": this.getHours(), //Ğ¡Ê± 
-			"m+": this.getMinutes(), //·Ö 
-			"s+": this.getSeconds(), //Ãë 
-			"q+": Math.floor((this.getMonth() + 3) / 3), //¼¾¶È 
-			"S": this.getMilliseconds() //ºÁÃë 
+			"M+": this.getMonth() + 1, //æœˆä»½ 
+			"d+": this.getDate(), //æ—¥ 
+			"h+": this.getHours(), //å°æ—¶ 
+			"m+": this.getMinutes(), //åˆ† 
+			"s+": this.getSeconds(), //ç§’ 
+			"q+": Math.floor((this.getMonth() + 3) / 3), //å­£åº¦ 
+			"S": this.getMilliseconds() //æ¯«ç§’ 
 		};
 		if (/(y+)/.test(d))
 			d = d.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -279,10 +262,10 @@ if(!Date.prototype.fmt) {
 	}
 }
 
-// ¸ñÊ½»¯Êı×Ö 12,553.00
+// æ ¼å¼åŒ–æ•°å­— 12,553.00
 if (!Number.prototype.fmt) {
 	Number.prototype.fmt = function() {
-		// ÑéÖ¤ÊäÈëµÄ×Ö·ûÊÇ·ñÎªÊı×Ö
+		// éªŒè¯è¾“å…¥çš„å­—ç¬¦æ˜¯å¦ä¸ºæ•°å­—
 		if (isNaN(this)) return this
 		return this.toLocaleString().replace(/\.00$/, '')
 	}

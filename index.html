@@ -17,7 +17,7 @@
   <div class="bg-light text-dark" id="c-left">
     <nav class="navbar mb-2">
     <div class="container-fluid">
-      <a class="navbar-brand font-weight-bold" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub" target="_blank">小说排版助手<sup class="badge badge-light text-dark">20.08</sup></a>
+      <a class="navbar-brand font-weight-bold" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub" target="_blank">小说排版助手<sup class="badge badge-light text-dark">20.09</sup></a>
       <ul class="navbar-nav justify-content-end">
         <li class="nav-item active">
           <a id="chinese" class="text-dark" href="javascript:void(0);" data-default="简|繁">繁</a>
@@ -163,11 +163,11 @@
         <div class="row">
           <div class="col-8">
             <button type="button" class="btn btn-outline-secondary" title="隐藏或显示左侧栏" id="floatTool" data-tip="显|隐">隐</button>
-            <button type="button" class="btn btn-primary bg-gradient" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">整理 → 特殊</button>
-            <button type="button" class="btn btn-primary bg-gradient" title="全局一键整理；快捷键: F8" id="onCleanUp">整理 → 全局</button>
-            <button type="button" class="btn btn-success bg-gradient" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit" data-tip="排版成功！重排请点击“还原”按钮！">排版 → 分段</button>
-            <button type="button" class="btn btn-success bg-gradient" title="阅读样式排版" id="onTypeSetRead" data-tip="排版成功！重排请点击“还原”按钮！">排版 → 阅读</button>
-            <button type="button" class="btn btn-info copy-content bg-gradient" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复制</button>
+            <button type="button" class="btn btn-primary" title="全局一键整理；快捷键: F8" id="onCleanUp">全局·整理</button>
+            <button type="button" class="btn btn-success" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit" data-tip="排版成功！重排请点击“还原”按钮！">分段·排版</button>
+            <button type="button" class="btn btn-info copy-content" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复制</button>
+            <button type="button" class="btn btn-outline-primary font-weight-bold" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊·整理</button>
+            <button type="button" class="btn btn-outline-success font-weight-bold" title="阅读样式排版" id="onTypeSetRead" data-tip="排版成功！重排请点击“还原”按钮！">阅读·排版</button>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn btn-outline-info font-weight-bold" title="转为简体" id="toSimp">简</button>
               <button type="button" class="btn btn btn-outline-info font-weight-bold" title="转为繁体" id="toTrad">繁</button>
@@ -183,10 +183,10 @@
             </div>
           </div>
           <div class="col-4 text-right">
-            <button type="button" class="btn btn-secondary bg-gradient" title="新建文档；快捷键: Ctrl+N" id="CreateEditor">新建</button>
-            <button type="button" class="btn btn-primary bg-gradient" title="缓存临时文档；快捷键: Ctrl+S" id="SaveEditor" data-tip="文档已保存！">缓存</button>
-            <button type="button" class="btn btn-info bg-gradient" title="还原临时文档；快捷键: Ctrl+R" id="RestoreEditor" data-tip="文档已还原！">还原</button>
-            <button type="button" class="btn btn-danger bg-gradient" title="清空临时文档" id="ClearEditor" data-tip="文档已清空！">清空</button>
+            <button type="button" class="btn btn-secondary" title="新建文档；快捷键: Ctrl+N" id="CreateEditor">新建</button>
+            <button type="button" class="btn btn-primary" title="缓存临时文档；快捷键: Ctrl+S" id="SaveEditor" data-tip="文档已保存！">缓存</button>
+            <button type="button" class="btn btn-info" title="还原临时文档；快捷键: Ctrl+R" id="RestoreEditor" data-tip="文档已还原！">还原</button>
+            <button type="button" class="btn btn-danger" title="清空临时文档" id="ClearEditor" data-tip="文档已清空！">清空</button>
           </div>
         </div>
       </div>
@@ -203,17 +203,17 @@
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min/ace.js"></script>
 
-<script src="./js/extend.js?202008"></script>
-<script src="./js/config.js?202008"></script>
-<script src="./js/typo.min.js?202008"></script>
-<script src="./js/typeset.min.js?202008"></script>
-<script src="./js/jquery.s2t.dic.js?202008"></script>
-<script src="./js/jquery.s2t.js?202008"></script>
+<script src="./js/extend.js?202009"></script>
+<script src="./js/config.js?202009"></script>
+<script src="./js/typo.min.js?202009"></script>
+<script src="./js/typeset.min.js?202009"></script>
+<script src="./js/jquery.s2t.dic.js?202009"></script>
+<script src="./js/jquery.s2t.js?202009"></script>
 
-<script src="./ace/theme-novel.js?202008"></script>
-<script src="./ace/mode-novel.js?202008"></script>
-<script src="./ace/ext-statusbar.js?202008"></script>
-<script src="./js/app.js?202008"></script>
+<script src="./ace/theme-novel.js?202009"></script>
+<script src="./ace/mode-novel.js?202009"></script>
+<script src="./ace/ext-statusbar.js?202009"></script>
+<script src="./js/app.js?202009"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {
