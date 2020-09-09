@@ -56,7 +56,7 @@ Object.extend(String.prototype, {
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return this.replace(/\r\n/g, '\n').replace(/\n\r/g, '\n').replace(/\r/g, '\n')
+		return this.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 		//return this.replace(/[\r\n]{1,2}/g, '\n')
 	},
 	// 格式化所有空格样式为标准
@@ -220,20 +220,19 @@ Object.extend(String.prototype, {
 // ***** 扩展数组处理 *****
 Object.extend(Array.prototype, {
 	each: function(func) {
-		var l = this.length, i = -1, back
+		var l = this.length, i = -1
 		while (++i < l) {
-			back = func(this[i], i, this)
-			if (back === '@next')
-				continue;
-			if (back === false)
+			if (func.call(this[i], this[i], i) === false)
 				break;
 		}
 	},
 	map: function(func) {
-		var l = this.length, i = -1
+		var l = this.length, i = -1, tmp
 		var arr = new Array(l)
 		while (++i < l) {
-			arr[i] = func(this[i], i, this)
+			tmp = func.call(this[i], this[i], i)
+			if (tmp !== null)
+				arr[i] = tmp
 		}
 		return arr
 	}

@@ -310,7 +310,8 @@ Object.extend(String.prototype, {
 			return n
 				.replaceAt(configs.sNumber)
 				.replace(/\d+/, function(m) {
-					return (~~m < 10) ? '0' + ~~m : m
+					m = ~~m
+					return (m < 10) ? '0' + m : m
 				})
 		}
 
