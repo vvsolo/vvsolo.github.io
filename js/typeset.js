@@ -90,7 +90,8 @@ function doSplit(str, sm, bm) {
 // 分段排版
 function onTypeSetSplit(str) {
 	// 结尾的文字，编辑user.js文件
-	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm')
+	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm'),
+		re = ''
 
 	// 执行整理
 	str = str
@@ -117,15 +118,10 @@ function onTypeSetSplit(str) {
 		})
 		// 标题居中
 		.replaceTitle('', '\n', 'center')
-
-	var words = str.split('\n'),
-		re = '',
-		i = words.length
-
-	// 开始进行分隔
-	while (i--) {
-		re = doSplit(words[i], '\n\n', '\n\n') + re
-	}
+		.split('\n')
+		.each(function(v) {
+			re += doSplit(v, '\n\n', '\n\n')
+		})
 
 	re = '\n' + re
 		.replace(/^[ 　]+$\n/gm, '')
@@ -148,7 +144,7 @@ function onTypeSetSplit(str) {
 		'b': $('#inputSite').val().trim() || ' ',
 		'y': $('#Check_0').is(':checked') ? '是' : '否',
 		'd': new Date().fmt("yyyy/MM/dd"),
-		'n': (re.length - re.findCount(allSpace)).fmt()
+		'n': (re.length - re.findCount(/[　\s]/g)).fmt()
 	})
 	return headStr + '\n' + re
 }

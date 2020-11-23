@@ -1,5 +1,4 @@
-﻿
-/****** 常用 - 正则设定 ******/
+﻿/****** 常用 - 正则设定 ******/
 var strCommon = {
 	// 英文间隔符
 	'enSep': '\u0027`＇‘’『』',
@@ -15,7 +14,7 @@ var strCommon = {
 	// 半角标点，引号 \u0022\u0027 双单
 	'qhwPun': "\u0027",
 	// 全角标点，无引号
-	'fwPun': '·・–—…、。〈〉《》【】〔〕〖〗〝〞（），．：；？！～￠￡￢￣￤￥＆＠＃※',
+	'fwPun': '·–—―…※、。〈〉《》【】〔〕〖〗〝〞・！-／：-＠～￠-￥',
 	// 全角标点，引号
 	'qfwPun': '‘’“”「」『』',
 	// 其他标点 @
@@ -63,7 +62,7 @@ var regChapter = {
 	't0': '[首小节自次節]序|[题題][注记註記跋]|[题題开開][卷篇头场頭場][诗词语詩詞語]|文案|卷[首后後][语語]|(?:作者)?前言|[全本下][{$c.0}{$c.1}]{$w0}|(?:作品|作者|人物|内容|本书)?{$w0}|篇[后後]|(?:完本|作者)感言|作者[后後的][话話]|正文|导读|導讀|[附目][录錄][0-9]{0,2}',
 	/****** 非常规标题·可有后续主体 ******/
 	't1': [
-		'楔子|引[言子文]|序篇?章|序[言幕目曲传傳卷]?|[后後][记话記話序]|尾[声记聲記]',
+		'楔子|引[言子文]|序篇?章|序[言幕目曲传傳卷]?|[后後][记话記話序]|尾[声记聲記]|大?[结結]局',
 		'同人[续續]?|[前后外续正後續间間][传篇傳章]|[前后外里裏]番|[续續]{$s1}{1,3}[{$c.2}]?|[番篇]外[篇卷章]?（?{$s1}{0,3}）?',
 		'外{$s1}{0,3}[{$c.2}]'
 	],
@@ -73,7 +72,6 @@ var regChapter = {
 	't2': '((?:第?{$n2}|第?{$n3}|{$n4})[{$c}])',
 	/****** （01）/（02）标题/（一）/（一）标题 ******/
 	't3': '([\\(（](?:{$n2}|{$n3}|{$s0})[\\)）])',
-	
 	/****** 卷一/卷一：标题 ******/
 	't4': '({$cf})[{$sep}]{0,4}({$n1}|{$n3})',
 	/****** chapter 22 ******/
@@ -94,19 +92,19 @@ var regChapter = {
 }
 
 // 处理自由组合的标题
-Object.extend(String.prototype, {
+extend(String.prototype, {
 	chapReg: function(f, r) {
-		checkNull(f) && (f = 'gm')
-		return this.fmt(regChapter, r).fmtReg(strChapter, f)
+		checkNull(f) && (f = 'gm');
+		return this.fmt(regChapter, r).fmtReg(strChapter, f);
 	},
 	comReg: function(f) {
-		checkNull(f) && (f = 'gm')
-		return this.fmtReg(strCommon, f)
+		checkNull(f) && (f = 'gm');
+		return this.fmtReg(strCommon, f);
 	}
 })
 
+/***** 常规部分 *****/
 var configs = {
-	/***** 常规部分 *****/
 	// 分隔符样式
 	'Separator': '＊＊＊　　＊＊＊　　＊＊＊',
 	// 章节与标题分隔符
@@ -117,6 +115,10 @@ var configs = {
 	'maxLinenum': 200,
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	'endStrs': '待[续續]|未完|未完待[续續]|完|完[结結]|全[文书書][完终終]',
+	// 象声词
+	'mimeticWord': '啊哦喔呃唔嗯哼咛喂呜啦吡喏嘞噶咂呓嗬吧哎呀哟哈呵咦呦啧嗵扑哧噗嗤咳啐呸呛嘶呼嗖咯吱咕嗝呱嘟咿叽笃喳嘎嘀哩嘤唧咪喵哞嗷呯砰嘿哄嚯叮咚哐咝噼啪哗嘭咣咔咹嚓嗡恩耶咻吖轰隆汪驾呔啜雪哺碰嗫铮嗚喲撲嗆嘰篤嚶噝譁轟駕嘖嚀囈囁錚',
+	// 无结尾标点错误
+	'noEndLine': /[^\,\.\:;\?\!\)\]\}\'\"\~，、。\：；？！）］〕】〗｝·’』”」〉》…—～]$/,
 	/****** 文章标题 - 正则设定 ******/
 	'novelTitle': /^[ 　]*(《([^》]+)》(.*[^。？！…]|$)|[书書]名[：\:](.+))$/m,
 	'novelAuthor': /^[ 　]*((?:[作编译編譯]者|排版|整理)[：\:].*)$/gm,
@@ -157,9 +159,9 @@ var configs = {
 		// 约定英语，用|分隔
 		'Word': 'iPhone|iPhoneSE|iPhoneX|iPhoneXR|iPhoneXRMax|iPhoneXR|iPad|iPadPro|iPadAir|iMac|iTv|iPod|ing|BiuBiu|TikTok',
 		// 约定英语大写，用|分隔
-		'WordUpper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|MMP|IBM|CPU|HDMI|GPU',
+		'WordUpper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O',
 		// 虚词一直小写
-		'WordOnlyLower': 'a|an|the|in|on|of|to|from|with|by|for|at|be|will|should|about|under|and|but|is|as',
+		'WordOnlyLower': 'a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with',
 		// 小写的后缀
 		'LowerExt': /。\b(?:Avi|Jpg|Bmp|Png|Net)\b/g,
 		// 约定英语修正
@@ -167,7 +169,7 @@ var configs = {
 		// 符合的英文
 		'PunFix': "[0-9A-Z][ \\w{$latin}']+[0-9a-z]".comReg('g'),
 		// 特殊的连续单词 转大写
-		'Continuous': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|xyz)\b/gi,
+		'Continuous': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|bca|dbca|edbca|xyz)\b/gi,
 		// 拉丁字母、某些标点后的大写
 		'PunAfter': '[，\, {$latin}][A-Z]'.comReg(),
 		// 引用中的英文
@@ -284,10 +286,12 @@ var configs = {
 	],
 	// 全半角数字
 	'sNumber': ['０１２３４５６７８９', '0123456789'],
+	// 拼音声调
+	'sPinYinTone': ['āáǎàēéěèōóǒòīíǐìūúǔùǖǘǚǜüḿńň', 'aaaaeeeeooooiiiiuuuuvvvvvmmnn'],
 	// 变体字母
 	'sVariants': [
-		'ÀÁÂÃÄÅĀАǍⱭàáâãäåāǎɑаßЬЪьъÇçÐÈÉÊËĒĚèéêëēěΗんÌÍÎÏĪǏΙìíîïīǐιМмΝÑŃŇИñńňиηÒÓÔÕÖŌǑØОòóôõöōðǒøоÞΡþρΤτÙÚÛÜŪǓǕǗǙǛυùúûüūǔǖǘǚǜⅤⅴνЩщωΥÝŸγýÿ',
-		'AAAAAAAAAaaaaaaaaaaaBbbbbCcDEEEEEEeeeeeeHhIIIIIIIiiiiiiiMmmNNNNNnnnnnOOOOOOOOOooooooooooPPppTtUUUUUUUUUUuuuuuuuuuuuVvvWwwYYYyyy'
+		'ÀÁÂÃÄÅĀАǍⱭàáâãäåāǎɑаßЬЪьъÇçÐÈÉÊËĒĚèéêëēěΗんÌÍÎÏĪǏΙìíîïīǐιМḿмΝÑŃŇИñńňиηÒÓÔÕÖŌǑØОòóôõöōðǒøоÞΡþρΤτÙÚÛÜŪǓǕǗǙǛυùúûüūǔǖǘǚǜⅤⅴνЩщωΥÝŸγýÿ',
+		'AAAAAAAAAaaaaaaaaaaaBbbbbCcDEEEEEEeeeeeeHhIIIIIIIiiiiiiiMmmmNNNNNnnnnnOOOOOOOOOooooooooooPPppTtUUUUUUUUUUuuuuuuuuuuuVvvWwwYYYyyy'
 	],
 	// 变体序号
 	'sSerialNumber': [
@@ -332,24 +336,21 @@ var configs = {
 	// 连接符–
 	// 圆点．
 	// 省略号⋯ \u2026
-	// 间隔号•、●、
+	// 间隔号•●
 	'punSymbol': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
-		'-｀‐━―─－ーˉ﹣﹦~﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢＋／︱¦＂′＇',
-		'—`———————－＝～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨++/\u007c\u007c\u0022\u0027\u0027'
+		'｀‐━―─－ーˉ﹣﹦~﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢＋／︱¦＂′＇',
+		'`———————－＝～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨++/\u007c\u007c\u0022\u0027\u0027'
 	],
 	// 标点符号修正
 	'punSymbolFix': [
+		// 破折号 ——
+		[/—+/g, '——'],
+		// 连接号 - -- ～
+		[/\-{2,}/g, '--'],
 		//[/\-/g, '—'],
-		// 中文破折号 ──
-		//[/([\u4e00-\u9fa0])——+/g, '$1──'],
-		//[/——+([\u4e00-\u9fa0])/g, '──$1'],
-		// 连接号 — —— ～
-		//[/\﹝/g, '［'], // 左方括号
-		//[/\﹞/g, '］'], // 右方括号
 		// 两个标点以上留一 「」『』“”‘’
 		// ：；（）［］｛｝%∧∨〈〉
-		[/——+/g, '——'],
 		[/：：+/g, '：'],
 		//[/，，+/g, '，'],
 		[/；；+/g, '；'],
@@ -384,6 +385,8 @@ var configs = {
 		[/…[，：；。`\—·]/g, '…'],
 		[/[，：；。`\—·]…/g, '…'],
 		[/…+/g, '……'],
+		// 修正省略号错误用法
+		[/……(等[，。！？])/g, '$1'],
 		// 去错误和相联标点
 		[/“：/g, '：“'],
 		[/：“”/g, '：“'],
@@ -420,34 +423,35 @@ var configs = {
 		// 20,000.00
 		//[/(?:\d+[，\.。]?)+(?=人民币|软妹币|元|韩元|美元|日元|英镑|港币|新?台币|法郎|比索|人|千|万|亿)/g, '$&'.replace(/，/g, ',')],
 		// 英文连接符–
-		[/([\-—～]+)(?:\b\w)/g, function(m, m1) {
-			return m1.length > 1 ? m.replace(m1, '——') : m.replace(m1, '-')
+		//[/([\-—～]+)(?:\b\w)/g, function(m, m1) {
+		//	return m1.length > 1 ? m.replace(m1, '——') : m.replace(m1, '-')
+		//}],
+		[/(?:\w\b)([\-—～]+)(?:\b\w)/g, function(m, m1) {
+			return m.replace(m1, '-');
 		}],
-		[/(?:\w\b)([\-—～]+)/g, function(m, m1) {
-			return m1.length > 1 ? m.replace(m1, '——') : m.replace(m1, '-')
-		}],
+		// C:\
+		[/([a-z])：/gi, '$1:'],
 		// 处理 Sid·Meier -> Sid Meier
 		[/([a-z]{2,})·(?=[a-z]{2,})/gi, '$1 '],
 		// 处理 Up / Down -> Up/Down
 		[/ *\/ *(?=[a-z]+)/gi, '/'],
 		// 处理 E。T。 -> E.T.
-		[/\b([a-z])\b[．。]/gi, '$1.'],
-		[/\b([a-z])\b\.$/gmi, '$1。']
+		[/\b([a-z])\b[．。](?!$|\W)/gi, '$1.']
 	],
 	/****** 结尾修正 ******/
 	'rEndFixed': {
 		// 经纬度 20"65'
 		'Latitude': '[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}] ?[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}]'.comReg('g'),
 		'LatitudeAt': ['“‘”’「『」』 ', '\u0022\u0027'.times(4)],
-		// 修正数字间的全角
-		'Number': /\b\d+ *[。·.：〉〈＝＊，] *\d+(?: *[。·.：〉〈＝＊，] *\d+)?/g,
+		// 修正数字间的全角 20.11.01 加入小数支持
+		'Number': /\b[\d\.。]+ *[。·.：〉〈＝＊，] *[\d\.。]+(?: *[。·.：〉〈＝＊，] *[\d\.。]+)?/g,
 		'NumberAt': ['。·.：〉〈＝＊，', '...:><=*,'],
 		// 时间 00:00:05，150
 		'Time': /\b\d{1,2}[:：]\d{1,2}[:：]\d{1,2}(?:，\b\d{1,4}\b| ?AM\b| ?PM\b)?/gi,
 		'TimeAt': ['：， ', ':,'],
 		// 日期 2018年9月6日4:11
-		'Date': /\b(?:31|30|2[0-9]|1[0-9]|0?[1-9])\b日 ?\b(?:2[0-3]|1[0-9]|0?[0-9])\b[:：]\b(?:5[0-9]|[1-4][0-9]|0?[1-9])/g,
-		'DateAt': ['： ', ':']
+		'Dates': /\b(?:31|30|2[0-9]|1[0-9]|0?[1-9])\b日 ?\b(?:2[0-3]|1[0-9]|0?[0-9])\b[:：]\b(?:5[0-9]|[1-4][0-9]|0?[1-9])/g,
+		'DatesAt': ['： ', ':']
 	},
 	'rEnd': [
 		//[/ ((?:2[0-3]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)(?:AM|PM))(?=[^。，\n])/gi, ' $1\n'],
