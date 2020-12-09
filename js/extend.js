@@ -181,7 +181,7 @@ extend(String.prototype, {
 
 // 重复连接字符串 repeat
 if(!String.prototype.repeat) {
-	String.prototype.repeat = String.prototype.repeat || function(m) {
+	String.prototype.repeat = function(m) {
 		m = ~~m;
 		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
 	}
