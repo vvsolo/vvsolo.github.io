@@ -190,9 +190,7 @@ if(!String.prototype.repeat) {
 // ***** 扩展数组处理 *****
 extend(Array.prototype, {
 	each: function(callback, thisArg) {
-		if (typeof callback !== "function") {
-			throw new TypeError(callback + ' is not a function');
-		}
+		if (!isFunction(callback)) return;
 		var that = this;
 		var l = this.length, i = -1;
 		(arguments.length > 1) && (that = thisArg);
