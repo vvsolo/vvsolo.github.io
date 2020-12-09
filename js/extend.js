@@ -193,7 +193,7 @@ extend(Array.prototype, {
 		if (typeof callback !== "function") {
 			throw new TypeError(callback + ' is not a function');
 		}
-		var that;
+		var that = this;
 		var l = this.length, i = -1;
 		(arguments.length > 1) && (that = thisArg);
 		while (++i < l) {
@@ -202,20 +202,6 @@ extend(Array.prototype, {
 		}
 	}
 });
-if(!Array.prototype.each) {
-	Array.prototype.each = Array.prototype.forEach || function(callback, thisArg) {
-		if (typeof callback !== "function") {
-			throw new TypeError(callback + ' is not a function');
-		}
-		var that;
-		var l = this.length, i = -1;
-		(arguments.length > 1) && (that = thisArg);
-		while (++i < l) {
-			if (callback.call(that, this[i], i, this) === false)
-				break;
-		}
-	}
-}
 
 // ***** 扩展时间处理 *****
 if(!Date.prototype.fmt) {
