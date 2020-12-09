@@ -189,7 +189,7 @@ if(!String.prototype.repeat) {
 
 // ***** 扩展数组处理 *****
 if(!Array.prototype.each) {
-	Array.prototype.each = Array.prototype.forEach || function(callback, thisArg) {
+	Array.prototype.each = function(callback, thisArg) {
 		if (typeof callback !== "function") {
 			throw new TypeError(callback + ' is not a function');
 		}
