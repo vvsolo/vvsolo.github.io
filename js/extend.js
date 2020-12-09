@@ -188,8 +188,8 @@ if(!String.prototype.repeat) {
 }
 
 // ***** 扩展数组处理 *****
-if(!Array.prototype.each) {
-	Array.prototype.each = function(callback, thisArg) {
+//if(!Array.prototype.each) {
+	Array.prototype.each = Array.prototype.forEach || function(callback, thisArg) {
 		if (typeof callback !== "function") {
 			throw new TypeError(callback + ' is not a function');
 		}
@@ -201,7 +201,7 @@ if(!Array.prototype.each) {
 				break;
 		}
 	}
-}
+//}
 
 // ***** 扩展时间处理 *****
 if(!Date.prototype.fmt) {
