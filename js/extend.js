@@ -189,7 +189,7 @@ if(!String.prototype.repeat) {
 
 // ***** 扩展数组处理 *****
 extend(Array.prototype, {
-	each: function(callback, thisArg) {
+	each: Array.prototype.forEach || function(callback, thisArg) {
 		if (!isFunction(callback)) return;
 		var that = this;
 		var l = this.length, i = -1;
