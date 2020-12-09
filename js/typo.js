@@ -36,6 +36,9 @@ extend(String.prototype, {
 			.replace(/[「『“‘](?=。|！|？|……|——|~~|$)$/gm, function(m) {
 				return arr1.charAt(arr2.indexOf(m.charAt(0))) + m.substring(1)
 			})
+			.replace(/：([”」])\n/g, function(m) {
+				return m.replaceAt(['”」', '“「'])
+			})
 			// 去除所有多余行
 			.replace(/\n\n\n+/g, '\n\n')
 			.replace(/^\n+/, '')
@@ -117,6 +120,7 @@ extend(String.prototype, {
 			.replace(eng.Line, function(m) {
 				// 如果是单词引用
 				if (m.find(/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi) ||
+					//(m.find(/^[“「]/mi) && m.find(/[」”]$/mi)) ||
 					m.findCount(eng.LineSkip) < 2 ||
 					!m.find(/[,， ]/)
 				) return m;
@@ -192,16 +196,15 @@ extend(String.prototype, {
 			.matchUpper(/\b[a-z]\b/g)
 			// 顶头字母大写
 			.replace(/^[a-z]+ /gim, function(m) {
-				return this.matchUpper(/\b[a-z]/gi)
+				return m.matchUpper(/\b[a-z]/gi)
 			});
 	},
 	// 半角字母数字
 	convertNumberLetter: function(r) {
-		var snLetter = configs.sNumberLetter;
 		return this
 			// 全角小写字母后紧跟大写，用空格分隔
 			.replace(/([Ａ-Ｚ][ａ-ｚ]+)(?=[Ａ-Ｚ][ａ-ｚ]+)/g, '$1 ')
-			.replaceAt(snLetter);
+			.replaceAt(configs.sNumberLetter);
 	},
 	// 转换标题内的全角数字
 	__chapterFullNumber: function() {
@@ -270,9 +273,9 @@ extend(String.prototype, {
 
 		if (lineLen > strLen) {
 			if (align === 'center') {
-				str = '　'.times(~~((lineLen - strLen) / 4)) + (strLen % 4 === 0 ? ' ' : '') + str;
+				str = '　'.repeat(~~((lineLen - strLen) / 4)) + (strLen % 4 === 0 ? ' ' : '') + str;
 			} else if (align === 'right') {
-				str = '　'.times(~~((lineLen - strLen) / 2)) + (strLen % 2 === 0 ? '' : ' ') + str;
+				str = '　'.repeat(~~((lineLen - strLen) / 2)) + (strLen % 2 === 0 ? '' : ' ') + str;
 			}
 		}
 		return (b1 || '') + str + (b2 || '');
@@ -336,8 +339,8 @@ extend(String.prototype, {
 				// 修正注释
 				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
 				// 修正结尾是数字的小标号
-				.replace(/([^\d\.])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
-				.replace(/([^\d\.]) ?\b(\d{1,2})$/, '$1（$2）')
+				.replace(/([^\w\.\-—])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
+				.replace(/([^\w\.\-—]) ?\b(\d{1,2})$/, '$1（$2）')
 				// 补零
 				.replace(/（(\d{1,3})）$/, function(m) {
 					return zero(m)

@@ -8,7 +8,8 @@
   <meta name="author" content="vsolo" />
   <title>小说排版助手（在线版）</title>
   <!-- Bootstrap core CSS -->
-  <link href="https://cdn.staticfile.org/twitter-bootstrap/5.0.0-alpha3/css/bootstrap.min.css" rel="stylesheet">
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <style>
   html,body{font-size:13px;min-width:960px}#TextareaEditor{margin:0;font-family:Consolas,Monaco,Courier New,monospace,serif;font-size:14px;line-height:1.5;min-height:500px;width:100%;height:100%;}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:200px}#c-right{left:200px}.form-control[type="text"]{font-weight:600}.form-control::placeholder{opacity:0.3;font-weight:400}.btn-info,.btn-info:hover{color:#fff}
   </style>
@@ -150,12 +151,12 @@
     <div class="p-0">
       <div class="alert m-0 rounded-0 border-0 editor-title" role="alert">
         <div class="row">
-          <div class="col-7 text-left">
+          <div class="col-7">
 	        <span class="copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！" title="点击复制标题到剪贴板">
                 <h4 class="alert-heading d-inline" id="TitleMsg" data-tip="标题">标题</h4>
             </span>
           </div>
-          <div class="col-5 text-right editor-message">
+          <div class="col-5 text-end editor-message">
             <span class="badge bg-warning text-dark" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</span>
           </div>
         </div>
@@ -182,7 +183,7 @@
               <button type="button" class="btn btn btn-outline-info font-weight-bold" title="插入全文完" data-insert="（全文完）">完</button>
             </div>
           </div>
-          <div class="col-4 text-right">
+          <div class="col-4 text-end">
             <button type="button" class="btn btn-secondary" title="新建文档；快捷键: Ctrl+N" id="CreateEditor">新建</button>
             <button type="button" class="btn btn-primary" title="缓存临时文档；快捷键: Ctrl+S" id="SaveEditor" data-tip="文档已保存！">缓存</button>
             <button type="button" class="btn btn-info" title="还原临时文档；快捷键: Ctrl+R" id="RestoreEditor" data-tip="文档已还原！">还原</button>
@@ -203,17 +204,17 @@
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min/ace.js"></script>
 
-<script src="./js/extend.js?202009"></script>
-<script src="./js/config.js?202009"></script>
-<script src="./js/typo.min.js?202009"></script>
-<script src="./js/typeset.min.js?202009"></script>
-<script src="./js/jquery.s2t.dic.js?202009"></script>
-<script src="./js/jquery.s2t.js?202009"></script>
+<script src="./js/extend.js?202012"></script>
+<script src="./js/config.js?202012"></script>
+<script src="./js/typo.min.js?202012"></script>
+<script src="./js/typeset.min.js?202012"></script>
+<script src="./js/jquery.s2t.dic.js?202012"></script>
+<script src="./js/jquery.s2t.js?202012"></script>
 
-<script src="./ace/theme-novel.js?202009"></script>
-<script src="./ace/mode-novel.js?202009"></script>
-<script src="./ace/ext-statusbar.js?202009"></script>
-<script src="./js/app.js?202009"></script>
+<script src="./ace/theme-novel.js?202012"></script>
+<script src="./ace/mode-novel.js?202012"></script>
+<script src="./ace/ext-statusbar.js?202012"></script>
+<script src="./js/app.js?202012"></script>
 <script>
 var _hmt = _hmt || [];
 (function() {

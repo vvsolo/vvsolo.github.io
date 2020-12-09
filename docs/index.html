@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>排版助手 - 使用文档</title>
+  <meta name="author" content="vsolo"/>
+  <title>排版助手 - 文档中心</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -12,16 +13,18 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
-      loadSidebar: '../docs/sidebar.md',
-      subMaxLevel: 2,
+      name: '排版助手',
+      loadSidebar: true,
+      //subMaxLevel: 2,
       repo: 'vvsolo/vvsolo.github.io',
       basePath: '../docs/',
       // 启用相对路径
       //relativePath: true,
-      name: ''
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
 </body>
 </html>

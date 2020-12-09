@@ -107,6 +107,8 @@ extend(String.prototype, {
 var configs = {
 	// 分隔符样式
 	'Separator': '＊＊＊　　＊＊＊　　＊＊＊',
+	// 题外话·分隔符样式
+	'tSeparator': '＊'.repeat(35),
 	// 章节与标题分隔符
 	'Divide': '：',
 	// 排版时每行最大字数（按双字节计算）
@@ -116,7 +118,7 @@ var configs = {
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	'endStrs': '待[续續]|未完|未完待[续續]|完|完[结結]|全[文书書][完终終]',
 	// 象声词
-	'mimeticWord': '啊哦喔呃唔嗯哼咛喂呜啦吡喏嘞噶咂呓嗬吧哎呀哟哈呵咦呦啧嗵扑哧噗嗤咳啐呸呛嘶呼嗖咯吱咕嗝呱嘟咿叽笃喳嘎嘀哩嘤唧咪喵哞嗷呯砰嘿哄嚯叮咚哐咝噼啪哗嘭咣咔咹嚓嗡恩耶咻吖轰隆汪驾呔啜雪哺碰嗫铮嗚喲撲嗆嘰篤嚶噝譁轟駕嘖嚀囈囁錚',
+	'mimeticWord': '啊哦喔呃唔嗯哼咛喂呜啦吡喏嘞噶咂呓嗬吧哎呀哟哈呵咦呦啧嗵扑哧噗嗤咳啐呸呛嘶呼嗖咯吱咕嗝呱嘟咿叽笃喳嘎嘀哩嘤唧咪喵哞嗷呯砰嘿哄嚯叮咚哐咝噼啪哗嘭咣咔咹嚓嗡恩耶咻吖轰隆汪驾呔啜雪哺碰嗫铮嗚喲撲嗆嘰篤嚶噝譁轟駕嘖嚀囈囁錚汩',
 	// 无结尾标点错误
 	'noEndLine': /[^\,\.\:;\?\!\)\]\}\'\"\~，、。\：；？！）］〕】〗｝·’』”」〉》…—～]$/,
 	/****** 文章标题 - 正则设定 ******/
@@ -159,7 +161,7 @@ var configs = {
 		// 约定英语，用|分隔
 		'Word': 'iPhone|iPhoneSE|iPhoneX|iPhoneXR|iPhoneXRMax|iPhoneXR|iPad|iPadPro|iPadAir|iMac|iTv|iPod|ing|BiuBiu|TikTok',
 		// 约定英语大写，用|分隔
-		'WordUpper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O',
+		'WordUpper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O',
 		// 虚词一直小写
 		'WordOnlyLower': 'a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with',
 		// 小写的后缀
@@ -242,7 +244,6 @@ var configs = {
 		[/"/g, '”'],
 		[/”([^“”]+)”/g, '”$1“'],
 		[/^([ 　]*)”/g, '$1“'],
-		//[/“$/g, '”'],
 		[/：”/g, '：“']
 	],
 	/****** 分隔符 ******/
@@ -276,7 +277,7 @@ var configs = {
 		[/@@@+/g, '\n@@@@\n'],
 		[/\n\n@@@@\n\n/g, '\n@@@@\n'],
 		// 还原注释标记
-		[/!@!@!@!@!/g, '＊'.times(35)]
+		[/!@!@!@!@!/g, '＊'.repeat(35)]
 	],
 	/****** 其他替换设定 ******/
 	// 全半角数字字母
@@ -348,7 +349,6 @@ var configs = {
 		[/—+/g, '——'],
 		// 连接号 - -- ～
 		[/\-{2,}/g, '--'],
-		//[/\-/g, '—'],
 		// 两个标点以上留一 「」『』“”‘’
 		// ：；（）［］｛｝%∧∨〈〉
 		[/：：+/g, '：'],
@@ -442,7 +442,7 @@ var configs = {
 	'rEndFixed': {
 		// 经纬度 20"65'
 		'Latitude': '[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}] ?[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}]'.comReg('g'),
-		'LatitudeAt': ['“‘”’「『」』 ', '\u0022\u0027'.times(4)],
+		'LatitudeAt': ['“‘”’「『」』 ', '\u0022\u0027'.repeat(4)],
 		// 修正数字间的全角 20.11.01 加入小数支持
 		'Number': /\b[\d\.。]+ *[。·.：〉〈＝＊，] *[\d\.。]+(?: *[。·.：〉〈＝＊，] *[\d\.。]+)?/g,
 		'NumberAt': ['。·.：〉〈＝＊，', '...:><=*,'],
@@ -460,6 +460,7 @@ var configs = {
 		[/ *={1,2}> */g, ' => '],
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.](?=\d{1,2})/gi, 'NO.'],
+		[/I\u0027M/g, 'I\u0027m'],
 		// 公司简称
 		[/ ?Co。，? ?Ltd。?/gi, ' Co.,Ltd.']
 	]

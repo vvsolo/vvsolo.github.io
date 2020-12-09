@@ -2,7 +2,7 @@
 $(function() {
 	var isLanguage = $('#chinese'),
 		tEditor = $('#TextareaEditor'),
-		editorTitleHeight = 50
+		editorTitleHeight = 50;
 
 	// 简繁互换
 	function setLanguage() {
@@ -56,45 +56,45 @@ $(function() {
 	var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
 	var statusBar = new StatusBar(editor, document.getElementById("statusBar"));
 	var sEditor = editor.getSession()
-	var storage = $.localStorage
+	var storage = $.localStorage;
 	sEditor.setValue(storage.get('tmpContent') || '')
 	isLanguage.html(storage.get('language') || '简')
 	// 读取保存的设置
 	var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite'],
-		l = inputVals.length, i
-	for (i = 0; i < l; i++) {
-		$('#' + inputVals[i]).val(storage.get(inputVals[i]) || '')
-	}
-	for (i = 0; i < 5; i++) {
+		i = -1;
+	inputVals.forEach(function(v, i) {
+		$('#' + v).val(storage.get(v) || '');
+	});
+	while (++i < 5) {
 		var tmp = 'Check_' + i;
-		$('#' + tmp).removeAttr('checked')
+		$('#' + tmp).removeAttr('checked');
 		if (!storage.isEmpty(tmp))
-			$('#' + tmp).attr('checked', 'checked')
+			$('#' + tmp).attr('checked', 'checked');
 	}
 	// 保存设置
 	$('#SaveConfig').click(function() {
-		for (i = 0; i < l; i++) {
-			var tmp = inputVals[i]
-			if ($('#' + tmp).val().length > 0)
-				storage.set(tmp, $('#' + tmp).val())
+		inputVals.forEach(function(v) {
+			if ($('#' + v).val())
+				storage.set(v, $('#' + v).val());
 			else
-				storage.remove(tmp)
-		}
-		for (i = 0; i < 5; i++) {
+				storage.remove(v);
+		});
+		var i = -1;
+		while (++i < 5) {
 			var tmp = 'Check_' + i;
 			if ($('#' + tmp).is(':checked'))
-				storage.set(tmp, 'checked')
+				storage.set(tmp, 'checked');
 			else
-				storage.remove(tmp)
+				storage.remove(tmp);
 		}
 		storage.set('language', (isLanguage.html() == '简') ? '繁' : '简')
-		showMessage(this)
+		showMessage(this);
 	})
 	// 简繁互换
-	setLanguage()
+	setLanguage();
 	isLanguage.click(function(e) {
 		e.preventDefault();
-		setLanguage()
+		setLanguage();
 	});
 	// 左侧收缩工具
 	$('#floatTool').click(function() {
@@ -105,180 +105,180 @@ $(function() {
 		$('#c-right').animate({
 			left: (cLeft ? 0 : 200)
 		}, 300)
-		var tipVal = $(this).attr('data-tip').split('|')
-		$(this).html(cLeft ? tipVal[0] : tipVal[1])
+		var tipVal = $(this).attr('data-tip').split('|');
+		$(this).html(cLeft ? tipVal[0] : tipVal[1]);
 		
 	})
 	// 转简体
 	$('#toSimp').on('click', function() {
-		var sVal = sEditor.getValue()
-		sVal = $.t2s(sVal)
-		sEditor.setValue(sVal)
-		editor.focus()
+		var sVal = sEditor.getValue();
+		sVal = $.t2s(sVal);
+		sEditor.setValue(sVal);
+		editor.focus();
 	})
 	// 转繁体
 	$('#toTrad').on('click', function() {
-		var sVal = sEditor.getValue()
-		sVal = $.s2t(sVal)
-		sEditor.setValue(sVal)
-		editor.focus()
+		var sVal = sEditor.getValue();
+		sVal = $.s2t(sVal);
+		sEditor.setValue(sVal);
+		editor.focus();
 	})
 	// 实时显示文章标题
-	setTitle()
-	$('#inputBookName,#inputChapter').on('keyup keydown change focus input propertychange', function() {
-		setTitle()
+	setTitle();
+	$('#inputBookName, #inputChapter').on('keyup keydown change focus input propertychange', function() {
+		setTitle();
 	})
 	// 保存文档
 	$('#SaveEditor').click(function() {
-		var sVal = sEditor.getValue()
+		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			storage.set('tmpContent', sVal)
+			storage.set('tmpContent', sVal);
 			sEditor.getUndoManager().markClean();
-			showMessage(this)
+			showMessage(this);
 		}
-		editor.focus()
+		editor.focus();
 	});
 	editor.commands.addCommand({
 		name: "__save",
 		exec: function() {
-			$('#SaveEditor').trigger('click')
+			$('#SaveEditor').trigger('click');
 		},
 		bindKey: { win: "ctrl-s", mac: "cmd-s" }
 	});
 	// 还原文档
 	$('#RestoreEditor').click(function() {
-		var sVal = storage.get('tmpContent') || ''
+		var sVal = storage.get('tmpContent') || '';
 		if (sVal.length > 0) {
-			sEditor.setValue(sVal)
-			editor.focus()
-			showMessage(this)
+			sEditor.setValue(sVal);
+			editor.focus();
+			showMessage(this);
 		}
 	});
 	editor.commands.addCommand({
 		name: "__restore",
 		exec: function() {
-			$('#RestoreEditor').trigger('click')
+			$('#RestoreEditor').trigger('click');
 		},
 		bindKey: { win: "ctrl-r", mac: "cmd-r" }
 	});
 	// 新建文档
 	$('#CreateEditor').click(function() {
-		sEditor.setValue('')
-		editor.focus()
+		sEditor.setValue('');
+		editor.focus();
 	});
 	editor.commands.addCommand({
 		name: "__create",
 		exec: function() {
-			$('#CreateEditor').trigger('click')
+			$('#CreateEditor').trigger('click');
 		},
 		bindKey: { win: "ctrl-n", mac: "cmd-n" }
 	});
 	// 清空文档
 	$('#ClearEditor').click(function() {
-		storage.remove('tmpContent')
-		showMessage(this)
-		editor.focus()
+		storage.remove('tmpContent');
+		showMessage(this);
+		editor.focus();
 	});
 	// 一键整理
 	$('#onCleanUp').click(function() {
-		var sVal = sEditor.getValue()
+		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			sVal = editorCleanUp(sVal)
-			sEditor.setValue(sVal)
-			editor.focus()
+			sVal = editorCleanUp(sVal);
+			sEditor.setValue(sVal);
+			editor.focus();
 		}
 	});
 	editor.commands.addCommand({
 		name: "__cleanup",
 		exec: function() {
-			$('#onCleanUp').trigger('click')
+			$('#onCleanUp').trigger('click');
 		},
 		bindKey: { win: "f8", mac: "f8" }
 	});
 	// 特殊整理
 	$('#onCleanUpEx').click(function() {
-		var sVal = sEditor.getValue()
+		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			sVal = editorCleanUpEx(sVal)
-			sEditor.setValue(sVal)
-			editor.focus()
+			sVal = editorCleanUpEx(sVal);
+			sEditor.setValue(sVal);
+			editor.focus();
 		}
 	});
 	editor.commands.addCommand({
 		name: "__cleanup_ex",
 		exec: function() {
-			$('#onCleanUpEx').trigger('click')
+			$('#onCleanUpEx').trigger('click');
 		},
 		bindKey: { win: "f7", mac: "f7" }
 	});
 	// 一键排版
 	$('#onTypeSetSplit').click(function() {
-		var sVal = sEditor.getValue()
+		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			storage.set('tmpContent', sVal)
-			showMessage(this)
-			sEditor.setValue(onTypeSetSplit(sVal))
-			editor.focus()
+			storage.set('tmpContent', sVal);
+			showMessage(this);
+			sEditor.setValue(onTypeSetSplit(sVal));
+			editor.focus();
 		}
 	});
 	editor.commands.addCommand({
 		name: "__typeset",
 		exec: function() {
-			$('#onTypeSetSplit').trigger('click')
+			$('#onTypeSetSplit').trigger('click');
 		},
 		bindKey: { win: "f9", mac: "f9" }
 	});
 	// 阅读排版
 	$('#onTypeSetRead').click(function() {
-		var sVal = sEditor.getValue()
+		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			storage.set('tmpContent', sVal)
-			showMessage(this)
-			sEditor.setValue(onTypeSetRead(sVal))
-			editor.focus()
+			storage.set('tmpContent', sVal);
+			showMessage(this);
+			sEditor.setValue(onTypeSetRead(sVal));
+			editor.focus();
 		}
 	});
 	// 绑定快捷键
 	// 简单UBB
 	$('.btn[data-ubbcode]').each(function() {
-		var $this = $(this)
+		var $this = $(this);
 		$this.click(function() {
-			var selection = sEditor.getTextRange(editor.getSelectionRange())
+			var selection = sEditor.getTextRange(editor.getSelectionRange());
 			if (selection.length > 0) {
-				var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection)
-				editor.insert(tmp)
+				var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection);
+				editor.insert(tmp);
 			} else {
-				showMessage(this)
+				showMessage(this);
 			}
 		})
 	});
 	// 插入待续完结
 	$('.btn[data-insert]').each(function() {
-		var tmp = $(this).data('insert')
+		var tmp = $(this).data('insert');
 		$(this).click(function() {
-			editor.insert(tmp)
+			editor.insert(tmp);
 		});
 	});
 	// 复制标题到剪贴板
-	var clipboardTitle = new ClipboardJS('.copy-title')
+	var clipboardTitle = new ClipboardJS('.copy-title');
 	clipboardTitle.on('success', function(e) {
-		e.clearSelection()
-		showMessage($('.copy-title'))
+		e.clearSelection();
+		showMessage($('.copy-title'));
 	});
 	// 复制文档到剪贴板
 	var clipboardText = new ClipboardJS('.copy-content', {
 		text: function(trigger) {
-			return editor.getValue()
+			return editor.getValue();
 		}
 	});
 	clipboardText.on('success', function(e) {
-		e.clearSelection()
-		showMessage($('.copy-content'))
+		e.clearSelection();
+		showMessage($('.copy-content'));
 	});
 	editor.commands.addCommand({
 		name: "__copydoc",
 		exec: function(){
-			$('.copy-content').trigger('click')
+			$('.copy-content').trigger('click');
 		},
 		bindKey: { win: "f10", mac: "f10" }
 	});

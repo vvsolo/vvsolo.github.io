@@ -27,17 +27,15 @@ var extend = function(a, b) {
 extend(String.prototype, {
 	// 字符串正则，加正则保护
 	regEscape: function() {
-		var reRegExpChar = /[\\.*]/g;
 		return this
-			.replace(reRegExpChar, '\\$&')
+			.replace(/[\\.*]/g, '\\$&')
 			.replace(/\u005c\u005c+/g, "\u005c\u005c") || '';
 	},
 	// 字符串，加正则保护
 	escapeRegExp: function() {
 		var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 		//var reRegExpChar = /([\\\/\'*+?|()\[\]{}.^$-])/g;
-		var reHasRegExpChar = new RegExp(reRegExpChar.source);
-		return (this && reHasRegExpChar.test(this))
+		return (this && (new RegExp(reRegExpChar.source)).test(this))
 			? this.replace(reRegExpChar, '\\$&')
 			: (this || '');
 	},
@@ -99,11 +97,6 @@ extend(String.prototype, {
 	len: function() {
 		return this.length + (this.match(/[^\x00-\xff]/g) || "").length;
 	},
-	// 重复连接字符串
-	times: function(m) {
-		m = ~~m;
-		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
-	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
 		return (this.match(isString(reg) ? reg.getReg() : reg) || '').length;
@@ -152,6 +145,13 @@ extend(String.prototype, {
 				return m;
 			})
 	},
+	// 快捷字符串替换
+	f: function() {
+		var args = [].slice.call(arguments);
+		return this.replace(/\$(\d)/g, function(m, m1) {
+			return args[m1] || m;
+		});
+	},
 	// 替换并返回正则式
 	fmtReg: function(args, f, r) {
 		return this.fmt(args, r).getReg(f);
@@ -179,16 +179,29 @@ extend(String.prototype, {
 	}
 });
 
+// 重复连接字符串 repeat
+if(!String.prototype.repeat) {
+	String.prototype.repeat = String.prototype.repeat || function(m) {
+		m = ~~m;
+		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
+	}
+}
+
 // ***** 扩展数组处理 *****
-extend(Array.prototype, {
-	each: function(func) {
+if(!Array.prototype.each) {
+	Array.prototype.each = Array.prototype.forEach || function(callback, thisArg) {
+		if (typeof callback !== "function") {
+			throw new TypeError(callback + ' is not a function');
+		}
+		var that;
 		var l = this.length, i = -1;
+		(arguments.length > 1) && (that = thisArg);
 		while (++i < l) {
-			if (func(this[i], i, this) === false)
+			if (callback.call(that, this[i], i, this) === false)
 				break;
 		}
 	}
-});
+}
 
 // ***** 扩展时间处理 *****
 if(!Date.prototype.fmt) {
@@ -219,6 +232,6 @@ if(!Date.prototype.fmt) {
 // 格式化数字 12,553.00
 if (!Number.prototype.fmt) {
 	Number.prototype.fmt = function() {
-		return isNaN(this)? this : this.toLocaleString().replace(/\.00$/, '');
+		return isNaN(this) ? this : this.toLocaleString().replace(/\.00$/, '');
 	}
 }

@@ -12,14 +12,11 @@
 (function($) {
 	// 转换
 	function convert(str, ss, tt){
-		var re = '', i = -1, l = str.length, tmp
-		while (++i < l) {
-			tmp = str.charAt(i);
-			if (str.charCodeAt(i) > 10000 && ss.indexOf(tmp) != -1)
-				re += tt.charAt(ss.indexOf(tmp));
-			else re += tmp;
-		}
-		return re;
+		return str.split('').map((v, i) => {
+			return (str.charCodeAt(i) > 10000 && ss.indexOf(v) != -1) ?
+				tt.charAt(ss.indexOf(v)) :
+				v
+		}).join('');
 	}
 	//转繁体
 	function Traditionalized(str){
@@ -43,7 +40,8 @@
 	}
 	// 繁转简补充部分
 	function Othered(str){
-		return str.replaces(addT2S())
+		addT2S().forEach((v) => str = str.replace(v[0], v[1]) );
+		return str;
 	}
 
 	/**
@@ -65,10 +63,7 @@
 	function tranAttr(element, attr, toT) {
 
 		if (attr instanceof Array) {
-			var i = -1, l = attr.length;
-			while (++i < l) {
-				tranAttr(element, attr[i], toT);
-			}
+			attr.forEach((v) => tranAttr(element, v, toT));
 		} else {
 			var attrValue = element.getAttribute(attr);
 
@@ -128,18 +123,14 @@
 		 * @param {String} str - 待转换的文本
 		 * @returns {String} 转换结果
 		 */
-		s2t: function(str) {
-			return tranStr(str, true);
-		},
+		s2t: (str) => tranStr(str, true),
 
 		/**
 		 * 文本繁转简
 		 * @param {String} str - 待转换的文本
 		 * @returns {String} 转换结果
 		 */
-		t2s: function(str) {
-			return tranStr(str, false);
-		}
+		t2s: (str) => tranStr(str, false)
 	});
 
 	// 扩展jQuery对象方法
