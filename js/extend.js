@@ -179,17 +179,9 @@ extend(String.prototype, {
 	}
 });
 
-// 重复连接字符串 repeat
-if(!String.prototype.repeat) {
-	String.prototype.repeat = function(m) {
-		m = ~~m;
-		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
-	}
-}
-
 // ***** 扩展数组处理 *****
 extend(Array.prototype, {
-	each: Array.prototype.forEach || function(callback, thisArg) {
+	each: function(callback, thisArg) {
 		if (!isFunction(callback)) return;
 		var that = this;
 		var l = this.length, i = -1;
@@ -200,36 +192,3 @@ extend(Array.prototype, {
 		}
 	}
 });
-
-// ***** 扩展时间处理 *****
-if(!Date.prototype.fmt) {
-	// 格式化时间
-	Date.prototype.fmt = function(d) {
-		var c = this;
-		var o = {
-			"y+": c.getFullYear(), //年
-			"M+": c.getMonth() + 1, //月份 
-			"d+": c.getDate(), //日 
-			"h+": c.getHours(), //小时 
-			"m+": c.getMinutes(), //分 
-			"s+": c.getSeconds(), //秒 
-			"q+": Math.floor((c.getMonth() + 3) / 3), //季度 
-			"S": c.getMilliseconds() //毫秒 
-		};
-		for (var k in o) {
-			var tmp = '00' + o[k];
-			d = d.replace(new RegExp(k), function(m) {
-				if (m.length < 2) return o[k];
-				return tmp.substr(tmp.length - m.length);
-			});
-		}
-		return d;
-	}
-}
-
-// 格式化数字 12,553.00
-if (!Number.prototype.fmt) {
-	Number.prototype.fmt = function() {
-		return isNaN(this) ? this : this.toLocaleString().replace(/\.00$/, '');
-	}
-}

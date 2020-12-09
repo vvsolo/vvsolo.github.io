@@ -89,12 +89,8 @@ function doSplit(str, sm, bm) {
 
 // 分段排版
 function onTypeSetSplit(str) {
-	// 结尾的文字，编辑user.js文件
-	var eStrs = ('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm'),
-		re = ''
-
 	// 执行整理
-	str = str
+	str = '\n' + str
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -109,7 +105,7 @@ function onTypeSetSplit(str) {
 			return m.setAlign('', '', 'center')
 		})
 		// 结尾居中
-		.replace(eStrs, function(m) {
+		.replace(('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
 			return m.setAlign('', '', 'center')
 		})
 		// 书名居中
@@ -119,11 +115,10 @@ function onTypeSetSplit(str) {
 		// 标题居中
 		.replaceTitle('', '\n', 'center')
 		.split('\n')
-		.each(function(v) {
-			re += doSplit(v, '\n\n', '\n\n')
+		.map(function(v) {
+			return doSplit(v, '\n\n', '\n\n')
 		})
-
-	re = '\n' + re
+		.join('')
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
 		// 作者类居左
@@ -134,19 +129,18 @@ function onTypeSetSplit(str) {
 		.replace(/\n\n{3,}/gm, '\n\n\n')
 
 	if ( !$('#Check_AddTop').is(':checked') )
-		return re
+		return str
 	// 插入标头
 	var headStr = ($('#chinese').html() !== '简') ?
 		'作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n' :
 		'作者：{$w}\n{$d}發表於：{$b}\n是否首發：{$y}\n字數：{$n} 字\n';
-	headStr = headStr.fmt({
+	return headStr.fmt({
 		'w': $('#inputAuthor').val().trim() || ' ',
 		'b': $('#inputSite').val().trim() || ' ',
 		'y': $('#Check_0').is(':checked') ? '是' : '否',
-		'd': new Date().fmt("yyyy/MM/dd"),
-		'n': (re.length - re.findCount(/[　\s]/g)).fmt()
-	})
-	return headStr + '\n' + re
+		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
+		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
+	}) + '\n' + str
 }
 
 // 阅读排版
