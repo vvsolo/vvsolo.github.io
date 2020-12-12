@@ -23,7 +23,7 @@ width: 0;\
 border-left: 1px dashed #4d4d4d;\
 }\
 .ace-novel {\
-color: #B7BDC8;\
+color: #C4CAD6;\
 background-color: #1E1E1E;\
 }\
 .ace-novel .ace_invisible {\
@@ -78,15 +78,15 @@ color: #EBDAB4;\
 .ace-novel .ace_punctuation.ace_operator {\
 color: yellow;\
 }\
-.ace-novel .ace_bookmark { background-color: #8B0A6B; color: #fff; }\
-.ace-novel .ace_title0 { background-color: #006200; color: #fff; }\
-.ace-novel .ace_title1 { background-color: #8B0A6B; color: #fff; }\
-.ace-novel .ace_title2 { background-color: #733730; color: #fff; }\
+.ace-novel .ace_bookmark { background-color: #AC1F30; color: #fff; }\
+.ace-novel .ace_title0 { background-color: #1D6F42; color: #fff; }\
+.ace-novel .ace_title1 { background-color: #4A0095; color: #fff; }\
+.ace-novel .ace_title2 { background-color: #AC1F30; color: #fff; }\
 .ace-novel .ace_endstr { background-color: #245580; color: #fff; }\
 .ace-novel .ace_number { color: #9D81DF; }\
 .ace-novel .ace_halfpun { color: #3087CA; }\
 .ace-novel .ace_quotes { color: #80FF80; }\
-.ace-novel .ace_cnPunctuation { font-family: NSimSun, SimSun; font-size: 15px; }\
+.ace-novel .ace_cnPunctuation1 { font-family: NSimSun, SimSun; font-size: 16px; }\
 .ace-novel .ace_indent-guide {\
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWPQ0FD0ZXBzd/wPAAjVAoxeSgNeAAAAAElFTkSuQmCC) right repeat-y\
 }";

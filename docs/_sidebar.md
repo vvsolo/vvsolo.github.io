@@ -3,3 +3,4 @@
 * [🛠️ 功能](function.md)
 * [📝 日志](logs.md)
 * [⚡ 下载](download.md)
+* [🩸 高级](advanced.md)
