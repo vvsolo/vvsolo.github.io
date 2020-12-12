@@ -26,14 +26,14 @@ var strChapter = {
 	'space': Space,
 	'sep': ' 　，、．·。：—\\.\\,\\:\\-\\|',
 	'c': ['卷部', '集篇阙季册闕冊', '章折回话节幕節話'],
-	'cf': '[折卷章]',
+	'cf': '[折卷册冊]',
 	'crt': '章',
 	's0': '[上中下续终續終]',
 	's1': '[0-9０-９零一二三四五六七八九十]',
 	'n1': '[0-9０-９]{1,4}',
 	'n2': '[0-9０-９]{1,4}(?:[-—.][0-9０-９]{1,3})?',
 	'n3': '[0０○〇零一二三四五六七八九十百千壹贰叁肆伍陆柒捌玖拾佰仟两廿卅卌貳叄陸兩]{1,7}',
-	'n4': '最?[初前后终尾後終]|[上中下续断續斷]',
+	'n4': '最[初终尾終]|[初前后终尾後終]|[上中下续断續斷]',
 	// 短标题
 	'w0': '(?:[简簡]介|介[绍紹]|[预預]告|自介)',
 	'w1': '[0-9]{1,2}',
@@ -131,7 +131,7 @@ var configs = {
 		//'t0': /[。…—！？][」”]$/,
 		't0': /[。;；—]$/,
 		't1': /^(?:序[长词战兴常稿歌秩次传述長詞戰興傳]|[上下]回|[\-—]{1,4}|断章取义|同人不)/,
-		't2': /^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课)|^一(?:幕[幕]|回[生首头家頭閤]|[直切生世])|^二(?:话[没不沒])|^三(?:[生世])|^四[周边处]/,
+		't2': /^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课)|^一(?:幕[幕]|回[生首头家頭閤神味]|[直切生世])|^二(?:话[没不沒])|^三(?:[生世])|^四[周边处]|^上节目/,
 		't3': '^[一二三四五六七八九十百两兩][{$c}].*[，].*$|^(?:{$n1}|{$n2})[年月日]'.chapReg(''),
 		't6': [
 			// 忽略日期格式 2010.10.10, 17.10.10, 17/10/10
@@ -163,13 +163,13 @@ var configs = {
 		// 约定英语大写，用|分隔
 		'WordUpper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|OK|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O',
 		// 虚词一直小写
-		'WordOnlyLower': 'a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with',
-		// 小写的后缀
-		'LowerExt': /。\b(?:Avi|Jpg|Bmp|Png|Net)\b/g,
+		'WordLower': 'a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with',
 		// 约定英语修正
 		'WordFix': [],
+		// 小写的后缀
+		'LowerExt': /。\b(?:Avi|Jpg|Bmp|Png|Net)\b/g,
 		// 符合的英文
-		'PunFix': "[0-9A-Z][ \\w{$latin}']+[0-9a-z]".comReg('g'),
+		'PunFix': "\\b[0-9A-Z][ \\w{$latin}']+[0-9a-z]\\b".comReg('g'),
 		// 特殊的连续单词 转大写
 		'Continuous': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|bca|dbca|edbca|xyz)\b/gi,
 		// 拉丁字母、某些标点后的大写
@@ -179,8 +179,11 @@ var configs = {
 		'QuoteTest': /[，。！？…]/,
 		// 英文间单引号样式替换
 		'Sep': ' *\\b[a-z]+\\b[{$enSep}](?: |\\b[a-z]+\\b)'.comReg('gi'),
-		// 括号中的英文
-		'Bracket': '[（〈《【〔〖][ \\w{$hwPun}{$qhwPun}{$fwPun}{$latin}]{2,}[〗〕】》〉）]'.comReg('g'),
+		// 姓名中的间隔
+		'NameSep': '\\b[IODL][{$enSep}]'.comReg('gi'),
+		'NameFix': /\b(?:[IODL]\'|Mac|Mc)[a-z]/gi,
+		// 括号中的英文 - 20.12.12 删除《》
+		'Bracket': '[（〈【〔〖][ \\w{$hwPun}{$qhwPun}{$fwPun}{$latin}]{2,}[〗〕】〉）]'.comReg('g'),
 		// 称谓单词前缀
 		'HonorWord': /\b(?:Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)\b。(?!$)/g,
 		// url
@@ -300,7 +303,7 @@ var configs = {
 		'00|00|01|01|01|01|01|01|01|02|02|02|02|02|02|02|03|03|03|03|03|03|03|04|04|04|04|04|04|04|05|05|05|05|05|05|05|06|06|06|06|06|06|06|07|07|07|07|07|07|07|08|08|08|08|08|08|08|09|09|09|09|09|09|09|10|10|10|10|10|10|10|11|11|11|12|12|12|13|13|13|14|14|14|15|15|15|16|16|16|17|17|17|18|18|18|19|19|19|20|20|20|一|二|三|四|五|六|七|八|九|十|一|二|三|四|五|六|七|八|九|十'
 	],
 	// HTML 字符实体
-	'regHtmlEntity': /[&＆]? ?([a-zA-Z1-8]{2,18})[;；]/g,
+	'regHtmlEntity': /[&＆]? ?[a-zA-Z1-8]{2,18}[;；]/g,
 	'sHtmlEntity': {
 		// 带有实体名称的 ASCII 实体
 		'quot': '"', 'apos': "'", 'amp': '&', 'lt': '<', 'gt': '>',
@@ -448,10 +451,7 @@ var configs = {
 		'NumberAt': ['。·.：〉〈＝＊，', '...:><=*,'],
 		// 时间 00:00:05，150
 		'Time': /\b\d{1,2}[:：]\d{1,2}[:：]\d{1,2}(?:，\b\d{1,4}\b| ?AM\b| ?PM\b)?/gi,
-		'TimeAt': ['：， ', ':,'],
-		// 日期 2018年9月6日4:11
-		'Dates': /\b(?:31|30|2[0-9]|1[0-9]|0?[1-9])\b日 ?\b(?:2[0-3]|1[0-9]|0?[0-9])\b[:：]\b(?:5[0-9]|[1-4][0-9]|0?[1-9])/g,
-		'DatesAt': ['： ', ':']
+		'TimeAt': ['：， ', ':,']
 	},
 	'rEnd': [
 		//[/ ((?:2[0-3]|1\d|0?[1-9])[:：](?:5[0-9]|[1-4]\d|0?\d)(?:AM|PM))(?=[^。，\n])/gi, ' $1\n'],
@@ -460,7 +460,7 @@ var configs = {
 		[/ *={1,2}> */g, ' => '],
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.](?=\d{1,2})/gi, 'NO.'],
-		[/I\u0027M/g, 'I\u0027m'],
+		//[/I\u0027M/g, 'I\u0027m'],
 		// 公司简称
 		[/ ?Co。，? ?Ltd。?/gi, ' Co.,Ltd.']
 	]

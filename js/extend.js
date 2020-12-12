@@ -99,7 +99,7 @@ extend(String.prototype, {
 	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
-		return (this.match(isString(reg) ? reg.getReg() : reg) || '').length;
+		return (this.match(isString(reg) ? new RegExp(reg, 'g') : reg) || '').length;
 	},
 	// 简化搜索方式
 	find: function(str) {
@@ -118,7 +118,6 @@ extend(String.prototype, {
 		if (!isObject(vals) && !isArray(vals)) {
 			return this;
 		}
-			
 		// 数组连接符号
 		r = r || '';
 		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
@@ -179,11 +178,19 @@ extend(String.prototype, {
 	}
 });
 
+// 重复连接字符串 repeat
+if(!String.prototype.repeat) {
+	String.prototype.repeat = function(m) {
+		m = ~~m;
+		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
+	}
+}
+
 // ***** 扩展数组处理 *****
 extend(Array.prototype, {
 	each: function(callback, thisArg) {
 		if (!isFunction(callback)) return;
-		var that = this;
+		var that;
 		var l = this.length, i = -1;
 		(arguments.length > 1) && (that = thisArg);
 		while (++i < l) {

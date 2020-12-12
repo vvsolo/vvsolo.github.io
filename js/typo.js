@@ -36,9 +36,9 @@ extend(String.prototype, {
 			.replace(/[「『“‘](?=。|！|？|……|——|~~|$)$/gm, function(m) {
 				return arr1.charAt(arr2.indexOf(m.charAt(0))) + m.substring(1)
 			})
-			.replace(/：([”」])\n/g, function(m) {
-				return m.replaceAt(['”」', '“「'])
-			})
+			//.replace(/：([”」])\n/g, function(m) {
+			//	return m.replaceAt(['”」', '“「'])
+			//})
 			// 去除所有多余行
 			.replace(/\n\n\n+/g, '\n\n')
 			.replace(/^\n+/, '')
@@ -55,19 +55,19 @@ extend(String.prototype, {
 			// 修正 数字间隔
 			.replace(ef.Number, function(m) {
 				var tmp = m.replaceAt(ef.NumberAt);
-				// 非标准中文数字间隔样式，还原逗号
-				if (!/\d+\,\d{3}/.test(tmp)) {
+				// 非标准中文数字间隔样式，不处理逗号
+				if (!/\d+\,\d{3}\b/.test(tmp)) {
 					tmp = tmp.replace(/\,/g, '，');
 				}
 				return tmp;
 			})
+			// 倒计时样式的，还原逗号
+			.replace(/(?:\d+\,){2,10}\d+……/g, function(m) {
+				return m.replace(/\,/g, '，');
+			})
 			// 修正 时间
 			.replace(ef.Time, function(m) {
 				return m.replaceAt(ef.TimeAt).matchUpper(/[apm]/g);
-			})
-			// 修正 日期
-			.replace(ef.Dates, function(m) {
-				return m.replaceAt(ef.DatesAt);
 			});
 	},
 	// 去除汉字间的空格
@@ -94,24 +94,11 @@ extend(String.prototype, {
 			return m.toUpperCase();
 		})
 	},
-	// 正则首字母大写
-	matchFirstUpper: function(reg) {
-		return this.matchUpper(/\b[a-z]/g);
-	},
 	// 正则字母小写
 	matchLower: function(reg) {
 		return this.replace(reg, function(m) {
 			return m.toLowerCase();
 		})
-	},
-	// 处理英文
-	__convertEnglish: function() {
-		return this
-			.replaceAt(configs.halfPuns)
-			.replaces(configs.halfSymbol)
-			.matchLower(configs.findEng.PunAfter)
-			.matchUpper(/[\.\?\!\:\&] ?[a-z]/g)
-			.trim();
 	},
 	// 单独一行英文
 	convertEngLine: function() {
@@ -119,12 +106,18 @@ extend(String.prototype, {
 		return this
 			.replace(eng.Line, function(m) {
 				// 如果是单词引用
-				if (m.find(/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi) ||
+				return (m.find(/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi) ||
 					//(m.find(/^[“「]/mi) && m.find(/[」”]$/mi)) ||
 					m.findCount(eng.LineSkip) < 2 ||
-					!m.find(/[,， ]/)
-				) return m;
-				return m.replaceAt(configs.halfPunsOther).__convertEnglish();
+					!m.find(/[,， ]/) ||
+					m.find(/[《》]/)
+				) ? m : m
+					.replaceAt(configs.halfPunsOther)
+					.replaceAt(configs.halfPuns)
+					.replaces(configs.halfSymbol)
+					.matchLower(eng.PunAfter)
+					.matchUpper(/[\.\?\!\:\&] ?[a-z]/g)
+					.trim();
 			});
 	},
 	// 修正英文大小写
@@ -138,19 +131,16 @@ extend(String.prototype, {
 			//.toLowerCase()
 			.matchLower(/[A-Z]/g)
 			// 英文首写全大写
-			.matchFirstUpper()
-			// 引用的全转小写
-			//.replace(eng.Quote, function(m) {
-			//	return eng.QuoteTest.test(m) ?
-			///		m.__convertEnglish() : m
-			//})
+			.matchUpper(/\b[a-z]/g)
+			//.matchUpper(/(?:^|[！？…～—“「])[a-z]/gi)
+			// 整段英文后续全小写
+			//.matchLower(/((?: |, ?)[a-z]+)+/gi)
 			// 处理英语中的 ' 标点符号
 			.replace(eng.Sep, function(m) {
-				return m
-					.matchLower(/[A-Z]/g)
-					.matchUpper(/^[a-z]/)
-					.matchLower(/ [A-Z]/g)
-					.replace('[{$enSep}]+'.comReg('g'), "'")
+				return m.replace('[{$enSep}]+'.comReg('g'), "'")
+			})
+			.replace(eng.NameSep, function(m) {
+				return m.replace('[{$enSep}]+'.comReg('g'), "'")
 			})
 			// 括号内全是英文时，缩拼全大写
 			.replace(eng.Bracket, function(m) {
@@ -166,11 +156,11 @@ extend(String.prototype, {
 			})
 			// 处理英语中称呼缩写，非行尾的
 			.replace(eng.HonorWord, function(m) {
-				return m.matchFirstUpper().replace(/。/g, '.')
+				return m.matchUpper(/\b[a-z]/g).replace(/。/g, '.')
 			})
 			// 处理常用英语书写
 			.matchUpper(('\\b(?:' + eng.WordUpper + ')\\b').getReg('gi'))
-			.replace(('\\b(' + eWord + ')([0-9]{0,4}|[0-9]{1,4}[a-z]{0,6})\\b').getReg('gi'), function(m, m1, m2) {
+			.replace(('\\b(' + eWord + ')([0-9]{1,4}[a-z]{0,6})?\\b').getReg('gi'), function(m, m1, m2) {
 				tmp = ('|' + eWord.toLowerCase() + '|').indexOf('|' + m1.toLowerCase() + '|') + 1
 				return ('|' + eWord + '|').substr(tmp, m1.length) + m2.toUpperCase()
 			})
@@ -190,10 +180,16 @@ extend(String.prototype, {
 			})
 			// 修正特定英文
 			.replaces(eng.WordFix)
-			// 虚词小写
-			.matchLower(('\\b(?:' + eng.WordOnlyLower + ')\\b').getReg('gi'))
 			// 单个字母大写
 			.matchUpper(/\b[a-z]\b/g)
+			// 虚词小写
+			.matchLower(('\\b(?:' + eng.WordLower + ')\\b').getReg('gi'))
+			// 姓名特定
+			.replace(eng.NameFix, function(m) {
+				return m.slice(0, m.length - 1) + m.slice(-1).toUpperCase();
+			})
+			// 修正间隔号后英文小写
+			.matchLower(/\'\b[a-z]+ /gi)
 			// 顶头字母大写
 			.replace(/^[a-z]+ /gim, function(m) {
 				return m.matchUpper(/\b[a-z]/gi)
@@ -223,13 +219,16 @@ extend(String.prototype, {
 	// Unicode转换
 	convertUnicode: function() {
 		return this
-			.replace(/(?:[＆&]#x|\\u?)([\da-f]{4})[;；]?/gi, function(m, m1) {
+			.replace(/(?:[＆&]#x|\\u?)[\da-f]{4}[;；]?/gi, function(m) {
+				var m1 = m.replace(/[＆&]#x|\\u|[;；]/g, '');
 				return unescape('%u' + m1);
 			})
-			.replace(/\\x([\da-f]{2})/gi, function(m, m1) {
+			.replace(/\\x[\da-f]{2}/gi, function(m) {
+				var m1 = m.replace(/\\x/, '');
 				return unescape('%u00' + m1);
 			})
-			.replace(/[＆&]#(\d+)[;；]/g, function(m, m1) {
+			.replace(/[＆&]#\d+[;；]/g, function(m) {
+				var m1 = m.replace(/[^\d]/g, '');
 				return String.fromCharCode(m1);
 			})
 			.replace(/(?:[%％][\da-f]{2})+/gi, function(m) {
@@ -240,7 +239,8 @@ extend(String.prototype, {
 	},
 	// html转义符转换
 	convertHtmlEntity: function() {
-		return this.replace(configs.regHtmlEntity, function(m, m1) {
+		return this.replace(configs.regHtmlEntity, function(m) {
+			var m1 = m.replace(/\W/g, '');
 			return configs.sHtmlEntity[m1] || configs.sHtmlEntity[m1.toLowerCase()] || m;
 		})
 	},
