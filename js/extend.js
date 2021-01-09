@@ -8,15 +8,17 @@ var allSpace = Space + '\x0A\x0D\xA0';
 var checkNull = function(obj) {
 	return obj === undefined || obj === null || false;
 }
+
 // 判断类型
-var isString = function(val) { return typeof val === 'string'; }
-var isArray = function(val) { return Object.prototype.toString.call(val) === "[object Array]"; }
-var isRegExp = function(val) { return val instanceof RegExp; }
-var isFunction = function(val) { return typeof val === 'function'; }
-var isObject = function(val) {
-	var type = typeof val;
-	return val !== null && (type === 'object' || type === 'function');
+var __os = Object.prototype.toString;
+var isString = function(v) { return typeof v === 'string'; }
+var isFunction = function(v) { return typeof v === 'function'; }
+//var isRegExp = function(v) { return v instanceof RegExp; }
+var isArray = function(v) { return __os.call(v) === "[object Array]"; }
+var isObject = function(v) {
+	return v !== null && __os.call(v) === "[object Object]";
 }
+
 // 对象批量赋值
 var extend = function(a, b) {
 	for (var i in b) a[i] = b[i];
@@ -25,20 +27,6 @@ var extend = function(a, b) {
 
 // ***** 扩展字符处理 *****
 extend(String.prototype, {
-	// 字符串正则，加正则保护
-	regEscape: function() {
-		return this
-			.replace(/[\\.*]/g, '\\$&')
-			.replace(/\u005c\u005c+/g, "\u005c\u005c") || '';
-	},
-	// 字符串，加正则保护
-	escapeRegExp: function() {
-		var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-		//var reRegExpChar = /([\\\/\'*+?|()\[\]{}.^$-])/g;
-		return (this && (new RegExp(reRegExpChar.source)).test(this))
-			? this.replace(reRegExpChar, '\\$&')
-			: (this || '');
-	},
 	// 安全转换正则
 	getReg: function(m) {
 		return new RegExp(this.replace(/\u005c\u005c+/g, "\u005c\u005c"), checkNull(m) ? 'gm' : m);
@@ -73,15 +61,16 @@ extend(String.prototype, {
 				isString(v[0]) && (v[0] = v[0].getReg());
 				re = re.replace(v[0], v[1] || '');
 			})
-		} else if (isObject(arr)) {
-			for (var item in arr)
+		} else {
+			for (var item in arr) {
 				re = re.replaces(arr[item]);
+			}
 		}
 		return re;
 	},
 	// 字符串定位替换
 	replaceAt: function(a, rev) {
-		rev && (a = [a[1], a[0]]);
+		rev && (a = a.reverse());
 		return this.replace(new RegExp('[' + a[0] + ']', 'g'), function(m) {
 			return a[1].charAt(a[0].indexOf(m));
 		});
@@ -108,47 +97,25 @@ extend(String.prototype, {
 	// 特殊方式替换字符串
 	/*
 	 * vals = {name:"loogn",age:22,sex:['man', 'woman']}
-	 * var result0 = "我是{$name}，{$sex.0}，今年{$age}了".fmt(arrs)
+	 * var result0 = "我是{$name}，{$sex.0}，今年{$age}了".fmt(vals)
 	 */
 	fmt: function(vals, r) {
 		// 字符串时，直接替换任意标签
-		if (isString(vals)) {
+		if (typeof vals === 'string') {
 			return this.replace(/\{\$zz\}/g, vals);
 		}
-		if (!isObject(vals) && !isArray(vals)) {
+		if (typeof vals !== 'object') {
 			return this;
 		}
-		// 数组连接符号
-		r = r || '';
-		// 特殊标记 /\{\$([a-z0-9\.]+)}/gi
-		return this
-			// 子项
-			.replace(/\{\$([\w\-]+)\}/g, function(m, m1) {
-				if (checkNull(vals[m1])) return m;
-				var val = vals[m1];
-				return isArray(val) ? val.join(r) : val;
-			})
-			// 子项是数组{$name.t1.0}
-			.replace(/\{\$([\w\-]+)\.([\d]{1,2}|[\w\.\-]{1,})\}/g, function(m, m1, m2) {
-				if (!checkNull(vals[m1])) {
-					var val = vals[m1];
-					// 如果子项是数组轮循
-					if (m2.indexOf('.') > -1)
-						return m.replace(('\{\$' + m1 + '\.').getReg(), '\{\$').fmt(val, r);
-
-					if (!checkNull(val[m2])) {
-						val = val[m2];
-						return isArray(val) ? val.join(r) : val;
-					}
-				}
-				return m;
-			})
-	},
-	// 快捷字符串替换
-	f: function() {
-		var args = [].slice.call(arguments);
-		return this.replace(/\$(\d)/g, function(m, m1) {
-			return args[m1] || m;
+		var val;
+		// {$name.t1.0}
+		return this.replace(/\{\$[\w\-]+(?:\.[\w\-]+)*\}/g, function(m) {
+			val = vals;
+			m.slice(2, -1).split('.').each(function(v) {
+				return (val = val[v]) || false;
+			});
+			return (val === undefined || isObject(val)) ? m :
+				isArray(val) ? val.join(r || '') : val;
 		});
 	},
 	// 替换并返回正则式
@@ -158,43 +125,21 @@ extend(String.prototype, {
 	// 循环测试正则
 	eachArrayRegTest: function(arr) {
 		var l = arr.length;
-		while (l--)
-			if (this.find(arr[l])) return true;
-
-		return false;
-	},
-	// 循环测试正则
-	eachRegTest: function(arr) {
-		if (isArray(arr)) return this.eachArrayRegTest(arr);
-
-		if (isObject(arr)) {
-			for (var v in arr) {
-				var tmp = arr[v];
-				if (isArray(tmp) ? this.eachArrayRegTest(tmp) : this.find(tmp))
-					return true;
-			}
+		while (l--) {
+			if (this.search(arr[l]) > -1) return true;
 		}
 		return false;
 	}
 });
 
-// 重复连接字符串 repeat
-if(!String.prototype.repeat) {
-	String.prototype.repeat = function(m) {
-		m = ~~m;
-		return m < 1 ? '' : m < 2 ? this : new Array(m + 1).join(this);
-	}
-}
-
 // ***** 扩展数组处理 *****
 extend(Array.prototype, {
-	each: function(callback, thisArg) {
-		if (!isFunction(callback)) return;
-		var that;
-		var l = this.length, i = -1;
-		(arguments.length > 1) && (that = thisArg);
+	each: function(callback /*, thisArg*/) {
+		if (typeof callback !== 'function') return;
+		var t, l = this.length, i = -1;
+		if (arguments.length > 1) t = arguments[1];
 		while (++i < l) {
-			if (callback.call(that, this[i], i, this) === false)
+			if (callback.call(t, this[i], i, this) === false)
 				break;
 		}
 	}
