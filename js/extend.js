@@ -20,13 +20,13 @@ var isObject = function(v) {
 }
 
 // 对象批量赋值
-var extend = function(a, b) {
-	for (var i in b) a[i] = b[i];
-	return a;
+Object.extend = function(d, s) {
+	for (var i in s) d[i] = s[i];
+	return d;
 }
 
 // ***** 扩展字符处理 *****
-extend(String.prototype, {
+Object.extend(String.prototype, {
 	// 安全转换正则
 	getReg: function(m) {
 		return new RegExp(this.replace(/\u005c\u005c+/g, "\u005c\u005c"), checkNull(m) ? 'gm' : m);
@@ -124,16 +124,16 @@ extend(String.prototype, {
 	},
 	// 循环测试正则
 	eachArrayRegTest: function(arr) {
-		var l = arr.length;
-		while (l--) {
-			if (this.search(arr[l]) > -1) return true;
+		var l = arr.length, i = -1;
+		while (++i < l) {
+			if (this.search(arr[i]) > -1) return true;
 		}
 		return false;
 	}
 });
 
 // ***** 扩展数组处理 *****
-extend(Array.prototype, {
+Object.extend(Array.prototype, {
 	each: function(callback /*, thisArg*/) {
 		if (typeof callback !== 'function') return;
 		var t, l = this.length, i = -1;

@@ -2,7 +2,7 @@
  * typo is novel text typeseting tool
  * author: vsolo 
  */
-extend(String.prototype, {
+Object.extend(String.prototype, {
 	// 排版初始化，去空格空行
 	replaceInit: function() {
 		return this
@@ -46,6 +46,7 @@ extend(String.prototype, {
 		for (item in t) {
 			switch (item) {
 				case 'find':
+				case 'skip':
 					break;
 				case 'at':
 					re = re.replaceAt(t.at);
@@ -62,6 +63,18 @@ extend(String.prototype, {
 				case 'lower':
 					re = re.matchLower(t.lower);
 					break;
+				case 'lc':
+					switch (t.lc) {
+						case 'u':
+							re = re.toUpperCase();
+							break;
+						case 'l':
+							re = re.toLowerCase();
+							break;
+						case 'f':
+							re = re.toLowerCase().matchUpper(/\b[a-z]/g);
+							break;
+					}
 			}
 		}
 		return re;
@@ -71,7 +84,8 @@ extend(String.prototype, {
 		configs.rEndFix.each(function(v) {
 			re = ('find' in v) ?
 				re.replace(v.find, function(m) {
-					return m.__replaceFix(v);
+					return ('skip' in v && m.eachArrayRegTest(v.skip)) ?
+						m : m.__replaceFix(v);
 				}) : re.__replaceFix(v);
 		})
 		return re;
@@ -108,7 +122,7 @@ extend(String.prototype, {
 	// 首字母大写
 	matchFirstUpper: function(reg) {
 		return this.replace(reg, function(m) {
-			return m.matchUpper(/\b[a-z]/g);
+			return m.toLowerCase().matchUpper(/\b[a-z]/g);
 		})
 	},
 	// 正则字母小写
@@ -181,12 +195,12 @@ extend(String.prototype, {
 			.matchUpper(('\\b(?:' + eng.Upper + ')\\b').getReg('gi'))
 			.replace(('\\b(' + eng.Special + ')(\\d{1,4}[a-z]{0,6})?\\b').getReg('gi'), function(m, m1, m2) {
 				tmp = ('|' + eSpecialLower + '|').indexOf('|' + m1.toLowerCase() + '|') + 1;
-				return ('|' + eng.Special + '|').slice(tmp, m1.length) + (m2 && m2.toUpperCase() || '');
+				return ('|' + eng.Special + '|').substr(tmp, m1.length) + ((m2 && m2.toUpperCase()) || '');
 			})
 			// 处理英文单位
 			.replace(('\\b(\\d[0-9。.]* ?)(' + eng.Unit + ')\\b').getReg('gi'), function(m, m1, m2) {
 				tmp = ('|' + eUnitLower + '|').indexOf('|' + m2.toLowerCase() + '|') + 1;
-				return m1 + ('|' + eng.Unit + '|').slice(tmp, m2.length);
+				return m1 + ('|' + eng.Unit + '|').substr(tmp, m2.length);
 			})
 			// 处理连续的英语
 			.matchUpper(eng.Continuou)
@@ -208,8 +222,6 @@ extend(String.prototype, {
 			.replace(eng.LatinAfter, function(m) {
 				return m.matchLower(/\b[a-zA-Z]*/g);
 			})
-			// 修正间隔号后英文小写 913
-			.matchLower(/\'\b[a-zA-Z]+ /g)
 			// 顶头字母大写 935
 			.matchFirstUpper(/(?:^[“「"\']?)\b[a-zA-Z]+ /gm);
 	},
@@ -299,11 +311,17 @@ extend(String.prototype, {
 		// 处理标题的外框
 		// 第一章：【标题】/【第一章：标题】
 		var pa = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmt(t).chapReg();
+		var na = '。|(?:完|完结|待续|未完|终)[{$b.1}]?$'.chapReg();
 		return this
 			.replace(pa, function(m) {
-				return m.indexOf('。') > -1 ? m : m.replace('[{$b}]'.chapReg('g'), ' ')
+				return m.search(na) > -1 ?
+					m : m.replace('[{$b}]'.chapReg('g'), ' ');
 			})
 			.replace(tpl.chapReg('gm', r), func);
+	},
+	// 标题过滤
+	__chaSkip: function(t) {
+		return this.eachArrayRegTest(configs.regSkipTitle[t || 't0']);
 	},
 	// 修正章节标题
 	replaceTitle: function(f, e, c, relax) {
@@ -311,23 +329,20 @@ extend(String.prototype, {
 		e = e || '';
 		var re = this,
 			// 替换值
-			regVal = regChapter,
-			regSkip = configs.regSkipTitle;
+			rChap = regChapter;
 
 		// 非严格限定
 		if (relax) {
 			// 标题间隔符（非严格限定）
-			regVal.s = regVal.sn;
+			rChap.s = rChap.sn;
 			// 行尾（非严格限定）
-			regVal.es = regVal.e;
+			rChap.es = rChap.e;
 		}
 
 		// 全角转半角数字
 		// 补零
 		var zero = function(n) {
-			return n
-				.replaceAt(configs.sNumber)
-				.replace(/\b\d\b/, '0$&');
+			return n.replaceAt(configs.sNumber).replace(/\b\d\b/, '0$&');
 		}
 
 		// 处理标题内容
@@ -356,7 +371,7 @@ extend(String.prototype, {
 				.replace(/([^\w\.\-—])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
 				.replace(/([^\w\.\-—]) ?\b(\d{1,2})$/, '$1（$2）')
 				// 补零
-				.replace(/（(\d{1,3})）$/, function(m) {
+				.replace(/（\d{1,3}）$/, function(m) {
 					return zero(m)
 				})
 				// 修正结尾是希腊数字的小标号
@@ -365,43 +380,39 @@ extend(String.prototype, {
 				});
 			return checkNull(sDiv) ? configs.Divide + str : str;
 		}
-		
-		// 过滤
-		var checkSkip = function(str, t) {
-			return str.search(regSkip[t || 't0']) > -1;
-		}
-		//
+
 		var xFinds = '{$n4}[{$c}]'.chapReg();
 		// 正则标题
 		re = re
 			/****** 修复标题间多余空格 ******/
-			.cleanSpace('^{$ts}'.chapReg())
+			.cleanSpace('^{$f}{$ts}'.chapReg())
 			/****** 非常规标题·无后续主体 ******/
-			.__Chapter(regVal.t0, '^({$t0}){$sn}$', '', function(m, m1) {
+			.__Chapter(rChap.t0, '^{$f}({$t0}){$sn}$', '', function(m, m1) {
 				return m1.setAlign(f, e, c);
 			})
 			/****** 非常规标题·可有后续主体 ******/
-			.__Chapter(regVal.t1.join('|'), '^({$t1})({$s}{$e}|{$sn}$)$', '|', function(m, m1, m2) {
+			.__Chapter(rChap.t1.join('|'), '^{$f}({$t1})({$s}{$e}|{$sn}$)$', '|', function(m, m1, m2) {
 				// 防止错误，有句号不转；全标点不转
-				if (m2.find(/^[\!\?！？。]{1,3}$/) || checkSkip(m) || checkSkip(m, 't1'))
-					return m;
+				if (m2.find(/^[\!\?！？。]{1,3}$/) ||
+					m.__chaSkip('t0') ||
+					m.__chaSkip('t1')
+				) return m;
 				return (m1 + handleTitle(m2)).setAlign(f, e, c);
 			})
 			/****** 01章/第02章/第02-18章/03章：标题/第０９章：标题 ******/
 			// m1 章节 m2 间隔 m3 标题
-			.__Chapter(regVal.t2, '^{$t2}({$sn})({$e}|$)$', '', function(m, m1, m2, m3) {
+			.__Chapter(rChap.t2, '^{$f}{$t2}({$sn})({$e}|$)$', '', function(m, m1, m2, m3) {
 				m3 = m3.trims();
 				// 如果是完结标记
 				if (m3.find(/^(?:完|完结|待续|未完|终)$/))
 					return ('【' + m1 + '·' + m3 + '】');
 				// 防止错误，有句号不转；——开头不转；全标点不转
-				if (m1.find(/^[\-\—]{2,4}/) || (!relax && m3.find(/^[！？。…]{1,3}$/)) || checkSkip(m))
-					return m;
-				// 防止错误，没有间隔符情况下
-				// 如：第一部电影很好，很成功。
-				// 如：一回头、一幕幕
-				if (!m2 && ((!relax && m3.find(/，|[！？。…’”』」]{1,3}$/)) || checkSkip(m, 't2'))) 
-					return m;
+				if (m1.find(/^[\-\—]{2,4}/) ||
+					m.__chaSkip('t0') ||
+					m.__chaSkip('t2') ||
+					(!relax && m3.find(/^[！？。…]{1,3}$/)) ||
+					(!m2 && !relax && m3.find(/，|[！？。…’”』」]{1,3}$/))
+				) return m;
 
 				if (!m1.find(xFinds))
 					m1 = '第' + m1.replace(/^第+| /g, '');
@@ -409,9 +420,9 @@ extend(String.prototype, {
 				return (zero(m1) + handleTitle(m3)).setAlign(f, e, c);
 			})
 			/****** （01）/（02）标题/（一）/（一）标题 ******/
-			.__Chapter(regVal.t3, '^{$t3}({$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(rChap.t3, '^{$f}{$t3}({$e}|$)$', '', function(m, m1, m2) {
 				// 防止错误，有句号不转
-				if (checkSkip(m)) return m;
+				if (m.__chaSkip('t0')) return m;
 				return (zero(m1) + handleTitle(m2, 'no')).setAlign(f, e, c);
 			})
 		
@@ -423,28 +434,25 @@ extend(String.prototype, {
 		var ctr = strChapter.crt;
 		return re
 			/****** 卷一/卷一：标题 ******/
-			.__Chapter(regVal.t4, '^{$t4}{$sn}({$e}|$)$', '', function(m, m1, m2, m3) {
+			.__Chapter(rChap.t4, '^{$f}{$t4}{$sn}({$e}|$)$', '', function(m, m1, m2, m3) {
 				return (f + '第' + m2 + m1 + handleTitle(m3) + e);
 			})
 			/****** chapter 22/ chapter 55 abcd ******/
-			.__Chapter(regVal.t5, '^{$t5}{$sn}({$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(rChap.t5, '^{$f}{$t5}{$sn}({$e}|$)$', '', function(m, m1, m2) {
 				return (f + '第' + zero(m1) + ctr + handleTitle(m2) + e);
 			})
 			/****** 01/01./01.标题/一/一、/一、标题 ******/
-			.__Chapter(regVal.t6, '^{$t6}({$s}|{$s}{$e}|$)$', '', function(m, m1, m2) {
+			.__Chapter(rChap.t6, '^{$f}{$t6}({$s}|{$s}{$e}|$)$', '', function(m, m1, m2) {
 				m2 = m2.trims();
-				// 防止错误，有句号不转；全标点不转
-				var t = /^[！？。]{1,3}$/;
-				if (m.indexOf('。') > -1 || m2.find(t) || checkSkip(m) || checkSkip(m, 't2'))
-					return m;
 				// 章节是数字格式情况下
 				m1 = zero(m1);
-				t = m1.find(/^\d+/) ? /[！？。]$/ : /[！？。…’”』」]$/;
-				if (m2.find(t)) return m;
-				// 其他处理过滤
-				if (m.cleanSpace().eachArrayRegTest(regSkip.t6))
-					 return m;
-
+				if (m.find(/。/) ||
+					m2.find(/^[！？。]{1,3}$/) ||
+					m.__chaSkip('t0') ||
+					m.__chaSkip('t2') ||
+					m2.find(m1.find(/^\d+/) ? /[！？。]$/ : /[！？。…’”』」]$/) ||
+					m.cleanSpace().__chaSkip('t6')
+				) return m;
 				return (f + '第' + m1 + ctr + handleTitle(m2) + e);
 			})
 	},
