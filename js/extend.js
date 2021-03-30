@@ -1,7 +1,7 @@
 ﻿// 空格
 // \u0009\u000B\u000C = \t\v\f
 // \u2000-\u200a\u205f\u2028\u2029\u3000\ufeff'
-var Space = '\x09\x0b\x0c\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufeff';
+var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufeff';
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 判断是否存在，可以为空
@@ -29,7 +29,7 @@ Object.extend = function(d, s) {
 Object.extend(String.prototype, {
 	// 安全转换正则
 	getReg: function(m) {
-		return new RegExp(this.replace(/\u005c\u005c+/g, "\u005c\u005c"), checkNull(m) ? 'gm' : m);
+		return new RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), checkNull(m) ? 'gm' : m);
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
@@ -84,7 +84,7 @@ Object.extend(String.prototype, {
 	},
 	// 取双字节与单字节混排时的真实字数
 	len: function() {
-		return this.length + (this.match(/[^\x00-\xff]/g) || "").length;
+		return this.length + (this.match(/[^\x00-\xFF]/g) || "").length;
 	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {

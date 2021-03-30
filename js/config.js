@@ -1,7 +1,7 @@
 ﻿/****** 常用 - 正则设定 ******/
 var strCommon = {
 	// 英文间隔符
-	'enSep': '\u0027`＇‘’『』',
+	'enSep': '\x27`＇‘’『』',
 	// 中文
 	// CJK is short for Chinese, Japanese, and Korean.
 	'han': '\u2e80-\u2eff\u2f00-\u2fdf\u3040-\u309f\u30a0-\u30fa\u30fc-\u30ff\u3100-\u312f\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff',
@@ -10,9 +10,9 @@ var strCommon = {
 	//'latin': '\\u00A0-\\u00FF\\u0100-\\u017F\\u0180-\\u024F',
 	'latin': '\u00aa\u00ba\u00c0-\u0183\u0186-\u01a6\u01a9-\u01b9\u01ba\u01bf\u01c4-\u01c6\u01c9-\u020b\u0210-\u0240\u0243-\u0293\u0299-\u029f\u02a0\u02a3-\u02ac\u02ae-\u02af\u02b1-\u02b8\u02e0-\u02e3\u036a\u0391-\u03c9\u0401-\u0451\u1d00-\u1dbf\u1e00-\u1eff\u207f\u2090-\u2099\u209c\u211e\u2c60-\u2c7f\ua726-\ua729\ua730-\ua767\ua771-\ua7b7\ua7fb-\ua7ff\uab30-\uab5f\ufb00-\ufb04',
 	// 半角标点，无引号
-	'hwPun': '\u0021-\u0026\u0028-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E\u00A1-\u00BF',
-	// 半角标点，引号 \u0022\u0027 双单
-	'qhwPun': "\u0027",
+	'hwPun': '\x21-\x26\x28-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E\xA1-\xBF',
+	// 半角标点，引号 \x22\x27 双单
+	'qhwPun': "\x27",
 	// 全角标点，无引号
 	'fwPun': '·–—―…※、。〈〉《》【】〔〕〖〗〝〞・！-／：-＠～￠-￥',
 	// 全角标点，引号
@@ -35,7 +35,7 @@ var strChapter = {
 	'n3': '[0０○〇零一二三四五六七八九十百千壹贰叁肆伍陆柒捌玖拾佰仟两廿卅卌貳叄陸兩]{1,7}',
 	'n4': '最[初终尾終]|[初前后终尾後終]|[上中下续断續斷]',
 	// 短标题
-	'w0': '(?:[简簡]介|介[绍紹]|[预預]告|自介)',
+	'w0': '(?:[简簡自]介|介[绍紹]|[预預]告)',
 	'w1': '[0-9]{1,2}',
 	'w3': '[一二三四五六七八九十]{1,3}',
 	// 限制后面的字符最大数
@@ -141,12 +141,14 @@ var configs = {
 		],
 		't2': [
 			/^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课)/,
-			/^一(?:幕[幕]|回[生首头家頭閤神味]|[直切生世])/,
+			'^一(?:[{$c}]|[直切生世味]|回[合首头])'.chapReg(''),
 			/^(?:二话[没不沒]|三[生世]|四[周边处]|五[谷更]|[百千][折转])/,
 			/^上节目/
 		],
 		't3': [
 			'^[一二三四五六七八九十百两兩][{$c}][^，]*[，]'.chapReg(''),
+			'^一二三四?五?六?七?[，]'.chapReg(''),
+			'^([壹贰叁肆伍陆柒捌玖拾])\\1'.chapReg(''),
 			'^(?:{$n1}|{$n2})[年月日]'.chapReg('')
 		],
 		't6': [
@@ -174,9 +176,9 @@ var configs = {
 		// 约定英文单位，用|分隔
 		'Unit': 'MHz|GHz|KHz|kWh|kW|mWh|gWh|mA|μA|mV|μV|mΩ|μΩ|Mbps',
 		// 约定英语大写，用|分隔
-		'Upper': 'OMG|MTV|SUV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|OS',
-		// 虚词小写
-		'Structural': /\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with)\b/gi,
+		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|WQLMLGB',
+		// 虚词小写，非行首
+		'Structural': /(?:!^)\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with)\b/gi,
 		// 特殊的连续单词 转大写
 		'Continuou': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|bca|dbca|edbca|xyz)\b/gi,
 		// 称谓单词前缀
@@ -201,6 +203,8 @@ var configs = {
 		'PunAfter': '[，\, {$latin}][A-Z]'.comReg('g'),
 		// 拉丁字母后的大写
 		'LatinAfter': '[{$latin}]\\b[a-zA-Z]+\\b'.comReg('g'),
+		// 重叠连续单词
+		'Overlap': /\b(no|go|up)\1+\b/gi,
 		// 引用中的英文
 		'Quote': '[“‘「『][ \\w{$hwPun}{$qhwPun}{$fwPun}{$latin}]{2,}[』」’”]'.comReg('g'),
 		'QuoteTest': /[，。！？…]/,
@@ -216,7 +220,8 @@ var configs = {
 	// 英文间隔
 	'enSep': '\\b([a-zA-Z]+)[{$enSep}]( |\\b[a-zA-Z]+\\b)'.comReg('g'),
 	/****** 半角标点符号 ******/
-	'halfPuns': ['。，：；？！＆–—─－（）“”「」‘’『』', '.,:;?!&----()\u0022\u0022\u0022\u0022\u0027\u0027\u0027\u0027'],
+	//'halfPuns': ['。，：；？！＆–—─－（）“”「」‘’『』', '.,:;?!&----()\u0022\u0022\u0022\u0022\u0027\u0027\u0027\u0027'],
+	'halfPuns': ['。，：；？！＆–—─－（）', '.,:;?!&----()'],
 	'halfSymbol': [
 		[/"/g, ' " '],
 		[/&/g, ' & '],
@@ -286,6 +291,8 @@ var configs = {
 		[/^.*[分切]割线$/gm, '@@@@'],
 		// 修正车牌号
 		[/([a-zA-Z])[\-—]@@@+/g, '$1-XXXXX'],
+		// 修正多个相连
+		[/^@@@+……$/gm, '@@@@'],
 		// 修正数字和某些标点后的*号
 		[/([\w：，；])\n?@@@@\n?/g, '$1****'],
 		[/@@@@\n?([，。！？…’”』」])/g, '****$1'],
@@ -305,12 +312,12 @@ var configs = {
 	'punSymbol': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
 		'｀‐━―─－ーˉ﹣﹦~﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢＋／︱¦＂′＇',
-		'`———————－＝～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨++/\u007c\u007c\u0022\u0027\u0027'
+		'`———————－＝～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨++/\x7C\x7C\x22\x27\x27'
 	],
 	// 标点符号修正
 	'punSymbolFix': [
 		// 破折号 ——
-		[/—+/g, '——'],
+		[/——+/g, '——'],
 		// 两个标点以上留一 「」『』“”‘’
 		// ：；（）［］｛｝%∧∨〈〉-
 		[/([：；（）［］｛｝%∧∨〈〉\-])\1+/g, function(m) {
@@ -380,19 +387,24 @@ var configs = {
 	'rEndFix': [
 		// 英文连接符–
 		{
-			'find': /\b\w[\-—～]+\w\b/g,
-			'rp': [/[\-—～]+/, '-']
+			'find': /\b[0-9a-zA-Z]+(?:[～—-]+[0-9a-zA-Z]+\b)+/g,
+			'rp': [/[～—]/g, '-']
 		},
-		// C:\
+		// 中文连接符–
 		{
-			'find': /\b[a-zA-Z]：/g,
-			'rp': [/：/, ':']
+			'find': /\W(?:[\-]{1,2}\W+)+/g,
+			'rp': [/\-/g, '—']
 		},
 		// 处理 Sid·Meier -> Sid Meier
 		{
-			'find': /\b[a-zA-Z]{2,}·[a-zA-Z]{2,}\b/g,
-			'rp': [/·/, ' ']
+			'find': /\b[a-zA-Z]{2,}(?:·[a-zA-Z]{2,}\b)+/g,
+			'rp': [/·/g, ' ']
 		},
+		// C:\
+		//{
+		//	'find': /\b[a-zA-Z]：/g,
+		//	'rp': [/：/, ':']
+		//},
 		// 处理 E。T。 -> E.T.
 		{
 			'find': /\b(?:[a-zA-Z][\.．。]){1,}(?!$|\W)/g,
@@ -413,18 +425,19 @@ var configs = {
 		},
 		// 经纬度 20"65'
 		{
-			'find': '\\b[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}] ?[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\u0022\u0027{$qfwPun}]'.comReg('g'),
-			'at': ['“‘”’「『」』 ', '\u0022\u0027'.repeat(4)]
+			'find': '\\b[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\x22\x27{$qfwPun}] ?[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\x22\x27{$qfwPun}]'.comReg('g'),
+			'at': ['“‘”’「『」』 ', '\x22\x27'.repeat(4)]
 		},
-		// 修正数字间的全角
+		// 修正数字间的全角 （）()
 		{
-			'find': /\b[\d\.。]+(?:[。·.：〉〈＝＊，,][\d\.。]+)+/g,
-			'at': ['。·.：〉〈＝＊，', '...:><=*,']
+			'find': '\\b[a-zA-Z]*[\\d\\.。]+\\b[{$ofwPun}]?(?:[。·.：〉〈＝＊，,—]\\b[\\d\\.。]+\\b[{$ofwPun}]?)+'.comReg('g'),
+			'skip': ['[{$ofwPun}][.,]'.comReg('')],
+			'at': ['。·.：〉〈＝＊，—', '...:><=*,-']
 		},
-		// 修正数字后缀 20,000.00 12.99%
+		// 计量单位后跟标点，还原
 		{
-			'find': '\\b(?:[0-9]+[,，。.]*)+\\b(?:人民币|软妹币?|元|[韩美日]元|英镑|港币|新?台币|法郎|比索|[金人千万亿]|[{$ofwPun}])'.comReg('g'),
-			'at': ['，。', ',.']
+			'find': '[{$ofwPun}][.,]'.comReg('g'),
+			'at': ['.,', '。，']
 		},
 		// 小数字点后是三位，还原
 		{
@@ -432,9 +445,14 @@ var configs = {
 			'skip': [/\b0\.\d{3,}\b/g],
 			'rp': [/\./g, '。']
 		},
+		// 修正数字后缀 20,000.00 12.99%
+		{
+			'find': '\\b(?:[0-9]+[,，。.]*)+(?:[a-zA-Z]+\\b|\\b(?:人民币|软妹币?|元|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿]|[{$ofwPun}]))'.comReg('g'),
+			'at': ['，。', ',.']
+		},
 		// 倒计时样式的，还原逗号
 		{
-			'find': /\b\d+(?:[\,，]\d+){2,10}/g,
+			'find': /\b\d+(?:[\,，]\d+\b){2,10}/g,
 			'rp': [/\,/g, '，']
 		},
 		// 非标准中文数字间隔样式，还原逗号
@@ -448,22 +466,25 @@ var configs = {
 			'rp': [/。/g, '.']
 		},
 		// 时间 00:00:05，150
+		//{
+		//	'find': /\b\d{1,2}[:：]\d{1,2}(?:[:：]\d{1,2})?(?:，\b\d{1,4}\b| ?A。?M。?| ?P。?M。?)?/gi,
+		//	'at': ['。：， ', '.:,']
+		//},
+		// 修复字母数字最后的标点
 		{
-			'find': /\b\d{1,2}[:：]\d{1,2}(?:[:：]\d{1,2})?(?:，\b\d{1,4}\b| ?A。?M。?| ?P。?M。?)?/gi,
-			'at': ['。：， ', '.:,']
+			'find': /\w[.,:]([^\w\"\'”」]|$)/g,
+			'at': ['.:, ', '。：，']
 		},
 		// 大写的英文 代词、经纬度
-		{
-			'upper': /\b(?:i|ok|n|e|w|s)\b/gi
-		},
+		{ 'upper': /\b(?:i|ok|n|e|w|s)\b/gi },
 		// 特定的大写的英文
-		{
-			'upper': /\b(?:it)\b[^ \']/gi
-		},
+		{ 'upper': /\b(?:it|at)\b[^ \']/gi },
+		// 引用开始的第一个字母大写
+		{ 'upper': /[《〈〔〖（【]\b[a-z]/g },
+		// 缩拼字母的省市县
+		{ 'upper': /\b[a-zA-Z]{1,3}[国省市县山城江河]/g },
 		// 特定的小写的英文
-		{
-			'lower': /\'\b[a-zA-Z]+ /g
-		}
+		{ 'lower': /\'\b[a-zA-Z]+ /g }
 	],
 	'rEnd': [
 		// 处理 Up / Down -> Up/Down
@@ -475,7 +496,8 @@ var configs = {
 		[/Co。，? ?Ltd。?/gi, 'Co.,Ltd.'],
 		// 处理 No。1 -> NO.1
 		[/\bno[。\.](?=\d{1,2})/gi, 'NO.'],
-		[/\bgame ?over\b/gi, 'Game Over']
+		[/\bgame ?over\b/gi, 'Game Over'],
+		[/[&＆]\b[Aa]mp\b[；;]?/g, '&']
 	],
 	/****** 其他替换设定 ******/
 	// 全半角数字字母

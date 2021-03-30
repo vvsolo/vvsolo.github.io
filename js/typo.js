@@ -63,6 +63,9 @@ Object.extend(String.prototype, {
 				case 'lower':
 					re = re.matchLower(t.lower);
 					break;
+				case 'fupper':
+					re = re.matchFirstUpper(t.fupper);
+					break;
 				case 'lc':
 					switch (t.lc) {
 						case 'u':
@@ -137,7 +140,7 @@ Object.extend(String.prototype, {
 		return this
 			.replace(eng.Line, function(m) {
 				// 如果是单词引用
-				return (m.find(/^[“「][a-z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/mi) ||
+				return (m.find(/^[“「][a-zA-Z]{1,6}(?:。|[！？]{1,3}|……|——)[」”]$/m) ||
 					//(m.find(/^[“「]/mi) && m.find(/[」”]$/mi)) ||
 					m.findCount(eng.LineSkip) < 2 ||
 					!m.find(/[,， ]/) ||
@@ -177,7 +180,7 @@ Object.extend(String.prototype, {
 			.matchUpper(eng.Bracket)
 			// 修正
 			.replace(eng.PunFix, function(m) {
-				return m.indexOf('\u0027') > -1 ? m.matchLower(/ [A-Z]/g) : m;
+				return m.indexOf('\x27') > -1 ? m.matchLower(/ [A-Z]/g) : m;
 			})
 			// 修正引用内
 			.replace(eng.Quote, function(m) {
@@ -221,6 +224,10 @@ Object.extend(String.prototype, {
 			// 修正拉丁字母后的英文大写
 			.replace(eng.LatinAfter, function(m) {
 				return m.matchLower(/\b[a-zA-Z]*/g);
+			})
+			// 重叠连续单词
+			.replace(eng.Overlap, function(m, m1) {
+				return m.replace(m1.getReg('gi'), m1.matchFirstUpper());
 			})
 			// 顶头字母大写 935
 			.matchFirstUpper(/(?:^[“「"\']?)\b[a-zA-Z]+ /gm);
@@ -465,10 +472,13 @@ Object.extend(String.prototype, {
 			// （01）　连续
 			parent03 = '(?:\\n+^（(?:{$n2}|{$n3})）(?:.{0,40}|$)$\\n+){2,}'.chapReg(),
 			/***** 修复相同的连续章节标题 *****/
-			fix1 = '(^(?:{$w1}|{$w3})(?:[：、。\\.\\,].{0,40}|$)$\\n+)\\1'.chapReg('gm'),
-			fix2 = '(^（(?:{$w1}|{$w3})）(?:.{0,40}|$)$\\n+)\\1'.chapReg('gm');
+			fix1 = '(^(?:{$w1}|{$w3})(?:[：、。\\.\\,].{0,40}|$)$\\n+)\\1'.chapReg('g'),
+			fix2 = '(^（(?:{$w1}|{$w3})）(?:.{0,40}|$)$\\n+)\\1'.chapReg('g'),
+			/***** 清除相连的类似的章节标题 *****/
+			c1 = '^({$t91}[{$c.2}]{$sn})(?:{$e}|$)$\\n+\\1.*$'.chapReg('gm'),
+			c3 = '^{$t3}(?:{$e}|$)$\\n+\\1.*$'.chapReg('gm');
 
-		var getParrentArr = function(str, v) {
+		var _gp = function(str, v) {
 			return str
 				.replace('^第({$zz})[{$crt}](?:：|$)'.fmt(v).chapReg(), '$1、')
 				.replace('^({$zz})[：、。\.\,]'.fmt(v).chapReg(), '$1、')
@@ -476,13 +486,24 @@ Object.extend(String.prototype, {
 				.replace(/、$/gm, '')
 				.replace(/\n\n+/g, '\n');
 		}
-		
+		var _rp = function(str) {
+			// 判断两行重复标题，以长度保留
+			var n = str.replace(/\n+/g, '\n').split('\n');
+			return n[0].length > n[1].length ? n[0] : n[1];
+		}
+
 		return this
+			.replace(c1, function(m) {
+				return _rp(m);
+			})
+			.replace(c3, function(m) {
+				return _rp(m);
+			})
 			.replace(parent01, function(m) {
-				return getParrentArr(m, '{$n1}')
+				return _gp(m, '{$n1}')
 			})
 			.replace(parent02, function(m) {
-				return getParrentArr(m, '{$n3}')
+				return _gp(m, '{$n3}')
 			})
 			.replace(parent03, function(m) {
 				return m.replace(/\n+/g, '\n')
