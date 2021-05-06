@@ -82,7 +82,7 @@ Object.assign(String.prototype, {
 	},
 	__endFix: function() {
 		var re = this;
-		config.rEndFix.each(function(v) {
+		config.rEndFix.forEach(function(v) {
 			re = ('find' in v) ?
 				re.replace(v.find, function(m) {
 					return ('skip' in v && m.eachArrayRegTest(v.skip)) ?

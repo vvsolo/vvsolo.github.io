@@ -5,7 +5,6 @@ var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 类型判断
-
 // ES3 将 Array 类型视为 Object;
 var __os = Object.prototype.toString;
 var isObject = function(v) {
@@ -42,7 +41,7 @@ Object.assign(String.prototype, {
 	replaces: function(arr) {
 		var re = this;
 		if (Array.isArray(arr)) {
-			arr.each(function(v) {
+			arr.forEach(function(v) {
 				// 如果传入是正则表达式
 				if (!Array.isArray(v)) {
 					v = [v, ''];
@@ -113,7 +112,7 @@ Object.assign(String.prototype, {
 			}
 			// 分析逐级尝试获取数据
 			val = vals;
-			tmp.split('.').each(function(v) {
+			tmp.split('.').forEach(function(v) {
 				if (v in val) {
 					val = val[v];
 				} else {
@@ -135,18 +134,5 @@ Object.assign(String.prototype, {
 			if (this.find(arr[i])) return true;
 		}
 		return false;
-	}
-});
-
-// ***** 扩展数组处理 *****
-Object.assign(Array.prototype, {
-	each: Array.prototype.foEach || function(callback /*, thisArg*/) {
-		if (typeof callback !== 'function') return;
-		var t, l = this.length, i = -1;
-		if (arguments.length > 1) t = arguments[1];
-		while (++i < l) {
-			if (callback.call(t, this[i], i, this) === false)
-				break;
-		}
 	}
 });
