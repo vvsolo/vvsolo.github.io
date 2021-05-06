@@ -25,7 +25,7 @@ var TextileHighlightRules = function() {
             },
             {
                 token : "endstr",
-                regex : '([（【“「<])(' + configs.endStrs + ')([）】”」>])'
+                regex : '([（【“「<])(' + config.endStrs + ')([）】”」>])'
             },
             // 省略号补丁，修正为宋体
             {

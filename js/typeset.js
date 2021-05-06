@@ -1,6 +1,6 @@
 // 分隔字数、实际分隔字数
-var vNum = configs.Linenum,
-	cutNum = configs.Linenum * 2
+var vNum = config.Linenum,
+	cutNum = config.Linenum * 2
 
 // 截取分段
 function doSplit(str, sm, bm) {
@@ -39,11 +39,11 @@ function doSplit(str, sm, bm) {
 		// 如果有英文
 		else if (findEngStr > 0) {
 			// 预分段
-			tmp = linestr.substr(0, vNum)
+			tmp = linestr.slice(0, vNum)
 			// 英文单字节数
 			if (sinBytes = tmp.findCount(/[\x00-\xff]/g)) {
 				// 预取补齐字符串，如果全是双字节
-				if (linestr.substr(vNum, sinBytes).len() === sinBytes*2) {
+				if (linestr.slice(vNum, sinBytes).len() === sinBytes*2) {
 					sublen = ~~(sinBytes/2)
 				} else {
 					// 预取英文半数
@@ -51,7 +51,7 @@ function doSplit(str, sm, bm) {
 					var i = sublen
 					while (i--) {
 						sublen++
-						if (linestr.substr(0, vNum + sublen).len() > cutNum) {
+						if (linestr.slice(0, vNum + sublen).len() > cutNum) {
 							sublen--
 							break;
 						}
@@ -61,7 +61,7 @@ function doSplit(str, sm, bm) {
 		}
 		// 按修正后的字数截取字符串
 		tmp = linestr
-			.substr(0, vNum + sublen)
+			.slice(0, vNum + sublen)
 			// 防止行尾限制标点，放置到下行
 			// 防止英文单词断行，放置到下行
 			// ［〔【｛·‘『“「〈《
@@ -94,22 +94,22 @@ function onTypeSetSplit(str) {
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
-		.replaceAt(configs.cnQuotes)
+		.convertCNQuotes()
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 修正分隔符号
 		.replaceSeparator()
 		// 分隔符居中
-		.replace(('^' + configs.Separator + '$').getReg('gm'), function(m) {
+		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
 			return m.setAlign('', '', 'center')
 		})
 		// 结尾居中
-		.replace(('^[（【“「<]?(?:' + configs.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
+		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
 			return m.setAlign('', '', 'center')
 		})
 		// 书名居中
-		.replace(configs.novelTitle, function(m) {
+		.replace(config.novelTitle, function(m) {
 			return m.setAlign('', '', 'center')
 		})
 		// 标题居中
@@ -122,7 +122,7 @@ function onTypeSetSplit(str) {
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
 		// 作者类居左
-		.replace(configs.novelAuthor, function(m) {
+		.replace(config.novelAuthor, function(m) {
 			return m.trim() + '\n'
 		})
 		.replaceEnd()
@@ -155,7 +155,7 @@ function onTypeSetRead(str) {
 		// 修正分隔符号
 		.replaceSeparator()
 		// 修正作者后面未空行
-		.replace(configs.novelAuthor, '$1\n')
+		.replace(config.novelAuthor, '$1\n')
 		.replace(/^/gm, '　　')
 		.replace(/(^　　$\n)+/gm, '　　\n')
 		.replace(/\n{3,}/gm, '\n\n')
@@ -199,7 +199,7 @@ function editorCleanUp(str) {
 		str = str.replaceSeparator()
 	// 修正引号
 	if ($('#Check_10').is(':checked'))
-		str = str.replaceQuotes('fr')
+		str = str.replaceQuotes()
 	// 修正英文
 	if ($('#Check_11').is(':checked'))
 		str = str.convertEnglish()
@@ -211,7 +211,7 @@ function editorCleanUp(str) {
 function editorCleanUpEx(str) {
 	var safeStr = ['\n\u2620', '\u2620\n'],
 		// 结尾
-		endStr = ('^[\\(（【〖“「［<](?:' + configs.endStrs + ')[>］」”〗】）\\)]$').getReg('gm')
+		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm')
 	// 其他自定义修正
 	var Others = [
 		//****** 修正错误语句换行 ******/
@@ -239,11 +239,11 @@ function editorCleanUpEx(str) {
 		// 去除汉字间的空格
 		.replaceSpace()
 		// 保护书名不换行
-		.replace(configs.novelTitle, function(m) {
+		.replace(config.novelTitle, function(m) {
 			return safeStr[0] + m + safeStr[1]
 		})
 		// 保护作者不换行
-		.replace(configs.novelAuthor, function(m) {
+		.replace(config.novelAuthor, function(m) {
 			return safeStr[0] + m + safeStr[1]
 		})
 		// 修正章节标题，加标题保护码

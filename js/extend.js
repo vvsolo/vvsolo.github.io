@@ -4,41 +4,27 @@
 var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufeff';
 var allSpace = Space + '\x0A\x0D\xA0';
 
-// 判断是否存在，可以为空
-var checkNull = function(obj) {
-	return obj === undefined || obj === null || false;
-}
+// 类型判断
 
-// 判断类型
+// ES3 将 Array 类型视为 Object;
 var __os = Object.prototype.toString;
-var isString = function(v) { return typeof v === 'string'; }
-var isFunction = function(v) { return typeof v === 'function'; }
-//var isRegExp = function(v) { return v instanceof RegExp; }
-var isArray = function(v) { return __os.call(v) === "[object Array]"; }
 var isObject = function(v) {
 	return v !== null && __os.call(v) === "[object Object]";
 }
 
-// 对象批量赋值
-Object.extend = function(d, s) {
-	for (var i in s) d[i] = s[i];
-	return d;
-}
-
 // ***** 扩展字符处理 *****
-Object.extend(String.prototype, {
+Object.assign(String.prototype, {
 	// 安全转换正则
-	getReg: function(m) {
-		return new RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), checkNull(m) ? 'gm' : m);
+	getReg: function(f) {
+		return RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), (f === '') ? '' : (f || 'gm'));
 	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
 		return this.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-		//return this.replace(/[\r\n]{1,2}/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
-		return this.replace(new RegExp('[' + Space + ']+', 'g'), ' ').toUNIX();
+		return this.replace(RegExp('[' + Space + ']+', 'g'), ' ').toUNIX();
 	},
 	// 删除字符首尾空格
 	trimSide: function() {
@@ -55,10 +41,16 @@ Object.extend(String.prototype, {
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
 		var re = this;
-		if (isArray(arr)) {
+		if (Array.isArray(arr)) {
 			arr.each(function(v) {
-				!isArray(v) && (v = [v, '']);
-				isString(v[0]) && (v[0] = v[0].getReg());
+				// 如果传入是正则表达式
+				if (!Array.isArray(v)) {
+					v = [v, ''];
+				}
+				// 如果 0 维是字符串，则转正则表达式
+				if (typeof v[0] === 'string') {
+					v[0] = v[0].getReg();
+				}
 				re = re.replace(v[0], v[1] || '');
 			})
 		} else {
@@ -69,17 +61,20 @@ Object.extend(String.prototype, {
 		return re;
 	},
 	// 字符串定位替换
-	replaceAt: function(a, rev) {
-		rev && (a = a.reverse());
-		return this.replace(new RegExp('[' + a[0] + ']', 'g'), function(m) {
-			return a[1].charAt(a[0].indexOf(m));
+	replaceAt: function(arr, rev) {
+		if (rev) {
+			arr = arr.reverse();
+		}
+		var nl = arr[1].split('');
+		return this.replace(RegExp('[' + arr[0] + ']', 'g'), function(m) {
+			return nl[arr[0].indexOf(m)] || m;
 		});
 	},
 	// 正则去所有空格
-	cleanSpace: function(reg, greg) {
+	cleanSpace: function(find, greg) {
 		greg = greg || /\s/g;
-		return reg ? this.replace(reg, function(m) {
-			return m.replace(greg, '')
+		return find ? this.replace(find, function(m) {
+			return m.replace(greg, '');
 		}) : this.replace(greg, '');
 	},
 	// 取双字节与单字节混排时的真实字数
@@ -88,11 +83,11 @@ Object.extend(String.prototype, {
 	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
-		return (this.match(isString(reg) ? new RegExp(reg, 'g') : reg) || '').length;
+		return (this.match(reg) || '').length;
 	},
 	// 简化搜索方式
 	find: function(str) {
-		return this.search(str) > -1;
+		return (typeof str === 'string' ? this.indexOf(str) : this.search(str)) > -1;
 	},
 	// 特殊方式替换字符串
 	/*
@@ -107,15 +102,26 @@ Object.extend(String.prototype, {
 		if (typeof vals !== 'object') {
 			return this;
 		}
-		var val;
+		var val, tmp;
 		// {$name.t1.0}
-		return this.replace(/\{\$[\w\-]+(?:\.[\w\-]+)*\}/g, function(m) {
+		return this.replace(/\{\$[\w\-\.]+\}/g, function(m) {
+			// 防止 1 级就输入 {$b.c} 的情况，先行判断
+			tmp = m.slice(2, -1);
+			if (tmp in vals) {
+				val = vals[tmp];
+				return Array.isArray(val) ? val.join(r || '') : val;
+			}
+			// 分析逐级尝试获取数据
 			val = vals;
-			m.slice(2, -1).split('.').each(function(v) {
-				return (val = val[v]) || false;
+			tmp.split('.').each(function(v) {
+				if (v in val) {
+					val = val[v];
+				} else {
+					return null;
+				}
 			});
-			return (val === undefined || isObject(val)) ? m :
-				isArray(val) ? val.join(r || '') : val;
+			return isObject(val) ? m :
+				Array.isArray(val) ? val.join(r || '') : val;
 		});
 	},
 	// 替换并返回正则式
@@ -126,15 +132,15 @@ Object.extend(String.prototype, {
 	eachArrayRegTest: function(arr) {
 		var l = arr.length, i = -1;
 		while (++i < l) {
-			if (this.search(arr[i]) > -1) return true;
+			if (this.find(arr[i])) return true;
 		}
 		return false;
 	}
 });
 
 // ***** 扩展数组处理 *****
-Object.extend(Array.prototype, {
-	each: function(callback /*, thisArg*/) {
+Object.assign(Array.prototype, {
+	each: Array.prototype.foEach || function(callback /*, thisArg*/) {
 		if (typeof callback !== 'function') return;
 		var t, l = this.length, i = -1;
 		if (arguments.length > 1) t = arguments[1];
