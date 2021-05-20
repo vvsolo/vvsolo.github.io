@@ -39,7 +39,7 @@ Object.assign(String.prototype, {
 			.replace(/\n\n+$/, '\n');
 	},
 	// 一些特殊的修正
-	__replaceFix: function(t) {
+	replaceHook: function(t) {
 		var re = this, item;
 		for (item in t) {
 			switch (item) {
@@ -86,8 +86,8 @@ Object.assign(String.prototype, {
 			re = ('find' in v) ?
 				re.replace(v.find, function(m) {
 					return ('skip' in v && m.eachArrayRegTest(v.skip)) ?
-						m : m.__replaceFix(v);
-				}) : re.__replaceFix(v);
+						m : m.replaceHook(v);
+				}) : re.replaceHook(v);
 		})
 		return re;
 	},
@@ -300,6 +300,7 @@ Object.assign(String.prototype, {
 	},
 	// 全角标点符号
 	convertPunctuation: function() {
+		//return this.replaceHook(config.punSymbols)
 		return this
 			// 标点符号修正
 			.replaceAt(config.punSymbol)
@@ -356,7 +357,7 @@ Object.assign(String.prototype, {
 		// 全角转半角数字
 		// 补零
 		var zero = function(n) {
-			return n.replaceAt(config.sNumber).replace(/\b\d\b/, '0$&');
+			return n.replaceAt(config.sNumber).replace(/\b\d\b/g, '0$&');
 		}
 
 		// 处理标题内容
@@ -377,7 +378,7 @@ Object.assign(String.prototype, {
 				// 修正结尾是上下的小标号
 				.replace(/([^\d\.])[ ·—-]([上中下终終完]|[零一二三四五六七八九十百]{1,5})$/, '$1（$2）')
 				// 修正标题是上下的小标号
-				.replace(/^(?:[上中下终終完]|[零一二三四五六七八九十百]{1,5})$/, '（$&）')
+				.replace(/^(?:[上中下终終完])$/, '（$&）')
 				// 中文间空格转换为逗号
 				.replace(' (?=[{$han}]{2,})'.comReg('g'), '，')
 				.replace(' (?=[{$han}])'.comReg('g'), '')
