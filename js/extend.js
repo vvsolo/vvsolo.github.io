@@ -141,3 +141,4 @@ Object.assign(String.prototype, {
 		return false;
 	}
 });
+

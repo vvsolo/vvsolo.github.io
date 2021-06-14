@@ -56,13 +56,13 @@ Object.assign(String.prototype, {
 					re = re.replaces(t.rps);
 					break;
 				case 'mu':
-					re = re.matchUpper(t.upper);
+					re = re.matchUpper(t.mu);
 					break;
 				case 'ml':
-					re = re.matchLower(t.lower);
+					re = re.matchLower(t.ml);
 					break;
 				case 'mf':
-					re = re.matchFirstUpper(t.fupper);
+					re = re.matchFirstUpper(t.mf);
 					break;
 				case 'lc':
 					switch (t.lc) {
@@ -197,10 +197,6 @@ Object.assign(String.prototype, {
 			.replace(eng.Model, function(m) {
 				return m.find(/\d/) ? m.toUpperCase() : m;
 			})
-			// 处理英语中称呼缩写，非行尾的
-			.replace(eng.Honor, function(m) {
-				return m.matchUpper(/\b[a-z]/g).replace(/。/g, '.');
-			})
 			// 处理常用英语书写
 			.matchUpper(('\\b(?:' + eng.Upper + ')\\b').getReg('gi'))
 			.replace(('\\b(' + eng.Special + ')(\\d{1,4}[a-z]{0,6})?\\b').getReg('gi'), function(m, m1, m2) {
@@ -211,6 +207,10 @@ Object.assign(String.prototype, {
 			.replace(('\\b(\\d[0-9。.]* ?)(' + eng.Unit + ')\\b').getReg('gi'), function(m, m1, m2) {
 				tmp = ('|' + eUnitLower + '|').indexOf('|' + m2.toLowerCase() + '|') + 1;
 				return m1 + ('|' + eng.Unit + '|').substr(tmp, m2.length);
+			})
+			// 处理英语中称呼缩写，非行尾的
+			.replace(eng.Honor, function(m) {
+				return m.toLowerCase().matchUpper(/\b[a-z]/g).replace(/。/g, '.');
 			})
 			// 处理连续的英语
 			.matchUpper(eng.Continuou)
@@ -367,10 +367,10 @@ Object.assign(String.prototype, {
 				.replace('^[{$sep}]+'.chapReg(), '');
 
 			if (str.length === 0) return '';
-			// 去除只有间隔符+数字的情况
-			if (str.find(/^（?\d{1,3}）?$/)) {
-				return str.replace(/^（?(\d{1,3})）?$/, function(m, m1) {
-					return '（' + zero(m1) + '）';
+			// 只有数字的情况
+			if (/^\d+$/.test(str)) {
+				return str.replace(RegExp['$&'], function(m) {
+					return config.Divide + (~~m > 20 ? m : '（' + zero(m) + '）');
 				});
 			}
 
@@ -432,7 +432,10 @@ Object.assign(String.prototype, {
 					m.__chaSkip('t0') ||
 					m.__chaSkip('t2') ||
 					(!relax && m3.find(/^[！？。…]{1,3}$/)) ||
-					(!m2 && !relax && m3.find(/，|[！？。…’”』」]{1,3}$/))
+					// 如果有 `，` 的
+					(!m2 && !relax && m3.find(/，/)) ||
+					// 如果章节 `第` 开头，结尾限定
+					(!m1.find(/^第/) && m3.find(/[！？。…’”』」]{1,3}$/))
 				) return m;
 
 				if (!m1.find(xFinds))
@@ -487,6 +490,8 @@ Object.assign(String.prototype, {
 			parent03 = '(?:\\n+^（(?:{$n2}|{$n3})）(?:.{0,40}|$)$\\n+){2,}'.chapReg(),
 			// 第01章……　连续
 			parent04 = '(?:^第{$n1}{$crt}……\\n+)+'.chapReg(),
+			// 第01章 第02章 第03章　连续
+			parent05 = '(?:^第[0-9]{1,5}{$crt}$\\n+){2,}'.chapReg(),
 			/***** 修复相同的连续章节标题 *****/
 			fix1 = '(^(?:{$w1}|{$w3})(?:[：、。\\.\\,].{0,40}|$)$\\n+)\\1'.chapReg('g'),
 			fix2 = '(^（(?:{$w1}|{$w3})）(?:.{0,40}|$)$\\n+)\\1'.chapReg('g'),
@@ -528,6 +533,9 @@ Object.assign(String.prototype, {
 			})
 			.replace(parent04, function(m) {
 				return m.replace('^第({$n1}){$crt}'.chapReg(), '$1、')
+			})
+			.replace(parent05, function(m) {
+				return m.replace('第|{$crt}'.chapReg('g'), '')
 			})
 			.replace('\\n\\n((?:{$n1}|{$n3})、?)'.chapReg(), '$1')
 			.replace(fix1, function(m, m1) {
