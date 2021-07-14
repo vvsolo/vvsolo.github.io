@@ -58,6 +58,9 @@ Object.assign(String.prototype, {
 				case 'mu':
 					re = re.matchUpper(t.mu);
 					break;
+				case 'mr':
+					re = re.cleanSpace(t.mr);
+					break;
 				case 'ml':
 					re = re.matchLower(t.ml);
 					break;
@@ -104,6 +107,7 @@ Object.assign(String.prototype, {
 	},
 	// 引号修正，西文引号
 	replaceQuotes: function() {
+		var tmp;
 		return this
 			.replace(config.enSep, '$1〔※@※〕$2')
 			.replaces(config.rQuotes)
@@ -386,7 +390,7 @@ Object.assign(String.prototype, {
 				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
 				// 修正结尾是数字的小标号
 				.replace(/([^\w\.\-—])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
-				.replace(/([^\w\.\-—])[ ·—-]?\b(\d{1,2})$/, '$1（$2）')
+				.replace(/([^\w\.\-—])[ ·—-]?\b([012]?[0-9])$/, '$1（$2）')
 				// 补零
 				.replace(/（\d{1,3}）$/, function(m) {
 					return zero(m)
@@ -501,7 +505,8 @@ Object.assign(String.prototype, {
 
 		var _gp = function(str, v) {
 			// 如果有非结尾标点的，判断退出
-			return str.find(/[^。？！…—～]$/) ? str : str
+			//return str.find(/[^。？！…—～]$/) ? str : str
+			return str
 				.replace('^第({$zz}){$crt}(?:：|……$|$)'.fmt(v).chapReg(), '$1、')
 				.replace('^第({$zz}){$crt}……'.fmt(v).chapReg(), '$1、……')
 				.replace('^({$zz})[：、。\.\,]'.fmt(v).chapReg(), '$1、')
