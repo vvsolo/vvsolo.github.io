@@ -139,8 +139,8 @@ var config = {
 			/^同人不/
 		],
 		't2': [
-			/^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课)/,
-			'^一(?:[{$c}]|[直切生世味]|回[合首头])'.chapReg(''),
+			/^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课|爷奶爹娘爸妈舅叔姨婶嫂哥姐弟妹儿女孙侄子)/,
+			'^一(?:[{$c}]|[直切生世味]|回[复合首头])'.chapReg(''),
 			/^(?:二话[没不沒]|三[生世]|四[周边处]|五[谷更]|[百千][折转])/,
 			/^上节目/
 		],
@@ -176,7 +176,7 @@ var config = {
 		// 约定英文单位，用|分隔
 		'Unit': 'MHz|GHz|KHz|kWh|kW|mWh|gWh|mA|μA|mV|μV|mΩ|μΩ|Mbps',
 		// 约定英语大写，用|分隔
-		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|WQLMLGB|RPG|NPC',
+		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC',
 		// 虚词小写，非行首
 		'Structural': /(?:!^)\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with)\b/gi,
 		// 特殊的连续单词 转大写
@@ -184,7 +184,7 @@ var config = {
 		// 称谓单词前缀
 		'Honor': /\b(?:Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)\b。(?!$)/g,
 		// 小写的后缀
-		'Suffix': /。\b(?:Txt|Avi|Jpg|Bmp|Png|Net)\b/g,
+		'Suffix': /。\b(?:Txt|Avi|Jpe?g|Bmp|Png|Net|Gif|Ppt)\b/g,
 		// 单个字母大写
 		'Single': '\\b[a-z]\\b[^ {$latin}]'.comReg('g'),
 		// 型号类全部大写
@@ -204,7 +204,7 @@ var config = {
 		// 拉丁字母后的大写
 		'LatinAfter': '[{$latin}]\\b[a-zA-Z]+\\b'.comReg('g'),
 		// 重叠连续单词
-		'Overlap': /\b(yes|no|go|up|hi|ha|biu|bye)\1+\b/gi,
+		'Overlap': /\b(yes|no|go|up|hi|ha|biu|bye|ok)\1+\b/gi,
 		// 引用中的英文
 		'Quote': '[“‘「『][ \\w{$hwPun}{$qhwPun}{$fwPun}{$latin}]{2,}[』」’”]'.comReg('g'),
 		'QuoteTest': /[，。！？…]/,
@@ -434,7 +434,7 @@ var config = {
 		},
 		// 修正数字间的全角 （）() 21.05.24 去除 ，,
 		{
-			'find': '\\b[a-zA-Z]*[\\d\\.。]+(?:\w+)?[{$ofwPun}]?(?:[。·.：〉〈＝＊—]\\b[\\d\\.。]+(?:\w+)?[{$ofwPun}]?)+'.comReg('g'),
+			'find': '\\b[a-zA-Z]*[\\d。.]+(?:\w+)?[{$ofwPun}]?(?:[。·.：〉〈＝＊—]\\b[\\d。.]+(?:\w+)?[{$ofwPun}]?)+'.comReg('g'),
 			'skip': ['[{$ofwPun}][.,]'.comReg('')],
 			'at': ['。·.：〉〈＝＊，—', '...:><=*,-']
 		},
@@ -450,8 +450,9 @@ var config = {
 			'rp': [/\./g, '。']
 		},
 		// 修正数字后缀 20,000.00 12.99%
+		// 21.07.24 修正数字越长时正则引起的锁死
 		{
-			'find': '\\b(?:[0-9]+[,，。.]*)+(?:[a-zA-Z]+\\b|\\b(?:人民币|软妹币?|元|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿]|[{$ofwPun}]))'.comReg('g'),
+			'find': '\\b(?:\\d{1,18}|[\\d,，]{2,20})(?:[。.]\\d{1,8})?(?:[a-zA-Z]+\\b|(?:人民币|软妹币?|元|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿]|[{$ofwPun}])|$)'.comReg('gm'),
 			'at': ['，。', ',.']
 		},
 		// 倒计时样式的，还原逗号

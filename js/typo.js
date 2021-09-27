@@ -107,11 +107,10 @@ Object.assign(String.prototype, {
 	},
 	// 引号修正，西文引号
 	replaceQuotes: function() {
-		var tmp;
 		return this
 			.replace(config.enSep, '$1〔※@※〕$2')
 			.replaces(config.rQuotes)
-			.replace(/〔※@※〕/g, '\'');
+			.replace(/〔※@※〕/g, "'");
 	},
 	// 引号修正，直角引号
 	replaceCNQuotes: function() {
@@ -329,12 +328,18 @@ Object.assign(String.prototype, {
 	__Chapter: function(t, tpl, r, func) {
 		// 处理标题的外框
 		// 第一章：【标题】/【第一章：标题】
-		var pa = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$sn})[{$b.0}]?(?:{$e}|$)[{$b.1}]?$'.fmt(t).chapReg();
-		var na = '。|(?:完|完结|待续|未完|终)[{$b.1}]?$'.chapReg();
+		var pa = '^{$f}[{$b.0}]?(?:{$zz})[{$b.1}]?(?:{$s}[{$b.0}]?(?:{$e})[{$b.1}]?)?$'.fmt(t).chapReg();
+		var na = /，|。$|(?:完|完结|待续|未完|终)$/;
 		return this
 			.replace(pa, function(m) {
-				return m.search(na) > -1 ?
-					m : m.replace('[{$b}]'.chapReg('g'), ' ');
+				var mt = m.trim().replace('[{$b}]'.chapReg('g'), ' ')
+				if (
+					// 判断结尾
+					mt.search(na) > -1
+					// 判断过滤
+					// || mt.eachRegTest(config.regSkipTitle)
+				) return m;
+				return mt;
 			})
 			.replace(tpl.chapReg('gm', r), func);
 	},
@@ -389,15 +394,15 @@ Object.assign(String.prototype, {
 				// 修正注释
 				.replace(/【?注(\d{1,2})】?/g, '【注$1】')
 				// 修正结尾是数字的小标号
-				.replace(/([^\w\.\-—])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
-				.replace(/([^\w\.\-—])[ ·—-]?\b([012]?[0-9])$/, '$1（$2）')
+				.replace(/([^\w\.\-—·])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
+				.replace(/([^\w\.\-—·])[ —-]?\b([012]?[0-9])$/, '$1（$2）')
 				// 补零
 				.replace(/（\d{1,3}）$/, function(m) {
 					return zero(m)
 				})
 				// 修正结尾是希腊数字的小标号
-				.replace(/[ ·]?\b([IVXC]{1,6})\b$/i, function(m, m1) {
-					return '（' + m1.toUpperCase() + '）'
+				.replace(/[ ·]\b[IVXC]{1,6}\b$/i, function(m) {
+					return '（' + m.slice(1).toUpperCase() + '）'
 				});
 			return (sDiv === undefined) ? config.Divide + str : str;
 		}
@@ -504,8 +509,10 @@ Object.assign(String.prototype, {
 			c3 = '^{$t3}(?:{$e}|$)$\\n+\\1.*$'.chapReg('gm');
 
 		var _gp = function(str, v) {
-			// 如果有非结尾标点的，判断退出
-			//return str.find(/[^。？！…—～]$/) ? str : str
+			// 如果有连续的数字退出 -> 3、5个小时后
+			if (str.search(/\n\d+[、，。\.\,]\d/) > -1) {
+				return str;
+			}
 			return str
 				.replace('^第({$zz}){$crt}(?:：|……$|$)'.fmt(v).chapReg(), '$1、')
 				.replace('^第({$zz}){$crt}……'.fmt(v).chapReg(), '$1、……')

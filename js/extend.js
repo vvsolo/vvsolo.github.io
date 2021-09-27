@@ -5,6 +5,7 @@ var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 类型判断
+
 // ES3 将 Array 类型视为 Object;
 var __os = Object.prototype.toString;
 var isObject = function(v) {
@@ -133,5 +134,12 @@ Object.assign(String.prototype, {
 			if (this.find(arr[i])) return true;
 		}
 		return false;
+	}
+});
+
+// ***** 扩展数组处理 *****
+Object.assign(Array.prototype, {
+	getRandom: function() {
+		return this[Math.floor(Math.random() * (this.length))];
 	}
 });
