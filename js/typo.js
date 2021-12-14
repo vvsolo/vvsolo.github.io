@@ -154,7 +154,9 @@ Object.assign(String.prototype, {
 					//(m.find(/^[“「]/mi) && m.find(/[」”]$/mi)) ||
 					m.findCount(eng.LineSkip) < 2 ||
 					!m.find(/[,， ]/) ||
-					m.find(/[《》]/)
+					m.find(/[《》]/) ||
+					// 如果全是标点符号
+					m.find(/[“「](?:。|[！？]{1,3}|……|——)[」”]/)
 				) ? m : m
 					.replaceAt(config.halfPuns)
 					.replaces(config.halfSymbol)

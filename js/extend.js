@@ -1,7 +1,7 @@
 ﻿// 空格
 // \u0009\u000B\u000C = \t\v\f
 // \u2000-\u200a\u205f\u2028\u2029\u3000\ufeff'
-var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufeff';
+var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufe0f\ufeff';
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 类型判断
@@ -137,9 +137,3 @@ Object.assign(String.prototype, {
 	}
 });
 
-// ***** 扩展数组处理 *****
-Object.assign(Array.prototype, {
-	getRandom: function() {
-		return this[Math.floor(Math.random() * (this.length))];
-	}
-});

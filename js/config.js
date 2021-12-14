@@ -63,7 +63,7 @@ var regChapter = {
 	/****** 非常规标题·可有后续主体 ******/
 	't1': [
 		'楔子|引[言子文]|序篇?章|序[言幕目曲传傳卷]?|[后後][记话記話序]|尾[声记聲記]|大?[结結]局',
-		'同人[续續]?|[前后外续正後續间間][传篇傳章]|[前后外里裏]番|[续續]{$s1}{1,3}[{$c.2}]?|[番篇]外[篇卷章]?（?{$s1}{0,3}）?',
+		'同人[续續]?|[前后外续正後續间間][传篇傳章]|[前后外里裏]番|[续續]{$s1}{1,3}[{$c.2}]?|[番篇]外[篇卷章语語]?（?{$s1}{0,3}）?',
 		'外{$s1}{0,3}[{$c.2}]'
 	],
 	/****** 01章/第02章/第02-18章/03章：标题/第０９章：标题 ******/
@@ -121,6 +121,10 @@ var config = {
 	'maxLinenum': 200,
 	// 结尾的标识语，用于排版输出时居中，用|分隔
 	'endStrs': '未完待[续續]|未完|待[续續]|完[结結]?|全[文书書][完终終]',
+	// 象声词
+	'mimeticWord': '啊哦喔呃唔嗯哼咛喂呜啦吡喏嘞噶咂呓嗬吧哎唷呀哟哈呵咦呦啧嗵扑哧噗呲嗤咳啐呸呛嘶呼嗖咯吱咕嗝呱嘟咿叽笃喳嘎嘀哩嘤唧咪喵哞嗷呯砰嘿哄嚯叮咚哐咝噼啪哗嘭咣咔咹嚓嗡恩耶咻吖轰隆汪驾呔啜雪哺碰嗫铮嗚喲撲嗆嘰篤嚶噝譁轟駕嘖嚀囈囁錚汩滴答诶誒蛤嗐刷唰嗒咵',
+	// 无结尾标点错误
+	'noEndLine': /[^\,\.\:;\?\!\)\]\}\'\"\~，、。\：；？！）］〕】〗｝·’』”」〉》…—～]$/,
 	/****** 文章标题 - 正则设定 ******/
 	'novelTitle': /^[ 　]*(《([^》]+)》(.*[^。？！…]|$)|[书書]名[：\:](.+))$/m,
 	'novelAuthor': /^[ 　]*((?:[作编译編譯]者|排版|整理)[：\:].*)$/gm,
@@ -176,7 +180,7 @@ var config = {
 		// 约定英文单位，用|分隔
 		'Unit': 'MHz|GHz|KHz|kWh|kW|mWh|gWh|mA|μA|mV|μV|mΩ|μΩ|Mbps',
 		// 约定英语大写，用|分隔
-		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|VIP|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC',
+		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC|V+IP',
 		// 虚词小写，非行首
 		'Structural': /(?:!^)\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with)\b/gi,
 		// 特殊的连续单词 转大写
@@ -307,10 +311,11 @@ var config = {
 	// 圆点．
 	// 省略号⋯ \u2026
 	// 间隔号•●
+	// ＋－＝＞＜
 	'punSymbol': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
-		'｀‐━―─－ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢＋／︱¦＂′＇',
-		'`———————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨++/\x7C\x7C\x22\x27\x27'
+		'｀‐━―─ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢／︱¦＂′＇',
+		'`——————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨＋/\x7C\x7C\x22\x27\x27'
 	],
 	// 标点符号修正
 	'punSymbolFix': [
@@ -345,7 +350,7 @@ var config = {
 		// 去错误和相联标点
 		[/“：/g, '：“'],
 		[/：“”/g, '：“'],
-		[/“[；，。]/g, '“'],
+		//[/“[；，。]/g, '“'],
 		//[/「：/g, '：「'],
 		//[/：「」/g, '：「'],
 		//[/([…。，！？])”[，。！？]/g, '$1”'],
@@ -434,9 +439,9 @@ var config = {
 		},
 		// 修正数字间的全角 （）() 21.05.24 去除 ，,
 		{
-			'find': '\\b[a-zA-Z]*[\\d。.]+(?:\w+)?[{$ofwPun}]?(?:[。·.：〉〈＝＊—]\\b[\\d。.]+(?:\w+)?[{$ofwPun}]?)+'.comReg('g'),
+			'find': '\\b[a-zA-Z]*[\\d。.]+(?:\w+)?[{$ofwPun}]?(?:[。·.：〉〈＊—＋－＝＞＜]\\b[\\d。.]+(?:\w+)?[{$ofwPun}]?)+'.comReg('g'),
 			'skip': ['[{$ofwPun}][.,]'.comReg('')],
-			'at': ['。·.：〉〈＝＊，—', '...:><=*,-']
+			'at': ['。·.：〉〈＊，—＋－＝＞＜', '...:><*,-+-=><']
 		},
 		// 计量单位后跟标点，还原
 		{
