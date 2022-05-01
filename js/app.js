@@ -100,10 +100,10 @@ $(function() {
 	$('#floatTool').click(function() {
 		var cLeft = $('#c-left').position().left === 0
 		$('#c-left').animate({
-			left: (cLeft ? -200 : 0)
+			left: (cLeft ? -220 : 0)
 		}, 300)
 		$('#c-right').animate({
-			left: (cLeft ? 0 : 200)
+			left: (cLeft ? 0 : 220)
 		}, 300)
 		var tipVal = $(this).attr('data-tip').split('|');
 		$(this).html(cLeft ? tipVal[0] : tipVal[1]);
