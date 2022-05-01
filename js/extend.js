@@ -1,11 +1,13 @@
 ﻿// 空格
 // \u0009\u000B\u000C = \t\v\f
 // \u2000-\u200a\u205f\u2028\u2029\u3000\ufeff'
-var Space = '\x09\x0B\x0C\x20\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue4c6\uf604\uf04a\uf8f5\ufe0f\ufeff';
+// DEL \x7f
+// \x09\x0B\x0C\x20\x7f
+// 21.12.27 删除所有控制字符，除 换行、回车和空格
+var Space = '\x00-\x09\x0B\x0C\x0E-\x20\x7f\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue11a\ue4c6\uf604\uf04a\uf8f5\ufe0f\ufeff';
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 类型判断
-
 // ES3 将 Array 类型视为 Object;
 var __os = Object.prototype.toString;
 var isObject = function(v) {
@@ -137,3 +139,9 @@ Object.assign(String.prototype, {
 	}
 });
 
+// ***** 扩展数组处理 *****
+Object.assign(Array.prototype, {
+	getRandom: function() {
+		return this[Math.floor(Math.random() * (this.length))];
+	}
+});

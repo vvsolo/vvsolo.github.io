@@ -26,7 +26,7 @@ var strChapter = {
 	'space': Space,
 	'sep': ' 　，、．·。：—.,:|-',
 	'c': ['卷部', '集篇阙季册闕冊', '章折回话节幕節話'],
-	'cf': '[折卷册冊]',
+	'cf': '[折卷册冊章]',
 	'crt': '章',
 	's0': '[上中下续终續終]',
 	's1': '[0-9０-９零一二三四五六七八九十]',
@@ -59,11 +59,11 @@ var regChapter = {
 	// 行尾（严格限定） regStrictEnd ’”』」
 	'es': '.{$en}[^，。：;；、…？！’”』」?!\\n]',
 	/****** 非常规标题·无后续主体 ******/
-	't0': '[首小节自次節]序|[题題][注记註記跋]|[题題开開][卷篇头场頭場][诗词语詩詞語]|文案|卷[首后後][语語]|(?:作者)?前言|[全本下][{$c.0}{$c.1}]{$w0}|(?:作品|作者|人物|内容|本书)?{$w0}|篇[后後]|(?:完本|作者)感言|作者[后後的][话話]|正文|导读|導讀|[附目][录錄][0-9]{0,2}',
+	't0': '[首小节自次節]序|[题題][注记註記跋]|[题題开開][卷篇头场頭場][诗词语詩詞語]|文案|[卷篇][首后後][语語]|(?:作者)?前言|[全本下][{$c.0}{$c.1}]{$w0}|(?:作品|作者|(?:主要)?人物|内容|本书)?{$w0}|篇[后後]|(?:完本|作者)感言|作者[后後的][话話]|正文|导读|導讀|[附目][录錄][0-9]{0,2}|[開开][場场]白|大[纲綱]',
 	/****** 非常规标题·可有后续主体 ******/
 	't1': [
-		'楔子|引[言子文]|序篇?章|序[言幕目曲传傳卷]?|[后後][记话記話序]|尾[声记聲記]|大?[结結]局',
-		'同人[续續]?|[前后外续正後續间間][传篇傳章]|[前后外里裏]番|[续續]{$s1}{1,3}[{$c.2}]?|[番篇]外[篇卷章语語]?（?{$s1}{0,3}）?',
+		'楔子|引[言子文]|序篇?章|序[言幕目曲传傳卷]?|首部曲|首[卷篇场場]|[开開][卷篇头场頭場]|[后後][记话記話序语語]|尾[声记聲記]|大?[结結]局{$s1}{0,3}',
+		'同人[续續]?|[前后外续正後續间間][传篇傳章]|完[结結]篇|特[别別]篇|[前后外里裏]番|[续續]{$s1}{1,3}[{$c.2}]?|[番篇]外[篇卷章语語]?（?{$s1}{0,3}）?',
 		'外{$s1}{0,3}[{$c.2}]'
 	],
 	/****** 01章/第02章/第02-18章/03章：标题/第０９章：标题 ******/
@@ -127,33 +127,34 @@ var config = {
 	'noEndLine': /[^\,\.\:;\?\!\)\]\}\'\"\~，、。\：；？！）］〕】〗｝·’』”」〉》…—～]$/,
 	/****** 文章标题 - 正则设定 ******/
 	'novelTitle': /^[ 　]*(《([^》]+)》(.*[^。？！…]|$)|[书書]名[：\:](.+))$/m,
-	'novelAuthor': /^[ 　]*((?:[作编译編譯]者|排版|整理)[：\:].*)$/gm,
+	'novelAuthor': /^[ 　]*((?:作者|著作?|[编編译譯]者|翻[译譯]|勘[误誤校]|精校|续写|續寫|排版|整理|改[写寫])[：\:].*)$/gm,
 	/****** 标题忽略 - 正则设定 ******/
 	// 全角数字标题
 	'regFullNumberTitle': '[第\\(（]{$n2}[{$c}\\)）]'.chapReg(),
 	'regSkipTitle': {
 		't0': [
-			/[。;；—]$/
+			/[。;；—]$/,
+			/^(?:\d{1,3}\.){3}\d{1,3}/
 		],
 		't1': [
 			/^[\-—]{1,4}/,
-			/^序[长词战兴常稿歌秩次传述長詞戰興傳]/,
 			/^[上下]回/,
 			/^断章取义/,
-			/^同人不/
+			/^同人不/,
+			/^序[长词战兴常稿歌秩次传述長詞戰興傳]/
 		],
 		't2': [
+			/^上节目/,
 			/^第?[零一二三四五六七八九十百两]{1,3}(?:部[分]|季[度]|卷[书经]|篇[篇经文]|[部集](?:戏|戲|电[影视視]|的)|部好莱坞|回合|节课|爷奶爹娘爸妈舅叔姨婶嫂哥姐弟妹儿女孙侄子)/,
 			'^一(?:[{$c}]|[直切生世味]|回[复合首头])'.chapReg(''),
-			/^(?:二话[没不沒]|三[生世]|四[周边处]|五[谷更]|[百千][折转])/,
-			/^上节目/
+			/^(?:二话[没不沒]|三[生世]|四[周边处]|五[谷更]|[百千][折转])/
 		],
 		't3': [
-			'^[一二三四五六七八九十百两兩][{$c}][^，]*[，]'.chapReg(''),
+			'^(?:{$n1}|{$n2})[年月日]'.chapReg(''),
 			'一[，、]二[，、]三'.chapReg(''),
 			'三[，、]二[，、]一'.chapReg(''),
 			'^([壹贰叁肆伍陆柒捌玖拾])\\1'.chapReg(''),
-			'^(?:{$n1}|{$n2})[年月日]'.chapReg('')
+			'^[一二三四五六七八九十百两兩][{$c}][^，]*[，]'.chapReg('')
 		],
 		't6': [
 			// 忽略此格式开始的
@@ -180,13 +181,13 @@ var config = {
 		// 约定英文单位，用|分隔
 		'Unit': 'MHz|GHz|KHz|kWh|kW|mWh|gWh|mA|μA|mV|μV|mΩ|μΩ|Mbps',
 		// 约定英语大写，用|分隔
-		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|VS|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC|V+IP',
-		// 虚词小写，非行首
-		'Structural': /(?:!^)\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with)\b/gi,
+		'Upper': 'OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC|V+IP',
+		// 虚词小写，非行首 up
+		'Structural': /(?!^)\b(?:a|about|an|and|as|at|be|but|by|for|from|in|into|is|nor|of|off|on|onto|or|out|over|should|so|the|to|under|will|with|yet|vs)\b/gi,
 		// 特殊的连续单词 转大写
 		'Continuou': /\b(?:([a-z])\1+|abcdefg|abcdef|abcde|abcd|abc|bca|dbca|edbca|xyz)\b/gi,
 		// 称谓单词前缀
-		'Honor': /\b(?:Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)\b。(?!$)/g,
+		'Honor': /\b(?:Mrs?|Ms|Doc|Dr|Jr|Rev|Hon|Mmes?|Esq|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)\b。(?!$)/gi,
 		// 小写的后缀
 		'Suffix': /。\b(?:Txt|Avi|Jpe?g|Bmp|Png|Net|Gif|Ppt)\b/g,
 		// 单个字母大写
@@ -196,7 +197,7 @@ var config = {
 		// 英文间单引号样式替换
 		'Sep': '\\b[a-zA-Z]+[{$enSep}](?: |\\b[a-zA-Z]+\\b)'.comReg('g'),
 		// 姓名中的间隔
-		'NameSep': '[^‘]\\b[iodlIODL][{$enSep}]'.comReg('g'),
+		'NameSep': '[^‘]\\b[iodlIODL][{$enSep}][a-zA-Z]'.comReg('g'),
 		//'NameFix': /\b(?:[iodlIODL]\'|Mac|Mc)[a-zA-Z]/g,
 		'NameFix': /\b[iodlIODL]\'[a-zA-Z]/g,
 		// 括号中的英文 - 20.12.12 删除《》〈〉〔〖〗〕
@@ -314,8 +315,8 @@ var config = {
 	// ＋－＝＞＜
 	'punSymbol': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
-		'｀‐━―─ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢／︱¦＂′＇',
-		'`——————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨＋/\x7C\x7C\x22\x27\x27'
+		'｀‐━―─ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢／＼︱¦＂′＇',
+		'`——————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨＋\x2f\x5c\x7C\x7C\x22\x27\x27'
 	],
 	// 标点符号修正
 	'punSymbolFix': [
@@ -323,9 +324,7 @@ var config = {
 		[/——+/g, '——'],
 		// 两个标点以上留一 「」『』“”‘’
 		// ：；（）［］｛｝%∧∨〈〉-
-		[/([：；（）［］｛｝%∧∨〈〉\-])\1+/g, function(m) {
-			return m.slice(0, 1);
-		}],
+		[/([：；（）［］｛｝%∧∨〈〉\-])\1+/g, '$1'],
 		// 波折号处理
 		[/～～+/g, '～～'],
 		[/。～～\n/g, '。\n～～'],
@@ -457,7 +456,7 @@ var config = {
 		// 修正数字后缀 20,000.00 12.99%
 		// 21.07.24 修正数字越长时正则引起的锁死
 		{
-			'find': '\\b(?:\\d{1,18}|[\\d,，]{2,20})(?:[。.]\\d{1,8})?(?:[a-zA-Z]+\\b|(?:人民币|软妹币?|元|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿]|[{$ofwPun}])|$)'.comReg('gm'),
+			'find': '\\b(?:\\d{1,18}|[\\d,，]{2,20})(?:[。.]\\d{1,8})?(?:[a-zA-Z]+\\b|(?:人民币|软妹币?|元|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿份倍帧斤顷个只条包点种座克寸件瓦支次股丈吨厘毫亩]|[{$ofwPun}])|$)'.comReg('gm'),
 			'at': ['，。', ',.']
 		},
 		// 倒计时样式的，还原逗号

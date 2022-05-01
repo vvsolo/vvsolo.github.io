@@ -1,5 +1,5 @@
 ﻿/**
- * typo is novel text typeseting tool
+ * typo is novel text typography tool
  * author: vsolo 
  */
 Object.assign(String.prototype, {
@@ -30,7 +30,7 @@ Object.assign(String.prototype, {
 			.replace(/^[」』”’]/gm, function(m) {
 				return Q2.charAt(Q1.indexOf(m));
 			})
-			.replace(/[「『“‘](?:。|！|？|……|——|~~|$)$/gm, function(m) {
+			.replace(/(?!^)[「『“‘](?:。|！|？|……|——|~~|$)$/gm, function(m) {
 				return Q1.charAt(Q2.indexOf(m.charAt(0))) + m.slice(1);
 			})
 			// 去除所有多余行
@@ -169,12 +169,20 @@ Object.assign(String.prototype, {
 	},
 	// 修正英文大小写
 	convertEnglish: function() {
-		var eng = config.rEng,
+		var re = this,
+			eng = config.rEng,
 			eSpecialLower = eng.Special.toLowerCase(),
 			eUnitLower = eng.Unit.toLowerCase(),
 			enSepReg = '[{$enSep}]+'.comReg('g'),
 			tmp;
-		return this
+
+		// 保护 作者 名称中的英文不转换
+		var authorArr = [];
+		re.replace(config.novelAuthor, function(m) {
+			authorArr.push([m.getReg('gmi'), m]);
+		})
+
+		re = re
 			// 转换英文小写
 			// 07-03 修正其他字母转小写，仅是英文
 			//.toLowerCase()
@@ -242,7 +250,11 @@ Object.assign(String.prototype, {
 				return m.replace(m1.getReg('gi'), m1.matchFirstUpper());
 			})
 			// 顶头字母大写 935
-			.matchFirstUpper(/(?:^[“「"\']?)\b[a-zA-Z]+ /gm);
+			.matchFirstUpper(/(?:^[“「"\']?)\b[a-zA-Z]+ /gm)
+
+		// 修正 作者英文名
+		if (authorArr.length > 0) re = re.replaces(authorArr)
+		return re;
 	},
 	// 半角字母数字
 	convertNumberLetter: function() {
@@ -305,7 +317,6 @@ Object.assign(String.prototype, {
 	},
 	// 全角标点符号
 	convertPunctuation: function() {
-		//return this.replaceHook(config.punSymbols)
 		return this
 			// 标点符号修正
 			.replaceAt(config.punSymbol)
@@ -525,7 +536,11 @@ Object.assign(String.prototype, {
 		}
 		var _rp = function(str) {
 			// 判断两行重复标题，以长度保留
-			var n = str.replace(/\n+/g, '\n').split('\n');
+			var n = str.replace(/\n+/g, '\n').split('\n', 2);
+			// 如果第二行有结尾
+			if (n[1].search(/[。！？…～]$/) > -1) {
+				return n[0] + '\n' + n[1].replace(n[0], '');
+			}
 			return n[0].length > n[1].length ? n[0] : n[1];
 		}
 
