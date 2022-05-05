@@ -88,9 +88,9 @@ function doSplit(str, sm, bm) {
 }
 
 // 分段排版
-function onTypeSetSplit(str) {
+function onTypeSetSplit(str, author, site) {
 	// 执行整理
-	return '\n' + str
+	str = '\n' + str
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -127,17 +127,14 @@ function onTypeSetSplit(str) {
 		})
 		.replaceEnd()
 		.replace(/\n\n{3,}/gm, '\n\n\n')
-}
 
-// 标头
-function editorHeader(author, site, nlen) {
 	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,
 		'b': site,
 		'y': '是',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
-		'n': nlen
-	})
+		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
+	}) + str + '\n\n';
 }
 
 // 一键整理
