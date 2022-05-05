@@ -90,7 +90,7 @@ function doSplit(str, sm, bm) {
 // 分段排版
 function onTypeSetSplit(str) {
 	// 执行整理
-	str = '\n' + str
+	return '\n' + str
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
@@ -127,18 +127,19 @@ function onTypeSetSplit(str) {
 		})
 		.replaceEnd()
 		.replace(/\n\n{3,}/gm, '\n\n\n')
-
-	// 插入标头
-	var headStr = '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'
-	return headStr.fmt({
-		'w': ' ',
-		'b': ' ',
-		'y': '是',
-		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
-		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
-	}) + '\n' + str
 }
 
+// 标头
+function getHeader(author, site, nlen) {
+	var headStr = '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'
+	return headStr.fmt({
+		'w': author,
+		'b': site,
+		'y': '是',
+		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
+		'n': nlen
+	})
+}
 // 一键整理
 function editorCleanUp(str) {
 	// 排版初始化，去空格空行
