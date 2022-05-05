@@ -134,7 +134,7 @@ function onTypeSetSplit(str, author, site) {
 		'y': '是',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
 		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
-	}) + str + '\n\n';
+	}) + '\n\n' + str + '\n\n';
 }
 
 // 一键整理
