@@ -130,9 +130,8 @@ function onTypeSetSplit(str) {
 }
 
 // 标头
-function getHeader(author, site, nlen) {
-	var headStr = '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'
-	return headStr.fmt({
+function editorHeader(author, site, nlen) {
+	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,
 		'b': site,
 		'y': '是',
@@ -140,6 +139,7 @@ function getHeader(author, site, nlen) {
 		'n': nlen
 	})
 }
+
 // 一键整理
 function editorCleanUp(str) {
 	// 排版初始化，去空格空行
