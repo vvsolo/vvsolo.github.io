@@ -89,6 +89,7 @@ function doSplit(str, sm, bm) {
 
 // 分段排版
 function onTypeSetSplit(str, author, site) {
+	if (str.trims() === '') return str;
 	// 执行整理
 	str = '\n' + str
 		// 排版初始化，去空格空行
@@ -139,6 +140,7 @@ function onTypeSetSplit(str, author, site) {
 
 // 一键整理
 function editorCleanUp(str) {
+	if (str.trims() === '') return str;
 	// 排版初始化，去空格空行
 	return str
 		.replaceInit()
