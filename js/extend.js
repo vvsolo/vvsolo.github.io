@@ -8,6 +8,7 @@ var Space = '\x00-\x09\x0B\x0C\x0E-\x20\x7f\u3000\u1680\u180e\u2000-\u200f\u2028
 var allSpace = Space + '\x0A\x0D\xA0';
 
 // 类型判断
+
 // ES3 将 Array 类型视为 Object;
 var __os = Object.prototype.toString;
 var isObject = function(v) {
@@ -117,8 +118,6 @@ Object.assign(String.prototype, {
 			tmp.split('.').forEach(function(v) {
 				if (v in val) {
 					val = val[v];
-				} else {
-					return null;
 				}
 			});
 			return isObject(val) ? m :
@@ -138,3 +137,4 @@ Object.assign(String.prototype, {
 		return false;
 	}
 });
+
