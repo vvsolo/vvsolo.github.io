@@ -134,7 +134,7 @@ function onTypeSetSplit(str, author, site, calcspance) {
 		'b': site,
 		'y': '是',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
-		'n': (str.length - str.findCount(calcspance == '1' ? /[\s]/g : /[　\s]/g)).toLocaleString()
+		'n': (str.length - str.findCount(~~calcspance > 0 ? /[\s]/g : /[　\s]/g)).toLocaleString()
 	}) + '\n\n' + str + '\n\n';
 }
 
