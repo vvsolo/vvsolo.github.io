@@ -42,10 +42,14 @@
 	function Simplized(str){
 		str = convert(str, _d.basic[0] + _d.T2S[0], _d.basic[1] + _d.T2S[1]);
 		// 繁转简补充部分
-		_d.other.forEach((v) => str = str.replace(v[0], v[1]) );
+		_d.other.forEach(function(v) {
+			str = str.replace(v[0], v[1])
+		});
 		// 汉字变体
-		const nl = [..._d.real[1]];
-		str = str.replace(new RegExp('[' + _d.real[0] + ']', 'g'), (m) => nl[_d.real[0].indexOf(m)] || m);
+		var nl = _d.real[1].split('');
+		str = str.replace(new RegExp('[' + _d.real[0] + ']', 'g'), function(m) {
+			return nl[_d.real[0].indexOf(m)] || m
+		});
 		return str;
 	}
 
@@ -68,7 +72,7 @@
 	function tranAttr(element, attr, toT) {
 
 		if (attr instanceof Array) {
-			attr.forEach((v) => tranAttr(element, v, toT));
+			attr.forEach(function(v) { tranAttr(element, v, toT) });
 		} else {
 			var attrValue = element.getAttribute(attr);
 
@@ -120,46 +124,26 @@
 			}
 		}
 	}
-
 	// 扩展jQuery全局方法
 	$.extend({
-		/**
-		 * 文本简转繁
-		 * @param {String} str - 待转换的文本
-		 * @returns {String} 转换结果
-		 */
 		s2t: (str) => tranStr(str, true),
-
-		/**
-		 * 文本繁转简
-		 * @param {String} str - 待转换的文本
-		 * @returns {String} 转换结果
-		 */
 		t2s: (str) => tranStr(str, false)
 	});
 
 	// 扩展jQuery对象方法
 	$.fn.extend({
-		/**
-		 * jQuery Objects简转繁
-		 * @this {jQuery Objects} 待转换的jQuery Objects
-		 */
 		s2t: function() {
 			return this.each(function() {
 				tranElement(this, true);
 			});
 		},
-
-		/**
-		 * jQuery Objects繁转简
-		 * @this {jQuery Objects} 待转换的jQuery Objects
-		 */
 		t2s: function() {
 			return this.each(function() {
 				tranElement(this, false);
 			});
 		}
 	});
+
 })(jQuery, {
 // 字库共用部分 2664
 'basic': [

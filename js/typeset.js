@@ -164,44 +164,47 @@ function onTypeSetRead(str) {
 
 // 一键整理
 function editorCleanUp(str) {
+	var _isChecked = function(i) {
+		return $('#Check_' + i).is(':checked')
+	}
 	// 排版初始化，去空格空行
 	str = str.replaceInit();
 	// HTML 字符实体转换
-	if ($('#Check_1').is(':checked'))
+	if (_isChecked(1))
 		str = str.convertHtmlEntity()
 	// Unicode转换
-	if ($('#Check_2').is(':checked'))
+	if (_isChecked(2))
 		str = str.convertUnicode()
 	// 转换变体字母
-	if ($('#Check_3').is(':checked'))
+	if (_isChecked(3))
 		str = str.convertVariant()
 	// 转换变体序号
-	if ($('#Check_4').is(':checked'))
+	if (_isChecked(4))
 		str = str.convertSerialNumber()
 	// 半角字母数字
-	if ($('#Check_6').is(':checked'))
+	if (_isChecked(6))
 		str = str.convertNumberLetter()
 	// 修正章节标题
-	if ($('#Check_7').is(':checked')) {
+	if (_isChecked(7)) {
 		// 修正错误标题
 		str = str
 			.replaceTitle()
 			.replaceTitleError()
 	}
 	// 全角标点符号
-	if ($('#Check_5').is(':checked'))
+	if (_isChecked(5))
 		str = str.convertPunctuation()
 	// 去除汉字间的空格
-	if ($('#Check_8').is(':checked'))
+	if (_isChecked(8))
 		str = str.replaceSpace()
 	// 修正分隔符号
-	if ($('#Check_9').is(':checked'))
+	if (_isChecked(9))
 		str = str.replaceSeparator()
 	// 修正引号
-	if ($('#Check_10').is(':checked'))
+	if (_isChecked(10))
 		str = str.replaceQuotes()
 	// 修正英文
-	if ($('#Check_11').is(':checked'))
+	if (_isChecked(11))
 		str = str.convertEnglish()
 	// 结束
 	return str.replaceEnd()

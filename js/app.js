@@ -56,35 +56,32 @@ $(function() {
 	var StatusBar = ace.require("ace/ext/statusbar").StatusBar;
 	var statusBar = new StatusBar(editor, document.getElementById("statusBar"));
 	var sEditor = editor.getSession()
-	var storage = $.localStorage;
-	sEditor.setValue(storage.get('tmpContent') || '')
-	isLanguage.html(storage.get('language') || '简')
+	sEditor.setValue(storage.get('tmpContent', ''))
+	isLanguage.html(storage.get('language', '简'))
 	// 读取保存的设置
-	var inputVals = ['inputBookName', 'inputChapter', 'inputAuthor', 'inputSite'],
+	var inputVals = ['inputBookName', 'inputAuthor', 'inputSite'],
 		i = -1;
 	inputVals.forEach(function(v, i) {
-		$('#' + v).val(storage.get(v) || '');
+		$('#' + v).val(storage.get(v, ''));
 	});
 	while (++i < 5) {
 		var tmp = 'Check_' + i;
-		$('#' + tmp).removeAttr('checked');
-		if (!storage.isEmpty(tmp))
-			$('#' + tmp).attr('checked', 'checked');
+		(storage.get(tmp, '') !== '') ?
+			$('#' + tmp).attr('checked', 'checked') :
+			$('#' + tmp).removeAttr('checked');
 	}
 	// 保存设置
-	$('#SaveConfig').click(function() {
+	$('#SaveConfig').on('click', function() {
 		inputVals.forEach(function(v) {
-			if ($('#' + v).val())
-				storage.set(v, $('#' + v).val());
-			else
+			($('#' + v).val() !== '') ?
+				storage.set(v, $('#' + v).val()) :
 				storage.remove(v);
 		});
 		var i = -1;
 		while (++i < 5) {
 			var tmp = 'Check_' + i;
-			if ($('#' + tmp).is(':checked'))
-				storage.set(tmp, 'checked');
-			else
+			$('#' + tmp).is(':checked') ?
+				storage.set(tmp, 'checked') :
 				storage.remove(tmp);
 		}
 		storage.set('language', (isLanguage.html() == '简') ? '繁' : '简')
@@ -92,12 +89,12 @@ $(function() {
 	})
 	// 简繁互换
 	setLanguage();
-	isLanguage.click(function(e) {
+	isLanguage.on('click', function(e) {
 		e.preventDefault();
 		setLanguage();
 	});
 	// 左侧收缩工具
-	$('#floatTool').click(function() {
+	$('#floatTool').on('click', function() {
 		var cLeft = $('#c-left').position().left === 0
 		$('#c-left').animate({
 			left: (cLeft ? -220 : 0)
@@ -107,7 +104,6 @@ $(function() {
 		}, 300)
 		var tipVal = $(this).attr('data-tip').split('|');
 		$(this).html(cLeft ? tipVal[0] : tipVal[1]);
-		
 	})
 	// 转简体
 	$('#toSimp').on('click', function() {
@@ -129,7 +125,7 @@ $(function() {
 		setTitle();
 	})
 	// 保存文档
-	$('#SaveEditor').click(function() {
+	$('#SaveEditor').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
 			storage.set('tmpContent', sVal);
@@ -146,8 +142,8 @@ $(function() {
 		bindKey: { win: "ctrl-s", mac: "cmd-s" }
 	});
 	// 还原文档
-	$('#RestoreEditor').click(function() {
-		var sVal = storage.get('tmpContent') || '';
+	$('#RestoreEditor').on('click', function() {
+		var sVal = storage.get('tmpContent', '');
 		if (sVal.length > 0) {
 			sEditor.setValue(sVal);
 			editor.focus();
@@ -162,7 +158,7 @@ $(function() {
 		bindKey: { win: "ctrl-r", mac: "cmd-r" }
 	});
 	// 新建文档
-	$('#CreateEditor').click(function() {
+	$('#CreateEditor').on('click', function() {
 		sEditor.setValue('');
 		editor.focus();
 	});
@@ -174,13 +170,13 @@ $(function() {
 		bindKey: { win: "ctrl-n", mac: "cmd-n" }
 	});
 	// 清空文档
-	$('#ClearEditor').click(function() {
+	$('#ClearEditor').on('click', function() {
 		storage.remove('tmpContent');
 		showMessage(this);
 		editor.focus();
 	});
 	// 一键整理
-	$('#onCleanUp').click(function() {
+	$('#onCleanUp').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
 			sVal = editorCleanUp(sVal);
@@ -196,7 +192,7 @@ $(function() {
 		bindKey: { win: "f8", mac: "f8" }
 	});
 	// 特殊整理
-	$('#onCleanUpEx').click(function() {
+	$('#onCleanUpEx').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
 			sVal = editorCleanUpEx(sVal);
@@ -212,7 +208,7 @@ $(function() {
 		bindKey: { win: "f7", mac: "f7" }
 	});
 	// 一键排版
-	$('#onTypeSetSplit').click(function() {
+	$('#onTypeSetSplit').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
 			storage.set('tmpContent', sVal);
@@ -229,7 +225,7 @@ $(function() {
 		bindKey: { win: "f9", mac: "f9" }
 	});
 	// 阅读排版
-	$('#onTypeSetRead').click(function() {
+	$('#onTypeSetRead').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
 			storage.set('tmpContent', sVal);
@@ -242,7 +238,7 @@ $(function() {
 	// 简单UBB
 	$('.btn[data-ubbcode]').each(function() {
 		var $this = $(this);
-		$this.click(function() {
+		$this.on('click', function() {
 			var selection = sEditor.getTextRange(editor.getSelectionRange());
 			if (selection.length > 0) {
 				var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection);
@@ -255,7 +251,7 @@ $(function() {
 	// 插入待续完结
 	$('.btn[data-insert]').each(function() {
 		var tmp = $(this).data('insert');
-		$(this).click(function() {
+		$(this).on('click', function() {
 			editor.insert(tmp);
 		});
 	});
