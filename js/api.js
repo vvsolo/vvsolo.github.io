@@ -88,7 +88,7 @@ function doSplit(str, sm, bm) {
 }
 
 // 分段排版
-function onTypeSetSplit(str, author, site) {
+function onTypeSetSplit(str, author, site, calc) {
 	if (str.trims() === '') return str;
 	// 执行整理
 	str = '\n' + str
@@ -134,7 +134,7 @@ function onTypeSetSplit(str, author, site) {
 		'b': site,
 		'y': '是',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
-		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
+		'n': (str.length - str.findCount(calc ? /[\s]/g : /[　\s]/g)).toLocaleString()
 	}) + '\n\n' + str + '\n\n';
 }
 
