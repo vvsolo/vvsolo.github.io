@@ -128,13 +128,13 @@ function onTypeSetSplit(str, author, site, calcspace) {
 		})
 		.replaceEnd()
 		.replace(/\n\n{3,}/gm, '\n\n\n')
-alert(calcspace)
+
 	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,
 		'b': site,
 		'y': '是',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
-		'n': (str.length - str.findCount(~~calcspace > 0 ? /[\s]/g : /[　\s]/g)).toLocaleString()
+		'n': (str.length - str.findCount(calcspace == '1' ? /[\s]/g : /[　\s]/g)).toLocaleString()
 	}) + '\n\n' + str + '\n\n';
 }
 
