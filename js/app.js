@@ -87,6 +87,11 @@ $(function() {
 		storage.set('language', (isLanguage.html() == '简') ? '繁' : '简')
 		showMessage(this);
 	})
+	// 保存设置
+	$('#CleanConfig').on('click', function() {
+		storage.clean()
+		showMessage(this);
+	})
 	// 简繁互换
 	setLanguage();
 	isLanguage.on('click', function(e) {
