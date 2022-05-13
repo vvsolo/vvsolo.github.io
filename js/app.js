@@ -8,12 +8,10 @@ $(function() {
 	function setLanguage() {
 		var tipVal = isLanguage.data('default').split('|')
 		if (tipVal[0] == isLanguage.html()) {
-			$('body').t2s();
-			$('title').t2s();
+			$('body, title').t2s();
 			isLanguage.html(tipVal[1]);
 		} else {
-			$('body').s2t();
-			$('title').s2t();
+			$('body, title').s2t();
 			isLanguage.html(tipVal[0]);
 		}
 	}
