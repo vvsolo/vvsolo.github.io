@@ -185,12 +185,8 @@ function editorCleanUp(str) {
 	if (_isChecked(6))
 		str = str.convertNumberLetter()
 	// 修正章节标题
-	if (_isChecked(7)) {
-		// 修正错误标题
-		str = str
-			.replaceTitle()
-			.replaceTitleError()
-	}
+	if (_isChecked(7))
+		str = str.replaceTitle()
 	// 全角标点符号
 	if (_isChecked(5))
 		str = str.convertPunctuation()

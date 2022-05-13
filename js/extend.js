@@ -1,33 +1,23 @@
-﻿// 空格
+﻿
+/***** 空格 *****/
 // \u0009\u000B\u000C = \t\v\f
 // \u2000-\u200a\u205f\u2028\u2029\u3000\ufeff'
 // DEL \x7f
 // \x09\x0B\x0C\x20\x7f
 // 21.12.27 删除所有控制字符，除 换行、回车和空格
-var Space = '\x00-\x09\x0B\x0C\x0E-\x20\x7f\u3000\u1680\u180e\u2000-\u200f\u2028-\u202f\u205f-\u2064\ue004\ue07b\ue11a\ue4c6\uf604\uf04a\uf8f5\ufe0f\ufeff';
-var allSpace = Space + '\x0A\x0D\xA0';
+var
+TYPO_SPACE = '\\x00-\\x09\\x0B\\x0C\\x0E-\\x20\\x7f\\u3000\\u1680\\u180e\\u2000-\\u200f\\u2028-\\u202f\\u205f-\\u2064\\ue004\\ue07b\\ue11a\\ue4c6\\uf604\\uf04a\\uf8f5\\ufe0f\\ufeff',
+TYPO_SPACE_REGEXP = RegExp('[' + TYPO_SPACE + ']+', 'g')
 
-// 类型判断
-
-// ES3 将 Array 类型视为 Object;
-var __os = Object.prototype.toString;
-var isObject = function(v) {
-	return v !== null && __os.call(v) === "[object Object]";
-}
-
-// ***** 扩展字符处理 *****
+/***** 扩展 String *****/
 Object.assign(String.prototype, {
-	// 安全转换正则
-	getReg: function(f) {
-		return RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), (f === '') ? '' : (f || 'gm'));
-	},
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
 		return this.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
-		return this.replace(RegExp('[' + Space + ']+', 'g'), ' ').toUNIX();
+		return this.replace(TYPO_SPACE_REGEXP, ' ').toUNIX();
 	},
 	// 删除字符首尾空格
 	trimSide: function() {
@@ -40,6 +30,10 @@ Object.assign(String.prototype, {
 	// 删除字符首尾空格、换行
 	trims: function() {
 		return this.replace(/^\s*/gm, '').replace(/\s*$/g, '');
+	},
+	// 安全转换正则
+	getReg: function(f) {
+		return RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), (f === '') ? '' : (f || 'gm'));
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
@@ -63,11 +57,17 @@ Object.assign(String.prototype, {
 		}
 		return re;
 	},
+	// 循环数组进行替换
+	replaceArr: function(arr, callback) {
+		var re = this;
+		arr.forEach(function(v) {
+			re = re.replace(v, callback)
+		})
+		return re;
+	},
 	// 字符串定位替换
 	replaceAt: function(arr, rev) {
-		if (rev) {
-			arr = arr.reverse();
-		}
+		if (rev) arr = arr.reverse();
 		var nl = arr[1].split('');
 		return this.replace(RegExp('[' + arr[0] + ']', 'g'), function(m) {
 			return nl[arr[0].indexOf(m)] || m;
@@ -80,13 +80,13 @@ Object.assign(String.prototype, {
 			return m.replace(greg, '');
 		}) : this.replace(greg, '');
 	},
-	// 取双字节与单字节混排时的真实字数
-	len: function() {
-		return this.length + (this.match(/[^\x00-\xFF]/g) || "").length;
-	},
 	// 取正则查询匹配的次数
 	findCount: function(reg) {
 		return (this.match(reg) || '').length;
+	},
+	// 取双字节与单字节混排时的真实字数
+	len: function() {
+		return this.length + this.findCount(/[^\x00-\xFF]/g);
 	},
 	// 简化搜索方式
 	find: function(str) {
@@ -99,28 +99,25 @@ Object.assign(String.prototype, {
 	 */
 	fmt: function(vals, r) {
 		// 字符串时，直接替换任意标签
-		if (typeof vals === 'string' || typeof vals === 'number') {
+		var valType = typeof vals, val;
+		if (valType === 'string' || valType === 'number') {
 			return this.replace(/\{\$zz\}/g, vals);
 		}
-		if (typeof vals !== 'object') {
+		if (valType !== 'object') {
 			return this;
 		}
-		var val, tmp;
+
 		return this.replace(/\{\$[\w\-\.]+\}/g, function(m) {
-			// 防止 1 级就输入 {$b.c} 的情况，先行判断
-			tmp = m.slice(2, -1);
-			if (tmp in vals) {
-				val = vals[tmp];
-				return Array.isArray(val) ? val.join(r || '') : val;
-			}
 			// 分析逐级尝试获取数据
 			val = vals;
-			tmp.split('.').forEach(function(v) {
-				if (v in val) {
+			m.slice(2, -1).split('.').forEach(function(v) {
+				try {
 					val = val[v];
+				} catch(e) {
+					return false;
 				}
 			});
-			return isObject(val) ? m :
+			return val === undefined ? m :
 				Array.isArray(val) ? val.join(r || '') : val;
 		});
 	},
@@ -132,9 +129,8 @@ Object.assign(String.prototype, {
 	eachArrayRegTest: function(arr) {
 		var l = arr.length, i = -1;
 		while (++i < l) {
-			if (this.find(arr[i])) return true;
+			if (this.search(arr[i]) > -1) return true;
 		}
 		return false;
 	}
 });
-
