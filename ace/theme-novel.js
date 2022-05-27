@@ -11,11 +11,13 @@ border-right: 1px solid #4d4d4d;
 color: #888;
 }
 .ace-novel .ace_gutter-active-line {
+border-left: 4px solid #80FF80;
 border-right: 1px solid #4d4d4d;
-background-color: rgba(45,46,45,0.8);
+background-color: rgba(70,66,60,0.4);
+color: #FFF;
 }
 .ace-novel .ace_marker-layer .ace_active-line {
-background: rgba(45,46,45,0.7);
+background: rgba(70,66,60,0.4);
 }
 .ace-novel .ace_marker-layer .ace_selected-word {
 border-radius: 2px;

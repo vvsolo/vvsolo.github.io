@@ -108,10 +108,6 @@ function onTypeSetSplit(str) {
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
 			return m.setAlign('', '', 'center')
 		})
-		// 书名居中
-		.replace(config.novelTitle, function(m) {
-			return m.setAlign('', '', 'center')
-		})
 		// 标题居中
 		.replaceTitle('', '\n', 'center')
 		.split('\n')
@@ -121,6 +117,10 @@ function onTypeSetSplit(str) {
 		.join('')
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
+		// 书名居中
+		.replace(config.novelTitle, function(m) {
+			return m.setAlign('', '', 'center') + '\n'
+		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
 			return m.trim() + '\n'

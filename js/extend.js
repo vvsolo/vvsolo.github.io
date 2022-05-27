@@ -7,13 +7,14 @@
 // 21.12.27 删除所有控制字符，除 换行、回车和空格
 var
 TYPO_SPACE = '\\x00-\\x09\\x0B\\x0C\\x0E-\\x20\\x7f\\u3000\\u1680\\u180e\\u2000-\\u200f\\u2028-\\u202f\\u205f-\\u2064\\ue004\\ue07b\\ue11a\\ue4c6\\uf604\\uf04a\\uf8f5\\ufe0f\\ufeff',
-TYPO_SPACE_REGEXP = RegExp('[' + TYPO_SPACE + ']+', 'g')
+TYPO_SPACE_REGEXP = RegExp('[' + TYPO_SPACE + ']+', 'g'),
+TYPO_ALLSPACE_REGEXP = RegExp('[' + TYPO_SPACE + '\\x0A\\x0D\\xA0' + ']', 'g');
 
 /***** 扩展 String *****/
 Object.assign(String.prototype, {
 	// 修正所有换行为 UNIX 标准
 	toUNIX: function() {
-		return this.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+		return this.replace(/\r\n?/g, '\n')
 	},
 	// 格式化所有空格样式为标准
 	space: function() {
@@ -21,7 +22,7 @@ Object.assign(String.prototype, {
 	},
 	// 删除字符首尾空格
 	trimSide: function() {
-		return this.replace(/^[ 　]+/gm, '').replace(/[ 　]+$/g, '');
+		return this.replace(/^[ 　]+/g, '').replace(/[ 　]+$/g, '');
 	},
 	// 删除字符首尾空格
 	trim: function() {
@@ -37,29 +38,26 @@ Object.assign(String.prototype, {
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
-		var re = this;
+		var re = this + '';
 		if (Array.isArray(arr)) {
+			if (arr.length < 1) return re;
 			arr.forEach(function(v) {
 				// 如果传入是正则表达式
-				if (!Array.isArray(v)) {
-					v = [v, ''];
-				}
+				!Array.isArray(v) && (v = [v, ''])
 				// 如果 0 维是字符串，则转正则表达式
-				if (typeof v[0] === 'string') {
-					v[0] = v[0].getReg();
-				}
-				re = re.replace(v[0], v[1] || '');
+				typeof v[0] === 'string' && (v[0] = v[0].getReg())
+				re = re.replace(v[0], v[1] || '')
 			})
-		} else {
-			for (var item in arr) {
-				re = re.replaces(arr[item]);
-			}
+			return re;
+		}
+		for (var item in arr) {
+			re = re.replaces(arr[item])
 		}
 		return re;
 	},
 	// 循环数组进行替换
 	replaceArr: function(arr, callback) {
-		var re = this;
+		var re = this + '';
 		arr.forEach(function(v) {
 			re = re.replace(v, callback)
 		})
@@ -99,11 +97,11 @@ Object.assign(String.prototype, {
 	 */
 	fmt: function(vals, r) {
 		// 字符串时，直接替换任意标签
-		var valType = typeof vals, val;
-		if (valType === 'string' || valType === 'number') {
+		var vType = typeof vals, val;
+		if (vType === 'string' || vType === 'number') {
 			return this.replace(/\{\$zz\}/g, vals);
 		}
-		if (valType !== 'object') {
+		if (vType !== 'object') {
 			return this;
 		}
 
@@ -111,12 +109,9 @@ Object.assign(String.prototype, {
 			// 分析逐级尝试获取数据
 			val = vals;
 			m.slice(2, -1).split('.').forEach(function(v) {
-				try {
-					val = val[v];
-				} catch(e) {
-					return false;
-				}
-			});
+				try { val = val[v] }
+				catch(e) { return false }
+			})
 			return val === undefined ? m :
 				Array.isArray(val) ? val.join(r || '') : val;
 		});

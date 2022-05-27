@@ -110,20 +110,42 @@ $(function() {
 		var tipVal = $(this).attr('data-tip').split('|');
 		$(this).html(cLeft ? tipVal[0] : tipVal[1]);
 	})
-	// 转简体
-	$('#toSimp').on('click', function() {
+	// 转简体 繁体
+	$('[data-language]').on('click', function() {
 		var sVal = sEditor.getValue();
-		sVal = $.t2s(sVal);
-		sEditor.setValue(sVal);
+		if (sVal.length > 0) {
+			var tmp = $(this).data('language');
+			sEditor.setValue(tmp === 't2s' ? $.t2s(sVal) : $.s2t(sVal));
+		}
 		editor.focus();
 	})
-	// 转繁体
-	$('#toTrad').on('click', function() {
-		var sVal = sEditor.getValue();
-		sVal = $.s2t(sVal);
-		sEditor.setValue(sVal);
-		editor.focus();
-	})
+	// 简单UBB
+	$('[data-ubbcode]').on('click', function() {
+		var selection = sEditor.getTextRange(editor.getSelectionRange());
+		if (selection.length > 0) {
+			var tmp = $(this).data('ubbcode').replace(/\{s\}/g, selection);
+			editor.insert(tmp);
+		} else {
+			showMessage(this);
+		}
+	});
+	// 插入待续完结
+	$('[data-insert]').on('click', function() {
+		var tmp = $(this).data('insert');
+		editor.insert(tmp);
+	});
+	// 对齐
+	$('[data-alien]').on('click', function() {
+		var tmp = $(this).data('alien');
+		var row = editor.selection.getCursor().row
+		var str = sEditor.getLine(row)
+		if (str.length > 0) {
+			str = str.setAlign('', '', tmp)
+			var range = editor.selection.getLineRange()
+			sEditor.replace(range, str + '\n')
+			editor.gotoLine(row + 1, 0, false)
+		}
+	});
 	// 实时显示文章标题
 	setTitle();
 	$('#inputBookName, #inputChapter').on('keyup keydown change focus input propertychange', function() {
@@ -238,27 +260,6 @@ $(function() {
 			sEditor.setValue(onTypeSetRead(sVal));
 			editor.focus();
 		}
-	});
-	// 绑定快捷键
-	// 简单UBB
-	$('.btn[data-ubbcode]').each(function() {
-		var $this = $(this);
-		$this.on('click', function() {
-			var selection = sEditor.getTextRange(editor.getSelectionRange());
-			if (selection.length > 0) {
-				var tmp = $this.data('ubbcode').replace(/\{s\}/g, selection);
-				editor.insert(tmp);
-			} else {
-				showMessage(this);
-			}
-		})
-	});
-	// 插入待续完结
-	$('.btn[data-insert]').each(function() {
-		var tmp = $(this).data('insert');
-		$(this).on('click', function() {
-			editor.insert(tmp);
-		});
 	});
 	// 复制标题到剪贴板
 	var clipboardTitle = new ClipboardJS('.copy-title');
