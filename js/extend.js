@@ -22,7 +22,7 @@ Object.assign(String.prototype, {
 	},
 	// 删除字符首尾空格
 	trimSide: function() {
-		return this.replace(/^[ 　]+/g, '').replace(/[ 　]+$/g, '');
+		return this.replace(/^[ 　]+/gm, '').replace(/[ 　]+$/g, '');
 	},
 	// 删除字符首尾空格
 	trim: function() {
