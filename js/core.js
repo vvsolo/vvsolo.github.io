@@ -88,7 +88,7 @@ Object.assign(String.prototype, {
 			case 'ml':
 			case 'mf':
 			case 'ms':
-				re = re.matchLetterCase(v[item], item.slice(1))
+				re = re.matchLetterCase(v[item], item.slice(-1))
 				break;
 			}
 		}
@@ -146,7 +146,7 @@ Object.assign(String.prototype, {
 	convertEnglish: function() {
 		// 无英文退出
 		if (this.search(/\b[a-zA-Z]/) < 0) {
-			return this;
+			return this + '';
 		}
 		var eng = config.rEnglish,
 			eSpecialLower = eng.Special.toLowerCase(),

@@ -396,12 +396,17 @@ config.rEnglish = {
 'Overlap': /\b(yes|no|go|up|hi|ha|biu|bye|ok)\1+\b/gi,
 // 前置的符号处理
 'FixChar': [
+	// 以 - 代替空格的英文语句
+	{
+		'hit': /\b[a-zA-Z']+\b(?:\-\b[a-zA-Z']+\b){2,}/g,
+		'rp': [/\-/g, ' ']
+	},
 	// 整句转小写
 	{ 'ml': /[a-z]，\b[A-Z]/g },
 	{ 'ml': / \b[A-Z]/g },
 	// 英文间单引号样式替换
 	{
-		'hit': '\\b[a-zA-Z]+[{$enSep}](?: |\\b[a-zA-Z]+\\b)?'.comReg(),
+		'hit': '[^‘\\x27]\\b[a-zA-Z]+[{$enSep}](?: |\\b[a-zA-Z]+\\b)?'.comReg(),
 		'rp': config.enSepTo,
 		'lc': 'f',
 		'mu': /\b[odlODL]\'[a-z]/g
@@ -409,7 +414,7 @@ config.rEnglish = {
 	{
 		'hit': [
 			// 英文连接符 –
-			/\b[0-9a-zA-Z]+(?:[～—-]+\b[0-9a-zA-Z]+\b)+/g,
+			/\b[0-9a-zA-Z]+(?:[－～—-]+\b[0-9a-zA-Z]+\b)+/g,
 			// 处理 Sid·Meier -> Sid Meier
 			/\b[a-zA-Z]{2,}(?:·\b[a-zA-Z]{2,}\b)+/g,
 			// 处理 E。T。 -> E.T.
@@ -417,7 +422,7 @@ config.rEnglish = {
 			// 修正公式中的（）()
 			/\b[a-zA-Z]+（\b[a-zA-Z\d]+）/g
 		],
-		'rp': [/[～—]+/g, '-'],
+		'rp': [/[～—－]+/g, '-'],
 		'at': ['（）．。·', '().. ']
 	},
 	// 括号中的英文 (不含空格) - 20.12.12 删除《》〈〉〔〖〗〕
@@ -441,7 +446,7 @@ config.rEnglish = {
 	},
 	// 约定英语大写，用|分隔
 	{
-		'hit': /.\b(?:OMG|MTV|SUV|HUV|ORV|TV|ID|CIA|FBI|CEO|CFO|CTO|COO|CIO|CBD|OA|PC|OEM|SOS|SOHO|PS|ISO|APEC|WTO|USA|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|KTV|OL|PK|NDE|XXOO|OOXX|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|IPTV|GPA|UI|LOL|IP|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|YQF|YQ|MMP|IBM|CPU|HDMI|GPU|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|OS|IMF|LED|OLED|SB|NND|CNM|WQLMLGB|RPG|NPC|TNT|V+IP)\b/gi,
+		'hit': /(?:^|.\b)(?:SOS|OMG|MTV|KTV|TV|IPTV|SUV|HUV|ORV|ID|IP|CIA|FBI|CBD|OS|OA|PC|PS|ISO|OEM|IBM|CPU|HDMI|GPU|RPG|NPC|SOHO|APEC|WTO|USA|UK|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|OL|PK|NDE|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|GPA|UI|LOL|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|IMF|LED|OLED|YQF|YQ|SB|MMP|NND|CNM|WQLMLGB|XXOO|OOXX|TNT|C[CEFTOI]O|V+IP)\b/gmi,
 		'skip': '^[{$latin}]'.comReg(''),
 		'lc': 'u'
 	}
@@ -490,8 +495,8 @@ config.rEnglish = {
 	// X 表示乘号时
 	{ 'ml': /\b\d+X\d+\b/g },
 	// 顶头字母大写 935
-	{ 'ms': /^\b[a-z]+ /gm },
-	{ 'ms': /[“「《〈〔]\b[a-z]+ /gm }
+	{ 'mf': /^\b[a-zA-Z']+ /gm },
+	{ 'mf': /[“「《〈〔]\b[a-z]+ /g }
 ]
 }
 
@@ -500,10 +505,10 @@ config.rEnglish = {
 strCommon['_f0'] = '\\b[0-9]{1,3}(?:[.。][0-9]{1,2})? ?[\x22\x27°{$qfwPun}]'.fmt(strCommon);
 strCommon['_f1'] = '[0-9。.]+[0-9a-zA-Z]*[{$ofwPun}]?'.fmt(strCommon);
 config.rEndFix = [
-	// 英文数字间的破折号
+	// 中文间的破折号
 	{
-		'hit': /\w—{2,}\w/g,
-		'rp': [/——+/g, '-']
+		'hit': /\W(?:\-{1,4}\W+)+/g,
+		'rp': [/\-+/g, '——']
 	},
 	// 经纬度 20"65'
 	{
@@ -539,10 +544,10 @@ config.rEndFix = [
 		'rp': [/\./g, '。']
 	},
 	// 三位数前的逗号
-	{
-		'hit': /\d(?:，\d{3})+\b/g,
-		'rp': [/，/g, ',']
-	},
+	//{
+	//	'hit': /\d(?:，\d{3})+\b/g,
+	//	'rp': [/，/g, ',']
+	//},
 	// 修复字母数字最后的标点
 	{
 		'hit': [
@@ -561,6 +566,8 @@ config.rEndFix = [
 
 /***** 结尾处理 *****/
 config.rEnd = [
+	// 修正英文外引号
+	[/[‘']([\w ]+)\'/g, '‘$1’'],
 	// 修正箭头
 	[/—{1,2}>/g, ' --> '],
 	[/={1,2}>/g, ' => '],

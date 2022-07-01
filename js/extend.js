@@ -112,7 +112,7 @@ Object.assign(String.prototype, {
 				try { val = val[v] }
 				catch(e) { return false }
 			})
-			return val === undefined ? m :
+			return typeof val === "undefined" ? m :
 				Array.isArray(val) ? val.join(r || '') : val;
 		});
 	},
