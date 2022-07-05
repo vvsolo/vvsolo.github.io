@@ -36,6 +36,11 @@ Object.assign(String.prototype, {
 	getReg: function(f) {
 		return RegExp(this.replace(/\x5C\x5C+/g, "\x5C\x5C"), (f === '') ? '' : (f || 'gm'));
 	},
+	// 安全转换正则
+	getSafeReg: function(f) {
+		// [\\\*\+\?\|\{\}\(\)\^\$\.\#\[\]]
+		return this.replace(/[\\\*\+\?\|\{\}\(\)\^\$\.\#\[\]]/g, "\x5C\x5C$1").getReg(f);
+	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {
 		var re = this + '';

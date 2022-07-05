@@ -157,7 +157,7 @@ Object.assign(String.prototype, {
 		// 保护 作者 名称中的英文不转换
 		var authorArr = [];
 		this.replace(config.novelAuthor, function(m) {
-			authorArr.push([m.trims().getReg('gi'), m]);
+			authorArr.push([m.trims().getSafeReg('gi'), m]);
 		})
 
 		return this
