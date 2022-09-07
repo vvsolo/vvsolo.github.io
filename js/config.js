@@ -188,9 +188,10 @@ var config = {
 		],
 		't3': [
 			'^(?:{$n1}|{$n2})[年月日]'.chapReg(''),
-			'一[，、]二[，、]三'.chapReg(''),
-			'三[，、]二[，、]一'.chapReg(''),
-			'^([壹贰叁肆伍陆柒捌玖拾])\\1'.chapReg(''),
+			/一[，、]二[，、]三/,
+			/三[，、]二[，、]一/,
+			/^(?:一二三|三二一)[，。！…]/,
+			/^([壹贰叁肆伍陆柒捌玖拾])\1/,
 			'^[一二三四五六七八九十百两兩][{$c}][^，]*[，]'.chapReg('')
 		],
 		't6': [
@@ -242,7 +243,7 @@ var config = {
 // 异体标点
 // 角分′
 // 角秒″
-// 连接符–
+// 连接符– －
 // 圆点．
 // 省略号⋯ \u2026
 // 间隔号•●
@@ -250,13 +251,14 @@ var config = {
 config.rPunctuation = {
 	'at': [
 		// 按键盘顺序 ﹏﹋﹌ˇ
-		'｀‐━―─ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢／＼︱¦＂′＇',
-		'`——————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、？？………·····〉｛｛｝｝““””””＜＞∧∨＋\x2f\x5c\x7C\x7C\x22\x27\x27'
+		'｀‐━―─ーˉ﹣﹦~〜∽﹗!﹫＠﹟＃﹩＄﹪％﹠＆﹡(﹙﹚)﹐,.．∶﹕︰:﹔;丶﹑﹖?⋯┅¨▪•‧・﹒︳﹛{﹜}〝｢″〃｣‴﹤﹥︿﹀﹢／＼︱¦＂′＇',
+		'`——————－＝～～～！！@@##$$%%&&＊（（）），，。。：：：：；；、、？？………·····〉｛｛｝｝““””””＜＞∧∨＋\x2f\x5c\x7C\x7C\x22\x27\x27'
 	],
 	// 标点符号修正
 	'rps': [
 		// 破折号 ——
 		[/——+/g, '——'],
+		[/－－+/g, '——'],
 		[/\-\-+/g, '——'],
 		// 两个标点以上留一 「」『』“”‘’
 		// ：；（）［］｛｝%∧∨〈〉-
@@ -364,7 +366,10 @@ config.rSeparator = [
 	// 处理换行
 	[/@@\n+@@/g, '@@@@'],
 	[/@@@+/g, '\n@@@@\n'],
-	[/\n+@@@@\n+/g, '\n@@@@\n'],
+	[/\n+@@@@\n+/g, '\n@@@@\n']
+]
+// 还原分隔符
+config.eSeparator = [
 	[/@@@@+/g, config.Separator],
 	[/!@!@!@!@!/g, config.tSeparator]
 ]
@@ -398,7 +403,7 @@ config.rEnglish = {
 'FixChar': [
 	// 以 - 代替空格的英文语句
 	{
-		'hit': /\b[a-zA-Z']+\b(?:\-\b[a-zA-Z']+\b){2,}/g,
+		'hit': /\b[a-zA-Z']{2,}\b(?:\-\b[a-zA-Z']{2,}\b){2,}/g,
 		'rp': [/\-/g, ' ']
 	},
 	// 整句转小写
@@ -411,10 +416,13 @@ config.rEnglish = {
 		'lc': 'f',
 		'mu': /\b[odlODL]\'[a-z]/g
 	},
+	// 英文连接符 –
+	{
+		'hit': /\b[0-9a-zA-Z]+\b(?:[－～—\-]{1,4}\b[0-9a-zA-Z]+\b)+/g,
+		'rp': [/[－～—\-]+/g, '-']
+	},
 	{
 		'hit': [
-			// 英文连接符 –
-			/\b[0-9a-zA-Z]+(?:[－～—-]+\b[0-9a-zA-Z]+\b)+/g,
 			// 处理 Sid·Meier -> Sid Meier
 			/\b[a-zA-Z]{2,}(?:·\b[a-zA-Z]{2,}\b)+/g,
 			// 处理 E。T。 -> E.T.
@@ -422,7 +430,6 @@ config.rEnglish = {
 			// 修正公式中的（）()
 			/\b[a-zA-Z]+（\b[a-zA-Z\d]+）/g
 		],
-		'rp': [/[～—－]+/g, '-'],
 		'at': ['（）．。·', '().. ']
 	},
 	// 括号中的英文 (不含空格) - 20.12.12 删除《》〈〉〔〖〗〕
@@ -444,9 +451,9 @@ config.rEnglish = {
 		'need': /\d/,
 		'lc': 'u'
 	},
-	// 约定英语大写，用|分隔
+	// 约定英语大写，用|分隔 CIA
 	{
-		'hit': /(?:^|.\b)(?:SOS|OMG|MTV|KTV|TV|IPTV|SUV|HUV|ORV|ID|IP|CIA|FBI|CBD|OS|OA|PC|PS|ISO|OEM|IBM|CPU|HDMI|GPU|RPG|NPC|SOHO|APEC|WTO|USA|UK|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|AV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|OL|PK|NDE|PM|CAA|CNN|CBS|BBS|ICM|IMAX|AMC|DC|NG|ABC|SPA|VR|AR|MR|CR|XR|ICU|IPO|IMDB|SWAT|GPA|UI|LOL|PVP|PVE|BBC|CCTV|TVB|NHK|PPT|NBC|NBA|CBA|MPV|ESPN|SEGA|B2B|C2C|B2C|B2M|B2A|C2A|O2O|CCD|CSS|HTML|WPS|IOS|IMF|LED|OLED|YQF|YQ|SB|MMP|NND|CNM|WQLMLGB|XXOO|OOXX|TNT|C[CEFTOI]O|V+IP)\b/gmi,
+		'hit': /(?:^|.\b)(?:SOS|OMG|MTV|KTV|TV|IPTV|SUV|HUV|ORV|ID|IP|CIA|FBI|KGB|CBD|OS|OA|PC|PS|ISO|OEM|IBM|CPU|HDMI|GPU|RPG|NPC|SOHO|APEC|WTO|USA|UK|GPS|GSM|NASDAQ|MBA|EMBA|EDBA|ATM|GDP|AIDS|CD|VCD|DVD|CDMA|DIY|EMS|EQ|IQ|PDA|DJ|SARS|DNA|RNA|UFO|NASA|AV|DV|WTF|TMD|IC|SM|TM|NTR|QQ|DP|OL|PK|NDE|PM|CAA|CNN|ICM|IMAX|AMC|DC|NG|ABC|SPA|ICU|IPO|IMDB|SWAT|GPA|UI|VI|LOL|PVP|PVE|BBC|NBC|CCTV|TVB|NHK|PPT|NBA|CBA|MPV|ESPN|SEGA|O2O|CCD|CSS|HTML|WPS|IOS|IMF|LED|OLED|LSD|PTSD|PDST|YQF|YQ|SB|MMP|NND|CNM|WQLMLGB|XXOO|OOXX|APM|EAPM|TNT|[ACB]BS|B2[BCMA]|C2[CA]|[VAMCX]R|C[CEFTOI]O|V+IP)\b/gmi,
 		'skip': '^[{$latin}]'.comReg(''),
 		'lc': 'u'
 	}
@@ -475,7 +482,7 @@ config.rEnglish = {
 	},
 	// 处理 url
 	{
-		'hit': /\b(?:(?:https?|ftp|file)[:：]\/{2})?\b(?:[-\w]+[。\.])+(?:com|net|org|gov|top|xyz|cn|me)\b/gi,
+		'hit': /\b(?:(?:https?|ftp|file)[:：]\/{2})?\b(?:[-\w]+[。\.])+(?:com|net|org|gov|top|xyz|cn|me|io)\b/gi,
 		'at': ['：。，～—', ':.,~-'],
 		'lc': 'l'
 	},
@@ -494,6 +501,8 @@ config.rEnglish = {
 	{ 'mu': /\b[a-zA-Z]{1,4}\b[国省市县山城江河]/g },
 	// X 表示乘号时
 	{ 'ml': /\b\d+X\d+\b/g },
+	// 用 - 分隔的简写
+	{ 'mu': /\b[a-zA-Z](?:[\+\-\.][a-zA-Z]){1,}\b/g },
 	// 顶头字母大写 935
 	{ 'mf': /^\b[a-zA-Z']+ /gm },
 	{ 'mf': /[“「《〈〔]\b[a-z]+ /g }
@@ -528,8 +537,9 @@ config.rEndFix = [
 		'at': ['.,', '。，']
 	},
 	// 修正数字后缀 20,000.00 12.99%
+	// (?:\\d{1,18}|[\\d,，]{2,20})(?:[。.]\\d{1,8})?
 	{
-		'hit': '\\b(?:\\d{1,18}|[\\d,，]{2,20})(?:[。.]\\d{1,8})?(?:[a-zA-Z]+\\b|(?:人民币|软妹币?|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿份倍帧斤顷个只条包点种座克寸件瓦支次股丈吨厘毫亩元{$ofwPun}])|$)'.comReg(),
+		'hit': '\\b(?:\\d{1,18}|\\d{1,3}(?:[,，]\\d{1,3}){1,3})(?:[。.]\\d{1,8})?(?:[a-zA-Z]+\\b|(?:人民币|软妹币?|[韩美日港澳]元|英镑|港币|新?台币|法郎|比索|[金人千万亿份倍帧斤顷个只条包点种座克寸件瓦支次股丈吨厘毫亩元{$ofwPun}])|$)'.comReg(),
 		'at': ['，。', ',.']
 	},
 	// IP 格式 192.168.0.1
@@ -558,7 +568,7 @@ config.rEndFix = [
 	},
 	// 处理 No。1 -> NO.1
 	{
-		'hit': /\b(?:no|top)\b[。\.]\b\d{1,5}\b/gi,
+		'hit': /\b(?:no|top|lv|level)\b。\b\d{1,5}\b/gi,
 		'lc': 'u',
 		'rp': [/。/, '.']
 	}
@@ -567,7 +577,7 @@ config.rEndFix = [
 /***** 结尾处理 *****/
 config.rEnd = [
 	// 修正英文外引号
-	[/[‘']([\w ]+)\'/g, '‘$1’'],
+	//[/[‘']([\w ]+)\'/g, '‘$1’'],
 	// 修正箭头
 	[/—{1,2}>/g, ' --> '],
 	[/={1,2}>/g, ' => '],

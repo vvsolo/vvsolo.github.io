@@ -122,7 +122,7 @@ Object.assign(String.prototype, {
 	},
 	// 修正分隔符号
 	replaceSeparator: function() {
-		return this.replaces(config.rSeparator);
+		return this.replaces(config.rSeparator).replaces(config.eSeparator);
 	},
 	// 引号修正，西文引号
 	replaceQuotes: function() {
@@ -145,7 +145,7 @@ Object.assign(String.prototype, {
 	// 修正英文大小写
 	convertEnglish: function() {
 		// 无英文退出
-		if (this.search(/\b[a-zA-Z]/) < 0) {
+		if (this.search(/\b[a-zA-Z0-9]/) < 0) {
 			return this + '';
 		}
 		var eng = config.rEnglish,
