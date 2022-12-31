@@ -161,13 +161,6 @@ $(function() {
 		}
 		editor.focus();
 	});
-	editor.commands.addCommand({
-		name: "__save",
-		exec: function() {
-			$('#SaveEditor').trigger('click');
-		},
-		bindKey: { win: "ctrl-s", mac: "cmd-s" }
-	});
 	// 还原文档
 	$('#RestoreEditor').on('click', function() {
 		var sVal = storage.get('tmpContent', '');
@@ -177,24 +170,10 @@ $(function() {
 			showMessage(this);
 		}
 	});
-	editor.commands.addCommand({
-		name: "__restore",
-		exec: function() {
-			$('#RestoreEditor').trigger('click');
-		},
-		bindKey: { win: "ctrl-r", mac: "cmd-r" }
-	});
 	// 新建文档
 	$('#CreateEditor').on('click', function() {
 		sEditor.setValue('');
 		editor.focus();
-	});
-	editor.commands.addCommand({
-		name: "__create",
-		exec: function() {
-			$('#CreateEditor').trigger('click');
-		},
-		bindKey: { win: "ctrl-n", mac: "cmd-n" }
 	});
 	// 清空文档
 	$('#ClearEditor').on('click', function() {
@@ -211,13 +190,6 @@ $(function() {
 			editor.focus();
 		}
 	});
-	editor.commands.addCommand({
-		name: "__cleanup",
-		exec: function() {
-			$('#onCleanUp').trigger('click');
-		},
-		bindKey: { win: "f8", mac: "f8" }
-	});
 	// 特殊整理
 	$('#onCleanUpEx').on('click', function() {
 		var sVal = sEditor.getValue();
@@ -226,13 +198,6 @@ $(function() {
 			sEditor.setValue(sVal);
 			editor.focus();
 		}
-	});
-	editor.commands.addCommand({
-		name: "__cleanup_ex",
-		exec: function() {
-			$('#onCleanUpEx').trigger('click');
-		},
-		bindKey: { win: "f7", mac: "f7" }
 	});
 	// 一键排版
 	$('#onTypeSetSplit').on('click', function() {
@@ -243,13 +208,6 @@ $(function() {
 			sEditor.setValue(onTypeSetSplit(sVal));
 			editor.focus();
 		}
-	});
-	editor.commands.addCommand({
-		name: "__typeset",
-		exec: function() {
-			$('#onTypeSetSplit').trigger('click');
-		},
-		bindKey: { win: "f9", mac: "f9" }
 	});
 	// 阅读排版
 	$('#onTypeSetRead').on('click', function() {
@@ -277,11 +235,48 @@ $(function() {
 		e.clearSelection();
 		showMessage($('.copy-content'));
 	});
-	editor.commands.addCommand({
+	// 绑定快捷键
+	editor.commands.addCommands([{
+		name: "__save",
+		exec: function() {
+			$('#SaveEditor').trigger('click');
+		},
+		bindKey: { win: "ctrl-s", mac: "cmd-s" }
+	},{
+		name: "__restore",
+		exec: function() {
+			$('#RestoreEditor').trigger('click');
+		},
+		bindKey: { win: "ctrl-r", mac: "cmd-r" }
+	},{
+		name: "__create",
+		exec: function() {
+			$('#CreateEditor').trigger('click');
+		},
+		bindKey: { win: "ctrl-n", mac: "cmd-n" }
+	},{
+		name: "__cleanup_ex",
+		exec: function() {
+			$('#onCleanUpEx').trigger('click');
+		},
+		bindKey: { win: "f7", mac: "f7" }
+	},{
+		name: "__cleanup",
+		exec: function() {
+			$('#onCleanUp').trigger('click');
+		},
+		bindKey: { win: "f8", mac: "f8" }
+	},{
+		name: "__typeset",
+		exec: function() {
+			$('#onTypeSetSplit').trigger('click');
+		},
+		bindKey: { win: "f9", mac: "f9" }
+	},{
 		name: "__copydoc",
 		exec: function(){
 			$('.copy-content').trigger('click');
 		},
 		bindKey: { win: "f10", mac: "f10" }
-	});
+	}]);
 });

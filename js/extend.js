@@ -5,6 +5,7 @@
 // DEL \x7f
 // \x09\x0B\x0C\x20\x7f
 // 21.12.27 删除所有控制字符，除 换行、回车和空格
+// 22.10.05 新增 \u00a0
 var
 TYPO_SPACE = '\\x00-\\x09\\x0B\\x0C\\x0E-\\x20\\xA0\\x7f\\u3000\\u1680\\u180e\\u2000-\\u200f\\u2028-\\u202f\\u205f-\\u2064\\ue004\\ue07b\\ue11a\\ue4c6\\uf604\\uf04a\\uf8f5\\ufe0f\\ufeff',
 TYPO_SPACE_REGEXP = RegExp('[' + TYPO_SPACE + ']+', 'g'),
@@ -39,7 +40,7 @@ Object.assign(String.prototype, {
 	// 安全转换正则
 	getSafeReg: function(f) {
 		// [\\\*\+\?\|\{\}\(\)\^\$\.\#\[\]]
-		return this.replace(/[\\\*\+\?\|\{\}\(\)\^\$\.\#\[\]]/g, "\x5C\x5C$1").getReg(f);
+		return this.replace(/[\\\*\+\?\|\{\}\(\)\^\$\.\#\[\]]/g, "\x5C\x5C$&").getReg(f);
 	},
 	// 循环正则替换，可处理对象
 	replaces: function(arr) {

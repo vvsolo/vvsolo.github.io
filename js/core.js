@@ -31,6 +31,9 @@ Object.assign(String.prototype, {
 			.replace(/(?!^)[「『“‘](?:。|[！？…—~]{1,3}|$)$/gm, function(m) {
 				return Q1.charAt(Q2.indexOf(m.charAt(0))) + m.charAt(1);
 			})
+			.replace(/：[」』”’]$/gm, function(m) {
+				return m.replaceAt([Q1, Q2]);
+			})
 			// 去除多余空格
 			.replace(/  +/g, ' ')
 			// 去除多余行
@@ -43,19 +46,26 @@ Object.assign(String.prototype, {
 	replaceHooks: function(arr, pre) {
 		if (pre !== undefined && pre === false) return this;
 		var re = this;
+		var repHit = function(t, v) {
+			re = re.replace(t, function(m) {
+				return (
+					('skip' in v && m.find(v.skip)) ||
+					('need' in v && !m.find(v.need))
+				) ? m : m.replaceHook(v)
+			})
+		}
 		arr.forEach(function(v) {
-			if ('hit' in v) {
-				if (!Array.isArray(v.hit)) v.hit = [v.hit];
-				v.hit.forEach(function(t) {
-					re = re.replace(t, function(m) {
-						return (
-							('skip' in v && m.find(v.skip)) ||
-							('need' in v && !m.find(v.need))
-						) ? m : m.replaceHook(v)
+			switch (true) {
+				case 'hit' in v:
+					repHit(v.hit, v);
+					break;
+				case 'hits' in v:
+					v.hits.forEach(function(t) {
+						repHit(t, v);
 					})
-				})
-			} else {
-				re = re.replaceHook(v)
+					break;
+				default:
+					re = re.replaceHook(v)
 			}
 		})
 		return re;
@@ -88,6 +98,7 @@ Object.assign(String.prototype, {
 			case 'ml':
 			case 'mf':
 			case 'ms':
+			case 'mz':
 				re = re.matchLetterCase(v[item], item.slice(-1))
 				break;
 			}
@@ -97,14 +108,18 @@ Object.assign(String.prototype, {
 	// 正则查找进行大小写转换——通用
 	toLetterCase: function(lc) {
 		switch (lc) {
-			case 'u':
+			case 'u': // 全大写
 				return this.toUpperCase();
-			case 'l':
+			case 'l': // 全小写
 				return this.toLowerCase();
-			case 'f':
+			case 'f': // 整句首字大写
 				return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
-			case 's':
+			case 's': // 单词首字大写
 				return this.replace(/\b[a-z]/g, function(m) {
+					return m.toUpperCase()
+				});
+			case 'z': // 重置单词首字大写
+				return this.toLowerCase().replace(/\b[a-z]/g, function(m) {
 					return m.toUpperCase()
 				});
 		}
@@ -294,7 +309,7 @@ Object.assign(String.prototype, {
 			return mn.find(na) ? m : mn;
 		})
 
-		return !re.find(tpl.str.getReg(tpl.f)) ? re : re
+		return !re.find(tpl.str.getReg(tpl.t)) ? re : re
 			// 连续重复的章节，去重
 			.replace('({$zz}\\n{1,2})\\1+'.fmtReg(tpl.str, 'g'), '$1')
 		 	.replace(tpl.str.getReg(tpl.flag), func)
@@ -320,7 +335,7 @@ Object.assign(String.prototype, {
 		var handleTitle = function(str, sDiv) {
 			str = str
 				.replace(/  +/g, ' ')
-				.replace('[{$b}]'.chapReg('g'), '')
+				.replace('^[{$b.0}](.*)[{$b.1}]$'.chapReg('g'), '$1')
 				.replace('^[{$sep}]+'.chapReg(''), '');
 
 			if (str.length === 0) return '';
@@ -342,8 +357,8 @@ Object.assign(String.prototype, {
 				// 修正注释
 				.replace(/注(\d{1,2})/g, '【注$1】')
 				// 修正结尾是数字的小标号
-				.replace(/([^\w\.\-—·])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
-				.replace(/([^\w\.\-—·])[ —-]?\b([012]?[0-9])$/, '$1（$2）')
+				//.replace(/([^\w\.\-—·])(\d{1,2}\/\d{1,2})$/, '$1（$2）')
+				.replace(/^([^\w\.\-—·]+)[ —-]?\b([1-9]|[012][0-9])$/, '$1（$2）')
 				// 补零
 				.replace(/（\d{1,3}）$/, function(m) {
 					return zero(m)
@@ -410,7 +425,7 @@ Object.assign(String.prototype, {
 			})
 		
 		// c 不设置或为 true 时执行
-		if (c === undefined || c === true) {
+		if (typeof c === "undefined" || c === true) {
 			/****** 以下为修复标题 ******/
 			// 转换章节后缀名
 			var ctr = strChapter.crt;
