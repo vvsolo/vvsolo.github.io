@@ -40,6 +40,7 @@ $(function() {
 		indentedSoftWrap: false,
 		//autoScrollEditorIntoView: true,
 		// 字体
+		fontFamily: 'Consolas,Monaco,Source Han Serif,NSimSun,SimSun,Courier New,monospace,serif',
 		fontSize: 16,
 		// 打印线
 		printMarginColumn: 70,
@@ -103,12 +104,13 @@ $(function() {
 		var cLeft = $('#c-left').position().left === 0
 		$('#c-left').animate({
 			left: (cLeft ? -220 : 0)
-		}, 300)
+		}, 0)
 		$('#c-right').animate({
 			left: (cLeft ? 0 : 220)
-		}, 300)
+		}, 0)
 		var tipVal = $(this).attr('data-tip').split('|');
 		$(this).html(cLeft ? tipVal[0] : tipVal[1]);
+		editor.resize();
 	})
 	// 转简体 繁体
 	$('[data-language]').on('click', function() {
@@ -131,18 +133,16 @@ $(function() {
 	});
 	// 插入待续完结
 	$('[data-insert]').on('click', function() {
-		var tmp = $(this).data('insert');
-		editor.insert(tmp);
+		editor.insert($(this).data('insert'));
 	});
 	// 对齐
-	$('[data-alien]').on('click', function() {
-		var tmp = $(this).data('alien');
+	$('[data-align]').on('click', function() {
 		var row = editor.selection.getCursor().row
 		var str = sEditor.getLine(row)
 		if (str.length > 0) {
-			str = str.setAlign('', '', tmp)
+			str = str.ChapterAlign('', '\n', $(this).data('align') || 'left')
 			var range = editor.selection.getLineRange()
-			sEditor.replace(range, str + '\n')
+			sEditor.replace(range, str)
 			editor.gotoLine(row + 1, 0, false)
 		}
 	});
@@ -185,8 +185,7 @@ $(function() {
 	$('#onCleanUp').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			sVal = editorCleanUp(sVal);
-			sEditor.setValue(sVal);
+			sEditor.setValue(editorCleanUp(sVal));
 			editor.focus();
 		}
 	});
@@ -194,8 +193,7 @@ $(function() {
 	$('#onCleanUpEx').on('click', function() {
 		var sVal = sEditor.getValue();
 		if (sVal.length > 0) {
-			sVal = editorCleanUpEx(sVal);
-			sEditor.setValue(sVal);
+			sEditor.setValue(editorCleanUpEx(sVal));
 			editor.focus();
 		}
 	});
@@ -241,19 +239,19 @@ $(function() {
 		exec: function() {
 			$('#SaveEditor').trigger('click');
 		},
-		bindKey: { win: "ctrl-s", mac: "cmd-s" }
+		bindKey: { win: "ctrl-alt-s", mac: "cmd-alt-s" }
 	},{
 		name: "__restore",
 		exec: function() {
 			$('#RestoreEditor').trigger('click');
 		},
-		bindKey: { win: "ctrl-r", mac: "cmd-r" }
+		bindKey: { win: "ctrl-alt-r", mac: "cmd-alt-r" }
 	},{
 		name: "__create",
 		exec: function() {
 			$('#CreateEditor').trigger('click');
 		},
-		bindKey: { win: "ctrl-n", mac: "cmd-n" }
+		bindKey: { win: "ctrl-alt-n", mac: "cmd-alt-n" }
 	},{
 		name: "__cleanup_ex",
 		exec: function() {

@@ -1,31 +1,26 @@
-// 分隔字数、实际分隔字数
-var vNum = config.Linenum,
-	cutNum = config.Linenum * 2
-
 // 截取分段
 function doSplit(str, sm, bm) {
-	if (str.len() < 1) {
-		return str + bm
-	}
-	if (str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
-		return str + bm
+	if (str.len() < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
+		return str + bm;
 	}
 
+	// 分隔字数、实际分隔字数
+	var vNum = config.Linenum, cutNum = config.Linenum * 2;
 	var linestr = '　　' + str
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len())
 		return linestr + bm
 
 	var oNum = ~~(linestr.length / vNum) + 1,
-		text = [], testTmp, rStr
+		// 查询单字节总数
+		findEngStr = linestr.findCount(/[\x00-\xff]/g),
+		// 如果全是单字节
+		findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1,
+		text = [],
+		testTmp, rStr;
 
-	// 查询单字节总数
-	var findEngStr = linestr.findCount(/[\x00-\xff]/g)
-	// 如果全是单字节
-	var findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1
 	while (oNum--) {
-		var sublen = 0, sinBytes, tmp,
-			FirstLine = true
+		var sublen = 0, FirstLine = true, sinBytes, tmp;
 		// 如果全是单字节
 		if (findAllEngStr) {
 			// 如果是首次截取
@@ -94,22 +89,22 @@ function onTypeSetSplit(str) {
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
-		.convertCNQuotes()
+		.convertCNQuote()
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 修正分隔符号
-		.replaceSeparator()
+		.convertSeparator()
 		// 分隔符居中
 		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.setAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center')
 		})
 		// 结尾居中
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.setAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center')
 		})
 		// 标题居中
-		.replaceTitle('', '\n', 'center')
+		.convertChapter('', '\n', 'center')
 		.split('\n')
 		.map(function(v) {
 			return doSplit(v, '\n\n', '\n\n')
@@ -119,7 +114,7 @@ function onTypeSetSplit(str) {
 		.replace(/\n\n{2,}/gm, '\n\n')
 		// 书名居中
 		.replace(config.novelTitle, function(m) {
-			return m.setAlign('', '', 'center') + '\n'
+			return m.ChapterAlign('', '', 'center') + '\n'
 		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
@@ -151,57 +146,28 @@ function onTypeSetRead(str) {
 		// 半角字母数字
 		.convertNumberLetter()
 		// 修正章节标题
-		.replaceTitle('\n\n', '', 'break')
+		.convertChapter('\n\n', '', 'break')
 		// 修正分隔符号
-		.replaceSeparator()
+		.convertSeparator()
 		// 修正作者后面未空行
 		.replace(config.novelAuthor, '$1\n')
 		.replace(/^/gm, '　　')
 		.replace(/(^　　$\n)+/gm, '　　\n')
-		.replace(/\n{3,}/gm, '\n\n')
+		.replace(/\n\n{2,}/g, '\n\n')
 		.replace(/^\n{2,}/, '\n')
 }
 
 // 一键整理
 function editorCleanUp(str) {
-	var _isChecked = function(i) {
-		return $('#Check_' + i).is(':checked')
-	}
 	// 排版初始化，去空格空行
 	str = str.replaceInit();
-	// HTML 字符实体转换
-	if (_isChecked(1))
-		str = str.convertHtmlEntity()
-	// Unicode转换
-	if (_isChecked(2))
-		str = str.convertUnicode()
-	// 转换变体字母
-	if (_isChecked(3))
-		str = str.convertVariant()
-	// 转换变体序号
-	if (_isChecked(4))
-		str = str.convertSerialNumber()
-	// 半角字母数字
-	if (_isChecked(6))
-		str = str.convertNumberLetter()
-	// 修正章节标题
-	if (_isChecked(7))
-		str = str.replaceTitle()
-	// 全角标点符号
-	if (_isChecked(5))
-		str = str.convertPunctuation()
-	// 去除汉字间的空格
-	if (_isChecked(8))
-		str = str.replaceSpace()
-	// 修正分隔符号
-	if (_isChecked(9))
-		str = str.replaceSeparator()
-	// 修正引号
-	if (_isChecked(10))
-		str = str.replaceQuotes()
-	// 修正英文
-	if (_isChecked(11))
-		str = str.convertEnglish()
+	['HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
+	'Punctuation', 'NumberLetter', 'Chapter', 'Space',
+	'Separator', 'Quote', 'English'].forEach((v, i) => {
+		if ($('#Check_' + (i + 1)).is(':checked')) {
+			str = str.convert(v)
+		}
+	})
 	// 结束
 	return str.replaceEnd()
 }
@@ -236,7 +202,7 @@ function editorCleanUpEx(str) {
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 去除汉字间的空格
-		.replaceSpace()
+		.convertSpace()
 		// 保护书名不换行
 		.replace(config.novelTitle, function(m) {
 			return safeStr[0] + m + safeStr[1]
@@ -246,9 +212,9 @@ function editorCleanUpEx(str) {
 			return safeStr[0] + m + safeStr[1]
 		})
 		// 修正章节标题，加标题保护码
-		.replaceTitle(safeStr[0], safeStr[1])
+		.convertChapter(safeStr[0], safeStr[1])
 		// 修正引号
-		.replaceQuotes()
+		.convertQuote()
 		// 其他自定义修正
 		.replaces(Others)
 		.replace(endStr, '')

@@ -1,31 +1,26 @@
-// 分隔字数、实际分隔字数
-var vNum = config.Linenum,
-	cutNum = config.Linenum * 2
-
 // 截取分段
 function doSplit(str, sm, bm) {
-	if (str.len() < 1) {
-		return str + bm
-	}
-	if (str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
-		return str + bm
+	if (str.len() < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
+		return str + bm;
 	}
 
+	// 分隔字数、实际分隔字数
+	var vNum = config.Linenum, cutNum = config.Linenum * 2;
 	var linestr = '　　' + str
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len())
 		return linestr + bm
 
 	var oNum = ~~(linestr.length / vNum) + 1,
-		text = [], testTmp, rStr
+		// 查询单字节总数
+		findEngStr = linestr.findCount(/[\x00-\xff]/g),
+		// 如果全是单字节
+		findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1,
+		text = [],
+		testTmp, rStr;
 
-	// 查询单字节总数
-	var findEngStr = linestr.findCount(/[\x00-\xff]/g)
-	// 如果全是单字节
-	var findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1
 	while (oNum--) {
-		var sublen = 0, sinBytes, tmp,
-			FirstLine = true
+		var sublen = 0, FirstLine = true, sinBytes, tmp;
 		// 如果全是单字节
 		if (findAllEngStr) {
 			// 如果是首次截取
@@ -95,26 +90,26 @@ function onTypeSetSplit(str, author, site) {
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 引号替换
-		.convertCNQuotes()
+		.convertCNQuote()
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 修正分隔符号
-		.replaceSeparator()
+		.convertSeparator()
 		// 分隔符居中
 		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.setAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center')
 		})
 		// 结尾居中
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.setAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center')
 		})
 		// 书名居中
 		.replace(config.novelTitle, function(m) {
-			return m.setAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center')
 		})
 		// 标题居中
-		.replaceTitle('', '\n', 'center')
+		.convertChapter('', '\n', 'center')
 		.split('\n')
 		.map(function(v) {
 			return doSplit(v, '\n\n', '\n\n')
@@ -155,16 +150,15 @@ function editorCleanUp(str) {
 		// 半角字母数字
 		.convertNumberLetter()
 		// 修正章节标题
-		.replaceTitle()
-		.replaceTitleError()
+		.convertChapter()
 		// 全角标点符号
 		.convertPunctuation()
 		// 去除汉字间的空格
-		.replaceSpace()
+		.convertSpace()
 		// 修正分隔符号
-		.replaceSeparator()
+		.convertSeparator()
 		// 修正引号
-		.replaceQuotes()
+		.convertQuote()
 		// 修正英文
 		.convertEnglish()
 		// 结束
@@ -201,7 +195,7 @@ function editorCleanUpEx(str) {
 		// 排版初始化，去空格空行
 		.replaceInit()
 		// 去除汉字间的空格
-		.replaceSpace()
+		.convertSpace()
 		// 保护书名不换行
 		.replace(config.novelTitle, function(m) {
 			return safeStr[0] + m + safeStr[1]
@@ -211,9 +205,9 @@ function editorCleanUpEx(str) {
 			return safeStr[0] + m + safeStr[1]
 		})
 		// 修正章节标题，加标题保护码
-		.replaceTitle(safeStr[0], safeStr[1])
+		.convertChapter(safeStr[0], safeStr[1])
 		// 修正引号
-		.replaceQuotes()
+		.convertQuote()
 		// 其他自定义修正
 		.replaces(Others)
 		.replace(endStr, '')

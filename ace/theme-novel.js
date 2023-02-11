@@ -91,7 +91,8 @@ color: yellow;
 .ace-novel .ace_number { color: #9D81DF; }
 .ace-novel .ace_halfpun { color: #3087CA; }
 .ace-novel .ace_quotes { color: #80FF80; }
-.ace-novel .ace_cnPunctuation { font-family: NSimSun, SimSun; }
+.ace-novel .ace_cnPunctuation { color: #BE9E5C; }
+.ace-novel .ace_error { background-color: #FDD701; color: #222;}
 .ace-novel .ace_indent-guide {
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWPQ0FD0ZXBzd/wPAAjVAoxeSgNeAAAAAElFTkSuQmCC) right repeat-y
 }`;
