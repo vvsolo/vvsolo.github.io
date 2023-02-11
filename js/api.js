@@ -162,7 +162,7 @@ function editorCleanUp(str) {
 		// 修正英文
 		.convertEnglish()
 		// 结束
-		.replaceEnd()
+		.replaceEnd();
 }
 
 // 特殊整理
