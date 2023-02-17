@@ -106,7 +106,8 @@ function onTypeSetSplit(str, author, site) {
 		})
 		// 书名居中
 		.replace(config.novelTitle, function(m) {
-			return m.ChapterAlign('', '', 'center')
+				return (m.trims().search(/[。？！…]$/) > -1 ? m :
+					m.ChapterAlign('', '', 'center'));
 		})
 		// 标题居中
 		.convertChapter('', '\n', 'center')
