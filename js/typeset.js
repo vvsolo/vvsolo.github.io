@@ -113,9 +113,8 @@ function onTypeSetSplit(str) {
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
 		// 书名居中
-		.replace(config.novelTitle, function(m) {
-			return (m.trims().search(/[。？！…]$/) > -1 ? m :
-				m.ChapterAlign('', '', 'center')) + '\n';
+		.replace(/^[ 　]+《[^》]+》$/m, function(m) {
+			return m.trim().ChapterAlign('', '', 'center') + '\n';
 		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
