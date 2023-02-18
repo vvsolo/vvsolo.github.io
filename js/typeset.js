@@ -1,53 +1,53 @@
-// 截取分段
-function doSplit(str, sm, bm) {
-	if (str.len() < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
+
+/**** 截取分段 ****/
+String.prototype.doSplit = function(sm, bm) {
+	var str = '' + this;
+	sm = sm || '\n\n';
+	bm = bm || '\n\n';
+	if (str.length < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
 		return str + bm;
 	}
-
-	// 分隔字数、实际分隔字数
-	var vNum = config.Linenum, cutNum = config.Linenum * 2;
-	var linestr = '　　' + str
+	var vNum = config.Linenum, cutNum = vNum * 2;
+	var linestr = '　　' + str;
 	// 小于每行最大字数时直接返回
-	if (cutNum >= linestr.len())
-		return linestr + bm
+	if (cutNum >= linestr.len()) {
+		return linestr + bm;
+	}
 
 	var oNum = ~~(linestr.length / vNum) + 1,
 		// 查询单字节总数
 		findEngStr = linestr.findCount(/[\x00-\xff]/g),
 		// 如果全是单字节
-		findAllEngStr = linestr.replace(/^　　+/, '').search(/^[\x00-\xff]+$/) > -1,
-		text = [],
-		testTmp, rStr;
+		findAllEngStr = str.search(/^[\x00-\xff]+$/) > -1,
+		text = [];
 
 	while (oNum--) {
-		var sublen = 0, FirstLine = true, sinBytes, tmp;
+		let sublen = 0, FirstLine = true, sinBytes, tmp, i;
 		// 如果全是单字节
 		if (findAllEngStr) {
 			// 如果是首次截取
 			if (FirstLine) {
-				sublen = vNum - 2
-				FirstLine = false
-			} else {
-				sublen = vNum
-			}
+				sublen = vNum - 2;
+				FirstLine = false;
+			} else sublen = vNum;
 		}
 		// 如果有英文
 		else if (findEngStr > 0) {
 			// 预分段
-			tmp = linestr.slice(0, vNum)
+			tmp = linestr.slice(0, vNum);
 			// 英文单字节数
 			if (sinBytes = tmp.findCount(/[\x00-\xff]/g)) {
 				// 预取补齐字符串，如果全是双字节
-				if (linestr.slice(vNum, sinBytes).len() === sinBytes*2) {
-					sublen = ~~(sinBytes/2)
+				if (linestr.slice(vNum, sinBytes).len() === sinBytes * 2) {
+					sublen = ~~(sinBytes / 2);
 				} else {
 					// 预取英文半数
-					sublen = Math.round(sinBytes/2)
-					var i = sublen
+					sublen = Math.round(sinBytes / 2);
+					i = sublen;
 					while (i--) {
-						sublen++
+						sublen++;
 						if (linestr.slice(0, vNum + sublen).len() > cutNum) {
-							sublen--
+							sublen--;
 							break;
 						}
 					}
@@ -64,7 +64,7 @@ function doSplit(str, sm, bm) {
 			.replace(/[［〔【｛『「〈《]{1,2}$/, function(m) {
 				linestr += m
 				return ''
-			})
+			});
 
 		// 剩下部分
 		linestr = linestr
@@ -75,11 +75,11 @@ function doSplit(str, sm, bm) {
 			.replace(/^[，、。：；？！）］〕】｝』」〉》…～—]{1,2}/, function(m) {
 				tmp += m
 				return ''
-			})
-			
-		text.push(tmp)
+			});
+
+		text.push(tmp);
 	}
-	return text.join('\n') + bm
+	return text.join('\n') + bm;
 }
 
 // 分段排版
@@ -106,9 +106,7 @@ function onTypeSetSplit(str) {
 		// 标题居中
 		.convertChapter('', '\n', 'center')
 		.split('\n')
-		.map(function(v) {
-			return doSplit(v, '\n\n', '\n\n')
-		})
+		.map(v => v.doSplit())
 		.join('')
 		.replace(/^[ 　]+$\n/gm, '')
 		.replace(/\n\n{2,}/gm, '\n\n')
