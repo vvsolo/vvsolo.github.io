@@ -1,9 +1,8 @@
 
 /**** 截取分段 ****/
-String.prototype.doSplit = function(sm, bm) {
-	var str = '' + this;
-	sm = sm || '\n\n';
-	bm = bm || '\n\n';
+String.prototype.doSplit = function() {
+	const str = '' + this;
+	const bm = '\n';
 	if (str.length < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
 		return str + bm;
 	}
@@ -97,29 +96,25 @@ function onTypeSetSplit(str) {
 		.convertSeparator()
 		// 分隔符居中
 		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center');
 		})
 		// 结尾居中
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center')
+			return m.ChapterAlign('', '', 'center');
 		})
-		// 标题居中
-		.convertChapter('', '\n', 'center')
-		.split('\n')
-		.map(v => v.doSplit())
-		.join('')
-		.replace(/^[ 　]+$\n/gm, '')
-		.replace(/\n\n{2,}/gm, '\n\n')
 		// 书名居中
-		.replace(/^[ 　]+《[^》]+》$/m, function(m) {
-			return m.trim().ChapterAlign('', '', 'center') + '\n';
+		.replace(/^《[^》]+》$/m, function(m) {
+			return m.ChapterAlign('', '\n', 'center');
 		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
-			return m.trim() + '\n'
+			return m.trim();
 		})
-		.replaceEnd()
-		.replace(/\n\n{3,}/gm, '\n\n\n')
+		// 标题居中
+		.convertChapter('', '', 'center')
+		.mapLine(v => v.doSplit())
+		.replace(/\n\n{3,}/g, '\n\n\n')
+		.replaceEnd();
 
 	if ( !$('#Check_AddTop').is(':checked') )
 		return str
