@@ -40,8 +40,9 @@ $(function() {
 		indentedSoftWrap: false,
 		//autoScrollEditorIntoView: true,
 		// 字体
-		fontFamily: 'Consolas,Monaco,Source Han Serif,NSimSun,SimSun,Courier New,monospace,serif',
-		fontSize: 16,
+		//fontFamily: 'Consolas,Monaco,Source Han Serif,NSimSun,SimSun,Courier New,monospace,serif',
+		fontFamily: 'Consolas,Monaco,Courier New,monospace,serif',
+		fontSize: '1.1rem',
 		// 打印线
 		printMarginColumn: 70,
 		// 显示空格

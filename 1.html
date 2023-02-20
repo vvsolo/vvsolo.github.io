@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-bs-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -9,40 +9,32 @@
   <title>小说排版助手（在线版）</title>
   <!-- Bootstrap core CSS -->
   <!-- CSS only -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
   <style>html,body{font-size:14px;min-width:960px}#TextareaEditor{margin:0;line-height:1.6;min-height:500px;width:100%;height:100%;color: #ddd;}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:220px}#c-right{left:220px}.form-control::placeholder{opacity:0.3;font-weight:400}.fs-9{font-size: 11px;font-family:Consolas;top:-8px;padding-left:3px;}.btn{font-weight:400;transition: all .3s; -webkit-transition: all .3s;}@media screen and (max-width: 960px){#c-left{width:0px}#c-right{left:0px}.btn sup,.hide-960{display: none;}}@media screen and (max-width: 480px){.hide-480{display: none;}}</style>
 </head>
 <body>
-  <div class="bg-light text-dark" id="c-left">
+  <div class="bg-gradient" id="c-left">
     <nav class="navbar mb-2">
       <div class="container-fluid">
-        <a class="navbar-brand fw-bolder link-primary" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub" target="_blank">小说排版助手<sup class="fs-9">2302</sup></a>
-        <a id="chinese" class="text-end link-dark text-decoration-none" href="javascript:void(0);" data-default="简|繁">繁</a>
+        <a class="navbar-brand fw-bolder" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub" target="_blank">小说排版助手<sup class="fs-9">2302</sup></a>
+        <a id="chinese" class="text-end text-decoration-none" href="javascript:void(0);" data-default="简|繁">繁</a>
       </div>
     </nav>
     <div class="container-fluid">
       <div class="input-group mb-1">
-        <div class="input-group-prepend">
-          <div class="input-group-text">书名</div>
-        </div>
+        <div class="input-group-text">书名</div>
         <input type="text" class="form-control" id="inputBookName" placeholder="小说名称">
       </div>
       <div class="input-group mb-1">
-        <div class="input-group-prepend">
-          <div class="input-group-text">章节</div>
-        </div>
+        <div class="input-group-text">章节</div>
         <input type="text" class="form-control" id="inputChapter" placeholder="更新章节">
       </div>
       <div class="input-group mb-1">
-        <div class="input-group-prepend">
-          <div class="input-group-text">作者</div>
-        </div>
+        <div class="input-group-text">作者</div>
         <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
       </div>
       <div class="input-group mb-1">
-        <div class="input-group-prepend">
-          <span class="input-group-text">首发</span>
-        </div>
+        <div class="input-group-text">首发</div>
         <input type="text" class="form-control" id="inputSite" placeholder="首发站点" aria-label="首发站点">
       </div>
       <div class="input-group mb-1 mt-2">
@@ -55,69 +47,68 @@
           <label class="form-check-label" for="Check_AddTop">添加标头</label>
         </div>
       </div>
-       <hr />
-      <div class="input-group mb-1">
+      <hr />
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_1">
           <label class="form-check-label" for="Check_1">修正 HTML 字符实体</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_2">
           <label class="form-check-label" for="Check_2">修正 Unicode</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_3">
           <label class="form-check-label" for="Check_3">修正变体字母</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-2">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_4">
           <label class="form-check-label" for="Check_4">修正变体序号</label>
         </div>
       </div>
-      <hr />
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_5" checked>
           <label class="form-check-label" for="Check_5">全角标点符号</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_6" checked>
           <label class="form-check-label" for="Check_6">半角字母数字</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_11" checked>
           <label class="form-check-label" for="Check_11">修正英文排版</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_7" checked>
           <label class="form-check-label" for="Check_7">修正章节标题</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_8" checked>
           <label class="form-check-label" for="Check_8">修正汉字空格</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_9" checked>
           <label class="form-check-label" for="Check_9">修正分隔符号</label>
         </div>
       </div>
-      <div class="input-group mb-1">
+      <div class="input-group mb-0">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="Check_10" checked>
           <label class="form-check-label" for="Check_10">修正引用符号</label>
@@ -125,22 +116,21 @@
       </div>
       <hr />
       <div class="mb-2">
-        <button type="button" class="btn btn-primary" title="保存设置" id="SaveConfig" data-tip="设置已保存！">保存设置</button>
-        <button type="button" class="btn btn-danger" title="清除所有设置" id="CleanConfig" data-tip="所有设置已清除！">清除设置</button>
+        <button type="button" class="btn btn-success btn-sm" title="保存设置" id="SaveConfig" data-tip="设置已保存！">保存设置</button>
+        <button type="button" class="btn btn-success btn-sm" title="清除所有设置" id="CleanConfig" data-tip="所有设置已清除！">清除设置</button>
       </div>
       <hr />
-      <div class="alert alert-success" role="alert">
-        <p class="mb-0">新建：Ctrl+Alt+N</p>
-        <p class="mb-0">保存：Ctrl+Alt+S</p>
-        <p class="mb-0">还原：Ctrl+Alt+R</p>
-        <p class="mb-0">特殊整理：F7</p>
-        <p class="mb-0">全局整理：F8</p>
-        <p class="mb-0">分段排版：F9</p>
-        <p class="mb-0">复　　制：F10</p>
-        <hr />
-        <p class="mb-0"><a class="link-success text-decoration-none fw-bold" href="https://vvsolo.github.io/docs/#/" target="_blank">💡&nbsp;&nbsp;在线文档</a></p>
-      </div>
       <div class="mb-2">
+        <p class="mb-0">新建文档：<kbd>CA+N</kbd></p>
+        <p class="mb-0">缓存文档：<kbd>CA+S</kbd></p>
+        <p class="mb-1">还原文档：<kbd>CA+R</kbd></p>
+        <p class="mb-0">特殊整理：<kbd>F7</kbd></p>
+        <p class="mb-0">全局整理：<kbd>F8</kbd></p>
+        <p class="mb-0">分段排版：<kbd>F9</kbd></p>
+        <p class="mb-0">复制文档：<kbd>F10</kbd></p>
+        <hr />
+        <p class="mb-0"><a class="text-decoration-none fw-bold" href="https://vvsolo.github.io/docs/#/" target="_blank">💡&nbsp;&nbsp;在线文档</a></p>
+        <hr />
         <a href="/"><span class="badge rounded-pill bg-danger">0</span></a>
         <span class="badge rounded-pill bg-dark">1</span>
         <a href="2.html"><span class="badge rounded-pill bg-primary">2</span></a>
@@ -216,16 +206,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"></script>
-
-<script src="./js/cores.min.js?2302"></script>
-<script src="./js/typeset.js?2302"></script>
-<script src="./js/jquery.s2t.js?2302"></script>
-
+<!-- ace editor core JavaScript -->
 <script src="./ace/theme-novel.js?2302"></script>
 <script src="./ace/mode-novel.js?2302"></script>
 <script src="./ace/ext-statusbar.js?2302"></script>
-<script src="./js/storage.js?2302"></script>
-<script src="./js/app.js?2302"></script>
+<!-- typo core JavaScript -->
+<script src="./js/cores.min.js?2302" defer></script>
+<script src="./js/typeset.js?2302" defer></script>
+<script src="./js/jquery.s2t.js?2302" defer></script>
+<script src="./js/storage.js?2302" defer></script>
+<script src="./js/app.js?2302" defer></script>
 <script>
 var _hmt = _hmt || [];
 (function() {
