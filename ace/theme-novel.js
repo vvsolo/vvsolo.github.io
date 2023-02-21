@@ -95,6 +95,16 @@ color: yellow;
 .ace-novel .ace_error { background-color: #FDD701; color: #222;}
 .ace-novel .ace_indent-guide {
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWPQ0FD0ZXBzd/wPAAjVAoxeSgNeAAAAAElFTkSuQmCC) right repeat-y
+}
+.ace_scrollbar-v::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 5px;
+}
+.ace_scrollbar-v::-webkit-scrollbar { width: 8px; }
+.ace_scrollbar-v::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #555;
 }`;
 
 var dom = require("../lib/dom");
