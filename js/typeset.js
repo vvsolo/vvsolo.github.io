@@ -1,4 +1,3 @@
-
 /**** 截取分段 ****/
 String.prototype.doSplit = function() {
 	const str = '' + this;
@@ -6,20 +5,20 @@ String.prototype.doSplit = function() {
 	if (str.length < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
 		return str + bm;
 	}
-	var vNum = config.Linenum, cutNum = vNum * 2;
-	var linestr = '　　' + str;
+	const vNum = config.Linenum, cutNum = vNum * 2;
+	let linestr = '　　' + str;
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len()) {
 		return linestr + bm;
 	}
 
-	var oNum = ~~(linestr.length / vNum) + 1,
-		// 查询单字节总数
-		findEngStr = linestr.findCount(/[\x00-\xff]/g),
+	// 查询单字节总数
+	const findEngStr = linestr.findCount(/[\x00-\xff]/g),
 		// 如果全是单字节
 		findAllEngStr = str.search(/^[\x00-\xff]+$/) > -1,
 		text = [];
 
+	let oNum = ~~(linestr.length / vNum) + 1;
 	while (oNum--) {
 		let sublen = 0, FirstLine = true, sinBytes, tmp, i;
 		// 如果全是单字节
@@ -61,8 +60,8 @@ String.prototype.doSplit = function() {
 			// ［〔【｛·‘『“「〈《
 			//.replace(/[［〔【｛『「〈《]{1,2}$|\b\w+$/, function(m) {
 			.replace(/[［〔【｛『「〈《]{1,2}$/, function(m) {
-				linestr += m
-				return ''
+				linestr += m;
+				return '';
 			});
 
 		// 剩下部分
@@ -72,8 +71,8 @@ String.prototype.doSplit = function() {
 			// 处理两个字符，因为经过整理过的标点只留两个
 			// ，、。：；？！）］〕】｝·’』”」〉》
 			.replace(/^[，、。：；？！）］〕】｝』」〉》…～—]{1,2}/, function(m) {
-				tmp += m
-				return ''
+				tmp += m;
+				return '';
 			});
 
 		text.push(tmp);
@@ -117,9 +116,9 @@ function onTypeSetSplit(str) {
 		.replaceEnd();
 
 	if ( !$('#Check_AddTop').is(':checked') )
-		return str
+		return str;
 	// 插入标头
-	var headStr = ($('#chinese').html() !== '简') ?
+	const headStr = ($('#chinese').html() !== '简') ?
 		'作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n' :
 		'作者：{$w}\n{$d}發表於：{$b}\n是否首發：{$y}\n字數：{$n} 字\n';
 	return headStr.fmt({
@@ -128,7 +127,7 @@ function onTypeSetSplit(str) {
 		'y': $('#Check_0').is(':checked') ? '是' : '否',
 		'd': new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()),
 		'n': (str.length - str.findCount(/[　\s]/g)).toLocaleString()
-	}) + '\n' + str
+	}) + '\n' + str;
 }
 
 // 阅读排版
@@ -147,7 +146,7 @@ function onTypeSetRead(str) {
 		.replace(/^/gm, '　　')
 		.replace(/(^　　$\n)+/gm, '　　\n')
 		.replace(/\n\n{2,}/g, '\n\n')
-		.replace(/^\n{2,}/, '\n')
+		.replace(/^\n{2,}/, '\n');
 }
 
 // 一键整理
@@ -158,38 +157,37 @@ function editorCleanUp(str) {
 	'Punctuation', 'NumberLetter', 'Chapter', 'Space',
 	'Separator', 'Quote', 'English'].forEach((v, i) => {
 		if ($('#Check_' + (i + 1)).is(':checked')) {
-			str = str.convert(v)
+			str = str.convert(v);
 		}
 	})
 	// 结束
-	return str.replaceEnd()
+	return str.replaceEnd();
 }
 
 // 特殊整理
 function editorCleanUpEx(str) {
-	var safeStr = ['\n\u2620', '\u2620\n'],
+	const safeStr = ['\n\u2620', '\u2620\n'],
 		// 结尾
-		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm')
-	// 其他自定义修正
-	var Others = [
-		//****** 修正错误语句换行 ******/
-		[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
-		// 修正错误的换行
-		[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
-		[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
-		[/，([”」])\n+/gm, '，$1'],
-		// 修正被分隔的标点符号
-		[/…\n+…/gm, '……'],
-		[/\n+([”」])/gm, '$1'],
-		[/…([“「])/g, '…\n$1'],
-		[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
-		[/分卷阅读(\d+)/g, ''],
-		// 去除标题保护
-		[safeStr.join('|').getReg('gm'), '\n'],
-		//[/(^〖【|】〗$)/gm, '\n'],
-		[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
-		[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
-	]
+		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm'),
+		// 其他自定义修正
+		Others = [
+			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
+			// 修正错误的换行
+			[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
+			[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
+			[/，([”」])\n+/gm, '，$1'],
+			// 修正被分隔的标点符号
+			[/…\n+…/gm, '……'],
+			[/\n+([”」])/gm, '$1'],
+			[/…([“「])/g, '…\n$1'],
+			[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
+			[/分卷阅读(\d+)/g, ''],
+			// 去除标题保护
+			[safeStr.join('|').getReg('gm'), '\n'],
+			//[/(^〖【|】〗$)/gm, '\n'],
+			[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
+			[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
+		];
 
 	str = str
 		// 排版初始化，去空格空行
@@ -217,13 +215,12 @@ function editorCleanUpEx(str) {
 
 // 组合文章标题
 function setTitle(){
-	var tmpReg = /^[（【“「<]|[）】”」>]$/g,
-		iBookName = $('#inputBookName').val(),
-		iChapter = $('#inputChapter').val(),
-		iBookInfo = ''
-	if(iBookName.length > 0)
-		iBookInfo = '【' + iBookName.trim().replace(tmpReg, '') + '】'
-	if(iChapter.length > 0)
-		iBookInfo += '（' + iChapter.trim().replace(tmpReg, '') + '）'
-	 $('#TitleMsg').html(iBookInfo || $('#TitleMsg').attr('data-tip'))
+	const tmpReg = /^[（【“「<]|[）】”」>]$/g,
+		_name = $('#inputBookName').val().trim(),
+		_chap = $('#inputChapter').val().trim();
+		
+	let str = '';
+	if(_name.length > 0) str += `【${_name.replace(tmpReg, '')}】`;
+	if(_chap.length > 0) str += `【${_chap.replace(tmpReg, '')}】`;
+	 $('#TitleMsg').html(str || $('#TitleMsg').attr('data-tip'));
 }

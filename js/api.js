@@ -5,20 +5,20 @@ String.prototype.doSplit = function() {
 	if (str.length < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
 		return str + bm;
 	}
-	var vNum = config.Linenum, cutNum = vNum * 2;
-	var linestr = '　　' + str;
+	const vNum = config.Linenum, cutNum = vNum * 2;
+	let linestr = '　　' + str;
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len()) {
 		return linestr + bm;
 	}
 
-	var oNum = ~~(linestr.length / vNum) + 1,
-		// 查询单字节总数
-		findEngStr = linestr.findCount(/[\x00-\xff]/g),
+	// 查询单字节总数
+	const findEngStr = linestr.findCount(/[\x00-\xff]/g),
 		// 如果全是单字节
 		findAllEngStr = str.search(/^[\x00-\xff]+$/) > -1,
 		text = [];
 
+	let oNum = ~~(linestr.length / vNum) + 1;
 	while (oNum--) {
 		let sublen = 0, FirstLine = true, sinBytes, tmp, i;
 		// 如果全是单字节
@@ -60,8 +60,8 @@ String.prototype.doSplit = function() {
 			// ［〔【｛·‘『“「〈《
 			//.replace(/[［〔【｛『「〈《]{1,2}$|\b\w+$/, function(m) {
 			.replace(/[［〔【｛『「〈《]{1,2}$/, function(m) {
-				linestr += m
-				return ''
+				linestr += m;
+				return '';
 			});
 
 		// 剩下部分
@@ -71,8 +71,8 @@ String.prototype.doSplit = function() {
 			// 处理两个字符，因为经过整理过的标点只留两个
 			// ，、。：；？！）］〕】｝·’』”」〉》
 			.replace(/^[，、。：；？！）］〕】｝』」〉》…～—]{1,2}/, function(m) {
-				tmp += m
-				return ''
+				tmp += m;
+				return '';
 			});
 
 		text.push(tmp);
@@ -159,29 +159,28 @@ function editorCleanUp(str) {
 
 // 特殊整理
 function editorCleanUpEx(str) {
-	var safeStr = ['\n\u2620', '\u2620\n'],
+	const safeStr = ['\n\u2620', '\u2620\n'],
 		// 结尾
-		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm')
-	// 其他自定义修正
-	var Others = [
-		//****** 修正错误语句换行 ******/
-		[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
-		// 修正错误的换行
-		[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
-		[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
-		[/，([”」])\n+/gm, '，$1'],
-		// 修正被分隔的标点符号
-		[/…\n+…/gm, '……'],
-		[/\n+([”」])/gm, '$1'],
-		[/…([“「])/g, '…\n$1'],
-		[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
-		[/分卷阅读(\d+)/g, ''],
-		// 去除标题保护
-		[safeStr.join('|').getReg('gm'), '\n'],
-		//[/(^〖【|】〗$)/gm, '\n'],
-		[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
-		[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
-	]
+		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm'),
+		// 其他自定义修正
+		Others = [
+			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
+			// 修正错误的换行
+			[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
+			[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
+			[/，([”」])\n+/gm, '，$1'],
+			// 修正被分隔的标点符号
+			[/…\n+…/gm, '……'],
+			[/\n+([”」])/gm, '$1'],
+			[/…([“「])/g, '…\n$1'],
+			[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
+			[/分卷阅读(\d+)/g, ''],
+			// 去除标题保护
+			[safeStr.join('|').getReg('gm'), '\n'],
+			//[/(^〖【|】〗$)/gm, '\n'],
+			[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
+			[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
+		];
 
 	str = str
 		// 排版初始化，去空格空行
@@ -190,11 +189,11 @@ function editorCleanUpEx(str) {
 		.convertSpace()
 		// 保护书名不换行
 		.replace(config.novelTitle, function(m) {
-			return safeStr[0] + m + safeStr[1]
+			return safeStr[0] + m + safeStr[1];
 		})
 		// 保护作者不换行
 		.replace(config.novelAuthor, function(m) {
-			return safeStr[0] + m + safeStr[1]
+			return safeStr[0] + m + safeStr[1];
 		})
 		// 修正章节标题，加标题保护码
 		.convertChapter(safeStr[0], safeStr[1])
@@ -202,7 +201,7 @@ function editorCleanUpEx(str) {
 		.convertQuote()
 		// 其他自定义修正
 		.replaces(Others)
-		.replace(endStr, '')
+		.replace(endStr, '');
 
-	return editorCleanUp(str)
+	return editorCleanUp(str);
 }
