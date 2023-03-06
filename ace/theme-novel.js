@@ -89,10 +89,24 @@ color: yellow;
 .ace-novel .ace_title2 { background-color: #AC1F30; color: #fff; }
 .ace-novel .ace_endstr { background-color: #245580; color: #fff; }
 .ace-novel .ace_number { color: #9D81DF; }
+.ace-novel .ace_fullpun { color: #BE9E5C; }
 .ace-novel .ace_halfpun { color: #3087CA; }
 .ace-novel .ace_quotes { color: #80FF80; }
-.ace-novel .ace_cnPunctuation { color: #BE9E5C; }
 .ace-novel .ace_error { background-color: #FDD701; color: #222;}
+.ace-novel .ace_warn { position: relative; }
+.ace-novel .ace_warn::before{
+  content: '';
+  position: absolute;
+  bottom: -0.24em;
+  width: 100%;
+  height: 0.25em;
+  background: 
+    linear-gradient(150deg, transparent, transparent 35%, #FDD701, transparent 55%, transparent 100%), 
+    linear-gradient(30deg, transparent, transparent 35%, #FDD701, transparent 55%, transparent 100%);
+  background-size: 0.7em 0.5em;
+  background-repeat: repeat-x, repeat-x;
+  left: 0px;
+}
 .ace-novel .ace_indent-guide {
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWPQ0FD0ZXBzd/wPAAjVAoxeSgNeAAAAAElFTkSuQmCC) right repeat-y
 }

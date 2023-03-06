@@ -166,27 +166,27 @@ function editorCleanUp(str) {
 
 // 特殊整理
 function editorCleanUpEx(str) {
-	const safeStr = ['\n\u2620', '\u2620\n'],
-		// 结尾
+	var safeStr = ['\n\u2620', '\u2620\n', '\u2620'],
 		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm'),
 		// 其他自定义修正
 		Others = [
 			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
-			// 修正错误的换行
+			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
 			[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
 			[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
-			[/，([”」])\n+/gm, '，$1'],
+			[/…\n([^”]+”)$/gm, '…$1'],
+			[/，”\n/g, '，”'],
 			// 修正被分隔的标点符号
-			[/…\n+…/gm, '……'],
-			[/\n+([”」])/gm, '$1'],
-			[/…([“「])/g, '…\n$1'],
-			[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
-			[/分卷阅读(\d+)/g, ''],
-			// 去除标题保护
-			[safeStr.join('|').getReg('gm'), '\n'],
-			//[/(^〖【|】〗$)/gm, '\n'],
-			[/\u2620(?=第[\d一二三四五六七八九十百千]+章)/g, ''],
-			[/(第[\d一二三四五六七八九十百千]+章：)/g, '\n$1']
+			[/…\n…/g, '……'],
+			[/\n”/g, '”'],
+			[/\n^“$/gm, '“'],
+			[/\u2620/g, '\n'],
+			// 文章中的书名换行
+			[/(?=[^。！？…”：\.\!\?\~\x22\x27\u2620；〗】])\n《/g, '《'],
+			[/第[\d一二三四五六七八九十百千]+章：/g, '\n$&'],
+			// 其他修正
+			[/：”/g, '：“'],
+			[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2']
 		];
 
 	str = str
@@ -194,23 +194,27 @@ function editorCleanUpEx(str) {
 		.replaceInit()
 		// 去除汉字间的空格
 		.convertSpace()
-		// 保护书名不换行
-		.replace(config.novelTitle, function(m) {
-			return safeStr[0] + m + safeStr[1]
+		// 保护无结尾标点的歌词类
+		.replace(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm, function(m) {
+			return safeStr[0] + m.replace(/\n/g, safeStr[1]) + safeStr[1];
 		})
-		// 保护作者不换行
-		.replace(config.novelAuthor, function(m) {
-			return safeStr[0] + m + safeStr[1]
-		})
+		// 修正章节外加括号
+		//.replace('^{$t80}({$e}|$)$'.chapReg(), '$1：$2')
+		//.replace('^{$t81}({$s}|{$s}{$e}|$)$'.chapReg(), '$1：$2')
+		// 修正章节最后是句号的
+		.replace('章[节節]$'.chapReg(), '章')
+		.replace('^({$t91}[{$c.2}]{$sn}.{$en})。$'.chapReg(), '$1')
+		// 修正章节前面是 `正文` 的
+		.replace('^正文 *({$t91}[{$crt}]{$sn}.{$en})$'.chapReg(), '$1')
 		// 修正章节标题，加标题保护码
 		.convertChapter(safeStr[0], safeStr[1])
 		// 修正引号
 		.convertQuote()
 		// 其他自定义修正
 		.replaces(Others)
-		.replace(endStr, '')
+		.replace(endStr, '');
 
-	return editorCleanUp(str)
+	return editorCleanUp(str);
 }
 
 // 组合文章标题
