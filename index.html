@@ -10,7 +10,7 @@
   <!-- Bootstrap core CSS -->
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>html,body{font-size:14px;min-width:960px}#TextareaEditor{margin:0;line-height:1.6;min-height:500px;width:100%;height:100%;color: #ddd;}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:220px}#c-right{left:220px}.form-control::placeholder{opacity:0.3;font-weight:400}.fs-9{font-size: 11px;font-family:Consolas;top:-8px;padding-left:3px;}.btn{font-weight:400;transition: all .3s; -webkit-transition: all .3s;}@media screen and (max-width: 960px){#c-left{width:0px}#c-right{left:0px}.btn sup,.hide-960{display: none;}}@media screen and (max-width: 480px){.hide-480{display: none;}}</style>
+  <style>html,body{font-size:14px;min-width:960px}#TextareaEditor{margin:0;line-height:1.6;min-height:500px;width:100%;height:100%;color: #ddd;}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:220px}#c-right{left:220px}.form-control::placeholder{opacity:0.3;font-weight:400}.fs-9{font-size: 11px;font-family:Consolas;top:-8px;padding-left:3px;}.btn{font-weight:400;transition:all .3s;-webkit-transition:all .3s;}@media screen and (max-width: 1200px){.hide-1200{display: none;}}@media screen and (max-width: 960px){#c-left{display:none;}#c-right{left:0px}.btn sup,.hide-960{display: none;}}@media screen and (max-width: 480px){.hide-480{display: none;}}</style>
 </head>
 <body>
   <div class="bg-gradient" id="c-left">
@@ -160,7 +160,7 @@
             <button type="button" class="btn btn-outline-warning" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit" data-tip="排版成功！重排请点击“还原”按钮！">排<span class="hide-480">版</span><sup class="fs-9">F9</sup></button>
             <button type="button" class="btn btn-outline-warning copy-content" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复<span class="hide-480">制</span><sup class="fs-9">F10</sup></button>
             </div>
-            <div class="btn-group  hide-960" role="group">
+            <div class="btn-group hide-960" role="group">
               <button type="button" class="btn btn-outline-info" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊</button>
               <button type="button" class="btn btn-outline-info" title="阅读样式排版" id="onTypeSetRead" data-tip="排版成功！重排请点击“还原”按钮！">阅读</button>
             </div>
@@ -168,7 +168,7 @@
               <button type="button" class="btn btn-outline-info" title="转为简体" data-language="t2s">简</button>
               <button type="button" class="btn btn-outline-info" title="转为繁体" data-language="s2t">繁</button>
             </div>
-            <div class="btn-group hide-960" role="group">
+            <div class="btn-group hide-1200" role="group">
               <button type="button" class="btn btn-outline-info" title="光标所在行·居左" data-align="left">左</button>
               <button type="button" class="btn btn-outline-info" title="光标所在行·居中" data-align="center">中</button>
               <button type="button" class="btn btn-outline-info" title="光标所在行·居右" data-align="right">右</button>
@@ -180,7 +180,7 @@
               <button type="button" class="btn btn-outline-info" title="UBB斜体" data-ubbcode="[i]{s}[/i]" data-tip="未选中文字！"><em>I</em></button>
             </div>
             -->
-            <div class="btn-group hide-960" role="group">
+            <div class="btn-group hide-1200" role="group">
               <button type="button" class="btn btn-outline-info" title="插入待续" data-insert="（待续）">续</button>
               <button type="button" class="btn btn-outline-info" title="插入全文完" data-insert="（全文完）">完</button>
             </div>

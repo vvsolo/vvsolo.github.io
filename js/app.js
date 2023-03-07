@@ -1,4 +1,3 @@
-//sEditor.setMode("ace/mode/novel");
 $(function() {
 	var isLanguage = $('#chinese'),
 		tEditor = $('#TextareaEditor'),
