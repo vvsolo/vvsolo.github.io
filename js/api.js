@@ -77,7 +77,7 @@ String.prototype.doSplit = function() {
 
 		text.push(tmp);
 	}
-	return text.join('\n') + bm;
+	return text.join('\n').replace(/\n+$/, '') + bm;
 }
 
 // 分段排版

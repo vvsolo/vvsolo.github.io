@@ -77,7 +77,7 @@ String.prototype.doSplit = function() {
 
 		text.push(tmp);
 	}
-	return text.join('\n') + bm;
+	return text.join('\n').replace(/\n+$/, '') + bm;
 }
 
 // 分段排版
@@ -215,16 +215,4 @@ function editorCleanUpEx(str) {
 		.replace(endStr, '');
 
 	return editorCleanUp(str);
-}
-
-// 组合文章标题
-function setTitle(){
-	const tmpReg = /^[（【“「<]|[）】”」>]$/g,
-		_name = $('#inputBookName').val().trim(),
-		_chap = $('#inputChapter').val().trim();
-		
-	let str = '';
-	if(_name.length > 0) str += `【${_name.replace(tmpReg, '')}】`;
-	if(_chap.length > 0) str += `【${_chap.replace(tmpReg, '')}】`;
-	 $('#TitleMsg').html(str || $('#TitleMsg').attr('data-tip'));
 }

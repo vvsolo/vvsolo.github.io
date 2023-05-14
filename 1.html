@@ -3,21 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="小说排版助手,小说排版,排版助手" />
   <meta name="author" content="vsolo" />
   <title>小说排版助手（在线版）</title>
-  <!-- Bootstrap core CSS -->
-  <!-- CSS only -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
-  <style>html,body{font-size:14px;min-width:960px}#TextareaEditor{margin:0;line-height:1.6;min-height:500px;width:100%;height:100%;color: #ddd;}.copy-title{cursor:pointer;font-weight:normal}.editor-title{border:0}.ace_status-indicator{position:fixed;right:10px;z-index:1001;min-width:300px;height:20px;line-height:20px;display:block;color:#888;font-size:13px;text-align:right;padding-right:10px;background-color:none}.ace_status-indicator{bottom:2px}#AlertMsg{font-size:1rem}#c-left,#c-right{margin:0;padding:0;position:absolute;top:0;bottom:0;left:0;right:0}#c-left{width:220px}#c-right{left:220px}.form-control::placeholder{opacity:0.3;font-weight:400}.fs-9{font-size: 11px;font-family:Consolas;top:-8px;padding-left:3px;}.btn{font-weight:400;transition:all .3s;-webkit-transition:all .3s;}@media screen and (max-width: 1200px){.hide-1200{display: none;}}@media screen and (max-width: 960px){#c-left{display:none;}#c-right{left:0px}.btn sup,.hide-960{display: none;}}@media screen and (max-width: 480px){.hide-480{display: none;}}</style>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0-alpha3/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="./css/style.css" rel="stylesheet">
 </head>
 <body>
-  <div class="bg-gradient" id="c-left">
-    <nav class="navbar mb-2">
+  <div class="bg-gradient hide-960" id="c-left">
+    <nav class="navbar mt-1 mb-2">
       <div class="container-fluid">
-        <a class="navbar-brand fw-bolder" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub" target="_blank">小说排版助手<sup class="fs-9">2303</sup></a>
-        <a id="chinese" class="text-end text-decoration-none" href="javascript:void(0);" data-default="简|繁">繁</a>
+        <a class="fs-5 link-light leWaterWave" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub"
+          target="_blank">小说排版助手<sup class="fs-9">2305</sup></a>
+        <a id="chinese" class="text-end" href="javascript:void(0);" data-default="简|繁">繁</a>
       </div>
     </nav>
     <div class="container-fluid">
@@ -42,7 +43,7 @@
           <input class="form-check-input" type="checkbox" id="Check_0" checked>
           <label class="form-check-label" for="Check_0">是否首发</label>
         </div>
-        <div class="form-check ms-2">
+        <div class="form-check ms-3">
           <input class="form-check-input" type="checkbox" id="Check_AddTop" checked>
           <label class="form-check-label" for="Check_AddTop">添加标头</label>
         </div>
@@ -123,107 +124,105 @@
       <div class="mb-2">
         <p class="mb-0">新建文档：<kbd>CA+N</kbd></p>
         <p class="mb-0">缓存文档：<kbd>CA+S</kbd></p>
-        <p class="mb-1">还原文档：<kbd>CA+R</kbd></p>
+        <p class="mb-2">还原文档：<kbd>CA+R</kbd></p>
         <p class="mb-0">特殊整理：<kbd>F7</kbd></p>
         <p class="mb-0">全局整理：<kbd>F8</kbd></p>
         <p class="mb-0">分段排版：<kbd>F9</kbd></p>
         <p class="mb-0">复制文档：<kbd>F10</kbd></p>
         <hr />
-        <p class="mb-0"><a class="text-decoration-none fw-bold" href="https://vvsolo.github.io/docs/#/" target="_blank">💡&nbsp;&nbsp;在线文档</a></p>
+        <p class="mb-0"><a href="https://vvsolo.github.io/docs/#/" target="_blank">💡&nbsp;&nbsp;在线文档</a></p>
         <hr />
-        <a href="/"><span class="badge rounded-pill bg-danger">0</span></a>
-        <span class="badge rounded-pill bg-dark">1</span>
-        <a href="2.html"><span class="badge rounded-pill bg-primary">2</span></a>
-        <a href="3.html"><span class="badge rounded-pill bg-success">3</span></a>
-        <a href="4.html"><span class="badge rounded-pill bg-success">4</span></a>
+        <div id="cdn-links">
+          <div><a href="/"><span class="badge text-bg-success">0</span><span class="badge text-bg-success opacity-75">jsdelivr</span></a></div>
+          <br>
+          <div><a href="1.html"><span class="badge text-bg-primary">1</span><span class="badge text-bg-primary opacity-75">cloudflare</span></a></div>
+          <div><a href="2.html"><span class="badge text-bg-primary">2</span><span class="badge text-bg-primary opacity-75">unpkg</span></a></div>
+          <div><a href="3.html"><span class="badge text-bg-primary">3</span><span class="badge text-bg-primary opacity-75">staticfile</span></a></div>
+          <div><a href="4.html"><span class="badge text-bg-primary">4</span><span class="badge text-bg-primary opacity-75">bootcdn</span></a></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="bg-dark text-white" id="c-right">
-    <div class="p-0">
-      <div class="alert m-0 rounded-0 border-0 editor-title" role="alert">
-        <div class="row">
-          <div class="col-7">
-            <span class="copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！" title="点击复制标题到剪贴板">
-                <h5 class="alert-heading d-inline" id="TitleMsg" data-tip="标题">标题</h5>
-            </span>
+  <div id="c-right">
+    <div class="m-3" id="editor-title">
+      <div class="d-flex">
+        <div class="flex-grow-1 copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！" title="点击复制标题到剪贴板">
+            <h5 id="TitleMsg" data-tip="标题">标题</h5>
+        </div>
+        <div class="editor-message">
+          <div class="badge bg-warning text-dark" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</div>
+        </div>
+      </div>
+      <hr class="mt-1 mb-2" />
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <button class="btn border-0 fs-5 p-0 pe-2 hide-960" title="隐藏或显示左侧栏" id="floatTool" data-tip="🌗|🌓">🌓</button>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-warning" title="全局一键整理；快捷键: F8" id="onCleanUp">整<span
+                class="hide-480">理</span><sup class="fs-9">F8</sup></button>
+            <button type="button" class="btn btn-outline-warning" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit"
+              data-tip="排版成功！重排请点击“还原 🧲”按钮！">排<span class="hide-480">版</span><sup class="fs-9">F9</sup></button>
+            <button type="button" class="btn btn-outline-warning copy-content" title="复制文档到剪贴板；快捷键: F10"
+              data-tip="文档已复制到剪贴板！">复<span class="hide-480">制</span><sup class="fs-9">F10</sup></button>
           </div>
-          <div class="col-5 text-end editor-message">
-            <span class="badge bg-warning text-dark" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</span>
+          <div class="btn-group hide-960" role="group">
+            <button type="button" class="btn btn-outline-info" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊</button>
+            <button type="button" class="btn btn-outline-info" title="阅读样式排版" id="onTypeSetRead"
+              data-tip="排版成功！重排请点击“还原 🧲”按钮！">阅读</button>
+          </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-info" title="转为简体" data-language="t2s">简</button>
+            <button type="button" class="btn btn-outline-info" title="转为繁体" data-language="s2t">繁</button>
+          </div>
+          <div class="btn-group hide-1200" role="group">
+            <button type="button" class="btn btn-outline-info" title="光标所在行·居左" data-align="left">左</button>
+            <button type="button" class="btn btn-outline-info" title="光标所在行·居中" data-align="center">中</button>
+            <button type="button" class="btn btn-outline-info" title="光标所在行·居右" data-align="right">右</button>
+          </div>
+          <div class="btn-group hide-1200" role="group">
+            <button type="button" class="btn btn-outline-info" title="插入待续" data-insert="（待续）">续</button>
+            <button type="button" class="btn btn-outline-info" title="插入全文完" data-insert="（全文完）">完</button>
           </div>
         </div>
-        <hr class="mt-1 mb-2" />
-        <div class="row">
-          <div class="col-8">
-            <a class="btn border-0 fs-5 hide-480" title="隐藏或显示左侧栏" id="floatTool" data-tip="🌗|🌓">🌓</a>
-            <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-warning" title="全局一键整理；快捷键: F8" id="onCleanUp">整<span class="hide-480">理</span><sup class="fs-9">F8</sup></button>
-            <button type="button" class="btn btn-outline-warning" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit" data-tip="排版成功！重排请点击“还原”按钮！">排<span class="hide-480">版</span><sup class="fs-9">F9</sup></button>
-            <button type="button" class="btn btn-outline-warning copy-content" title="复制文档到剪贴板；快捷键: F10" data-tip="文档已复制到剪贴板！">复<span class="hide-480">制</span><sup class="fs-9">F10</sup></button>
-            </div>
-            <div class="btn-group  hide-960" role="group">
-              <button type="button" class="btn btn-outline-info" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊</button>
-              <button type="button" class="btn btn-outline-info" title="阅读样式排版" id="onTypeSetRead" data-tip="排版成功！重排请点击“还原”按钮！">阅读</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-outline-info" title="转为简体" data-language="t2s">简</button>
-              <button type="button" class="btn btn-outline-info" title="转为繁体" data-language="s2t">繁</button>
-            </div>
-            <div class="btn-group hide-1200" role="group">
-              <button type="button" class="btn btn-outline-info" title="光标所在行·居左" data-align="left">左</button>
-              <button type="button" class="btn btn-outline-info" title="光标所在行·居中" data-align="center">中</button>
-              <button type="button" class="btn btn-outline-info" title="光标所在行·居右" data-align="right">右</button>
-            </div>
-            <!---
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-outline-info" title="UBB加粗" data-ubbcode="[b]{s}[/b]" data-tip="未选中文字！">B</button>
-              <button type="button" class="btn btn-outline-info" title="UBB下划线" data-ubbcode="[u]{s}[/u]" data-tip="未选中文字！"><u>U</u></button>
-              <button type="button" class="btn btn-outline-info" title="UBB斜体" data-ubbcode="[i]{s}[/i]" data-tip="未选中文字！"><em>I</em></button>
-            </div>
-            -->
-            <div class="btn-group hide-1200" role="group">
-              <button type="button" class="btn btn-outline-info" title="插入待续" data-insert="（待续）">续</button>
-              <button type="button" class="btn btn-outline-info" title="插入全文完" data-insert="（全文完）">完</button>
-            </div>
-          </div>
-          <div class="col-4 text-end hide-960">
-            <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-secondary" title="新建文档；快捷键: Ctrl+Alt+N" id="CreateEditor">📄</button>
-            <button type="button" class="btn btn-outline-secondary" title="缓存临时文档；快捷键: Ctrl+Alt+S" id="SaveEditor" data-tip="文档已保存！">💾</button>
-            <button type="button" class="btn btn-outline-secondary" title="还原临时文档；快捷键: Ctrl+Alt+R" id="RestoreEditor" data-tip="文档已还原！">🧲</button>
-            <button type="button" class="btn btn-outline-secondary" title="清空临时文档" id="ClearEditor" data-tip="文档已清空！">🗑</button>
-            </div>
+        <div class="text-end hide-960">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-secondary" title="新建文档；快捷键: Ctrl+Alt+N"
+              id="CreateEditor">📄</button>
+            <button type="button" class="btn btn-outline-secondary" title="缓存临时文档；快捷键: Ctrl+Alt+S" id="SaveEditor"
+              data-tip="文档已保存！">💾</button>
+            <button type="button" class="btn btn-outline-secondary" title="还原临时文档；快捷键: Ctrl+Alt+R" id="RestoreEditor"
+              data-tip="文档已还原！">🧲</button>
+            <button type="button" class="btn btn-outline-secondary" title="清空临时文档" id="ClearEditor"
+              data-tip="文档已清空！">🗑</button>
           </div>
         </div>
       </div>
-      <pre id="TextareaEditor" placeholder="粘贴文本到此处" notran="true">载入中，请稍候……</pre>
-      <div class="editor-status" id="statusBar"></div>
     </div>
+    <div id="TextareaEditor" notran="true">载入中，请稍候……</div>
+    <div class="editor-status" id="statusBar"></div>
   </div>
-    <!-- /.container -->
 
-<!-- Bootstrap core JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"></script>
-<!-- ace editor core JavaScript -->
-<script src="./ace/theme-novel.js?2303"></script>
-<script src="./ace/mode-novel.js?2303"></script>
-<script src="./ace/ext-statusbar.js?2303"></script>
-<!-- typo core JavaScript -->
-<script src="./js/cores.min.js?2303" defer></script>
-<script src="./js/typeset.js?2303" defer></script>
-<script src="./js/jquery.s2t.js?2303" defer></script>
-<script src="./js/storage.js?2303" defer></script>
-<script src="./js/app.js?2303" defer></script>
-<script>
-var _hmt = _hmt || [];
-(function() {
-var hm = document.createElement("script");
-hm.src = "https://hm.baidu.com/hm.js?4e383017601b1ea13cab1d5efbae8584";
-var s = document.getElementsByTagName("script")[0];
-s.parentNode.insertBefore(hm, s);
-})();
-</script>
+  <!-- Core JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.0/ace.min.js"></script>
+  <!-- Editor JavaScript -->
+  <script src="./ace/theme-novel.js?2305"></script>
+  <script src="./ace/mode-novel.js?2305"></script>
+  <script src="./ace/ext-statusbar.js?2305"></script>
+  <!-- Typo JavaScript -->
+  <script src="./js/cores.min.js?2305"></script>
+  <script src="./js/typeset.js?2305"></script>
+  <script src="./js/jquery.s2t.js?2305"></script>
+  <script src="./js/app.js?2305"></script>
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4e383017601b1ea13cab1d5efbae8584";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
 </body>
 </html>

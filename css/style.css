@@ -1,0 +1,121 @@
+html {
+	font-size: 0.85rem;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+#c-left,
+#c-right {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+}
+#c-left {
+	width: 220px;
+}
+#c-right {
+	left: 220px;
+	margin: 0;
+}
+#c-right {
+	display: grid;
+	grid-template-rows: auto 1fr;
+}
+
+#TextareaEditor {
+	margin: 0;
+	padding: 0;
+	line-height: 1.6;
+	min-height: 500px;
+	width: 100%;
+	height: 100%;
+}
+
+.copy-title {
+	cursor: pointer;
+	font-weight: normal;
+}
+
+.ace_status-indicator {
+	position: fixed;
+	right: 10px;
+	bottom: 3px;
+	display: block;
+	font-size: 0.7rem;
+	color: #888;
+	text-align: right;
+	min-width: 300px;
+	line-height: 20px;
+	padding-right: 10px;
+	background-color: none;
+	z-index: 1001;
+}
+
+#cdn-links {
+	display: grid;
+	grid-template-columns: 50% 50%;
+}
+#cdn-links div {
+	padding: 3px 0;
+}
+#cdn-links div .badge:first-child {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+#cdn-links div .badge:last-child {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.form-control::placeholder {
+	opacity: 0.3;
+	font-weight: 400;
+}
+.fs-9 {
+	font-size: 11px;
+	font-family: Consolas;
+	top: -9px;
+	padding-left: 3px;
+}
+.btn {
+	font-weight: 400;
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+
+@media screen and (max-width: 1200px) {
+	.hide-1200 {
+		display: none;
+	}
+}
+@media screen and (max-width: 960px) {
+	.btn sup,
+	.hide-960 {
+		display: none;
+	}
+	#c-right {
+		left: 0px;
+	}
+}
+@media screen and (max-width: 480px) {
+	.hide-480 {
+		display: none;
+	}
+}
+.leWaterWave {
+	animation: leWaterWave 5s linear 3s infinite alternate
+}
+@keyframes leWaterWave {
+	0%   {color:var(--bs-white);}
+	50%  {color:var(--bs-yellow);}
+	100% {color:var(--bs-orange);}
+}
