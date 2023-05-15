@@ -143,8 +143,7 @@ $(() => {
 		const $this = $(this);
 		const $span = $this.find("span");
 		let $url = $this.attr("href");
-		$url = $url === "/" ? "index.html" : $url;
-		if ($pathname === "/" || $pathname.endsWith($url)) {
+		if ($pathname === $url || $pathname.endsWith("index.html") || $pathname.endsWith($url)) {
 			$span.removeClass("text-bg-primary").addClass("text-bg-success");
 			$span.unwrap();
 		} else {
