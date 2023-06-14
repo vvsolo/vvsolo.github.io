@@ -107,7 +107,7 @@ $(() => {
 		$$.lang.html("简");
 	}
 	// 简繁互换
-	function setLanguage() {
+	$$.lang.on("click", function () {
 		const tipVal = $$.lang.data("default").split("|");
 		if (tipVal[0] === $$.lang.html()) {
 			$("body, title").t2s();
@@ -118,9 +118,7 @@ $(() => {
 			$$.lang.html(tipVal[0]);
 			store.set("language", tipVal[1]);
 		}
-	}
-	// 简繁互换
-	$$.lang.on("click", setLanguage);
+	});
 })();
 
 // editor height
