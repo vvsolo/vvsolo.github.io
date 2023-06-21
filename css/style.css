@@ -112,10 +112,11 @@ a {
 	}
 }
 .leWaterWave {
-	animation: leWaterWave 5s linear 3s infinite alternate
+	color: var(--bs-white);
+	animation: WaterWave 5s linear 3s infinite alternate;
 }
-@keyframes leWaterWave {
-	0%   {color:var(--bs-white);}
-	50%  {color:var(--bs-yellow);}
-	100% {color:var(--bs-orange);}
+@keyframes WaterWave {
+	0%   {color: var(--bs-white);}
+	50%  {color: var(--bs-yellow);}
+	100% {color: var(--bs-orange);}
 }
