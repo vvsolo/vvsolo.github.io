@@ -86,7 +86,7 @@ function onTypeSetSplit(str, author, site) {
 	// 执行整理
 	str = '\n' + str
 		// 排版初始化，去空格空行
-		.replaceInit()
+		.convertInit()
 		// 引号替换
 		.convertCNQuote()
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
@@ -96,15 +96,15 @@ function onTypeSetSplit(str, author, site) {
 		.convertSeparator()
 		// 分隔符居中
 		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center');
+			return m.stringAlign('', '', 'center');
 		})
 		// 结尾居中
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center');
+			return m.stringAlign('', '', 'center');
 		})
 		// 书名居中
 		.replace(/^《[^》]+》$/m, function(m) {
-			return m.ChapterAlign('', '\n', 'center');
+			return m.stringAlign('', '\n', 'center');
 		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
@@ -114,7 +114,7 @@ function onTypeSetSplit(str, author, site) {
 		.convertChapter('', '', 'center')
 		.mapLine(v => v.doSplit())
 		.replace(/\n\n{3,}/g, '\n\n\n')
-		.replaceEnd();
+		.convertEnd();
 
 	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,
@@ -129,14 +129,14 @@ function onTypeSetSplit(str, author, site) {
 function editorCleanUp(str) {
 	if (str.trims() === '') return str;
 	// 排版初始化，去空格空行
-	str = str.replaceInit();
+	str = str.convertInit();
 	['HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
 	'Punctuation', 'NumberLetter', 'Chapter', 'Space',
 	'Separator', 'Quote', 'English'].forEach((v, i) => {
 		str = str.convert(v);
 	})
 	// 结束
-	return str.replaceEnd();
+	return str.convertEnd();
 }
 
 // 特殊整理
@@ -166,7 +166,7 @@ function editorCleanUpEx(str) {
 
 	str = str
 		// 排版初始化，去空格空行
-		.replaceInit()
+		.convertInit()
 		// 去除汉字间的空格
 		.convertSpace()
 		// 保护无结尾标点的歌词类

@@ -13,7 +13,6 @@
 
 
 ### ✨ 特性
-
 - 修正 HTML 字符实体
 - 修正 Unicode
 - 修正变体字母
@@ -32,9 +31,7 @@
 - 针对无格式文档的特殊整理
 - 两种样式的排版风格
 
-
 ### 🙏 鸣谢
-
 - [EverEdit](http://www.everedit.cn/)
 - [OpenCC 简繁互换](https://github.com/BYVoid/OpenCC)
 - [pangu.js](https://github.com/vinta/pangu.js)

@@ -209,7 +209,7 @@ $(function () {
 		const row = editor.selection.getCursor().row;
 		let str = sEditor.getLine(row);
 		if (str.length > 0) {
-			str = str.ChapterAlign("", "\n", $(this).data("align") || "left");
+			str = str.stringAlign("", "\n", $(this).data("align") || "left");
 			const range = editor.selection.getLineRange();
 			sEditor.replace(range, str);
 			editor.gotoLine(row + 1, 0, false);

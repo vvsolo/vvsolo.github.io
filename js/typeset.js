@@ -85,7 +85,7 @@ function onTypeSetSplit(str) {
 	// 执行整理
 	str = '\n' + str
 		// 排版初始化，去空格空行
-		.replaceInit()
+		.convertInit()
 		// 引号替换
 		.convertCNQuote()
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
@@ -95,25 +95,25 @@ function onTypeSetSplit(str) {
 		.convertSeparator()
 		// 分隔符居中
 		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center');
+			return m.stringAlign('', '', 'center');
 		})
 		// 结尾居中
 		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.ChapterAlign('', '', 'center');
+			return m.stringAlign('', '', 'center');
 		})
 		// 书名居中
 		.replace(/^《[^》]+》$/m, function(m) {
-			return m.ChapterAlign('', '\n', 'center');
+			return m.stringAlign('', '\n', 'center');
 		})
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
 			return m.trim();
 		})
 		// 标题居中
-		.convertChapter('', '', 'center')
+		.convertChapter('center')
 		.mapLine(v => v.doSplit())
 		.replace(/\n\n{3,}/g, '\n\n\n')
-		.replaceEnd();
+		.convertEnd();
 
 	if ( !$('#Check_AddTop').is(':checked') )
 		return str;
@@ -134,11 +134,11 @@ function onTypeSetSplit(str) {
 function onTypeSetRead(str) {
 	return str
 		// 排版初始化，去空格空行
-		.replaceInit()
+		.convertInit()
 		// 半角字母数字
 		.convertNumberLetter()
 		// 修正章节标题
-		.convertChapter('\n\n', '', 'break')
+		.convertChapter('nofix')
 		// 修正分隔符号
 		.convertSeparator()
 		// 修正作者后面未空行
@@ -152,7 +152,7 @@ function onTypeSetRead(str) {
 // 一键整理
 function editorCleanUp(str) {
 	// 排版初始化，去空格空行
-	str = str.replaceInit();
+	str = str.convertInit();
 	['HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
 	'Punctuation', 'NumberLetter', 'Chapter', 'Space',
 	'Separator', 'Quote', 'English'].forEach((v, i) => {
@@ -161,7 +161,7 @@ function editorCleanUp(str) {
 		}
 	})
 	// 结束
-	return str.replaceEnd();
+	return str.convertEnd();
 }
 
 // 特殊整理
@@ -191,7 +191,7 @@ function editorCleanUpEx(str) {
 
 	str = str
 		// 排版初始化，去空格空行
-		.replaceInit()
+		.convertInit()
 		// 去除汉字间的空格
 		.convertSpace()
 		// 保护无结尾标点的歌词类
@@ -207,7 +207,7 @@ function editorCleanUpEx(str) {
 		// 修正章节前面是 `正文` 的
 		.replace('^正文 *({$t91}[{$crt}]{$sn}.{$en})$'.chapReg(), '$1')
 		// 修正章节标题，加标题保护码
-		.convertChapter(safeStr[0], safeStr[1])
+		.convertChapter('fix', safeStr[0], safeStr[1])
 		// 修正引号
 		.convertQuote()
 		// 其他自定义修正
