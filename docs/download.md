@@ -8,6 +8,3 @@
 
 #### tmp.link
 [tmp.link](https://tmp.link/room/640c6c6aeaf46 ':target=_blank')
-
-#### up2sha
-[up2sha](https://up2sha.re/file?f=A53oBk ':target=_blank')
