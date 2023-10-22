@@ -31,6 +31,10 @@ border-left: 1px dashed #4d4d4d;
 color: #C4CAD6;
 background-color: #1E1E1E;
 }
+.ace-novel .ace_text {
+color: #C4CAD6;
+background-color: #1E1E1E;
+}
 .ace-novel .ace_invisible {
 color: #504945;
 }
@@ -84,9 +88,9 @@ color: #EBDAB4;
 color: yellow;
 }
 .ace-novel .ace_bookmark { background-color: #AC1F30; color: #fff; }
-.ace-novel .ace_title0 { background-color: #1D6F42; color: #fff; }
 .ace-novel .ace_title1 { background-color: #4A0095; color: #fff; }
 .ace-novel .ace_title2 { background-color: #AC1F30; color: #fff; }
+.ace-novel .ace_title3 { background-color: #1D6F42; color: #fff; }
 .ace-novel .ace_endstr { background-color: #245580; color: #fff; }
 .ace-novel .ace_number { color: #9D81DF; }
 .ace-novel .ace_fullpun { color: #BE9E5C; }

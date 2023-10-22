@@ -95,17 +95,11 @@ function onTypeSetSplit(str, author, site) {
 		// 修正分隔符号
 		.convertSeparator()
 		// 分隔符居中
-		.replace(('^' + config.Separator + '$').getReg('gm'), function(m) {
-			return m.stringAlign('', '', 'center');
-		})
+		.findCenter(('^' + config.Separator + '$').getReg('gm'))
 		// 结尾居中
-		.replace(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'), function(m) {
-			return m.stringAlign('', '', 'center');
-		})
+		.findCenter(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'))
 		// 书名居中
-		.replace(/^《[^》]+》$/m, function(m) {
-			return m.stringAlign('', '\n', 'center');
-		})
+		.findCenter(/^《[^》]+》$/m)
 		// 作者类居左
 		.replace(config.novelAuthor, function(m) {
 			return m.trim();

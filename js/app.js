@@ -289,64 +289,27 @@ $(function () {
 	});
 	// 复制文档到剪贴板
 	const clipboardText = new ClipboardJS(".copy-content", {
-		text: function () {
-			return editor.getValue();
-		},
+		text: () => editor.getValue()
 	});
 	clipboardText.on("success", function (e) {
 		e.clearSelection();
 		showMessage($(".copy-content"));
 	});
 	// 绑定快捷键
-	editor.commands.addCommands([
-		{
-			name: "__save",
-			exec: function () {
-				$("#SaveEditor").trigger("click");
-			},
-			bindKey: { win: "ctrl-alt-s", mac: "cmd-alt-s" },
-		},
-		{
-			name: "__restore",
-			exec: function () {
-				$("#RestoreEditor").trigger("click");
-			},
-			bindKey: { win: "ctrl-alt-r", mac: "cmd-alt-r" },
-		},
-		{
-			name: "__create",
-			exec: function () {
-				$("#CreateEditor").trigger("click");
-			},
-			bindKey: { win: "ctrl-alt-n", mac: "cmd-alt-n" },
-		},
-		{
-			name: "__cleanup_ex",
-			exec: function () {
-				$("#onCleanUpEx").trigger("click");
-			},
-			bindKey: { win: "f7", mac: "f7" },
-		},
-		{
-			name: "__cleanup",
-			exec: function () {
-				$("#onCleanUp").trigger("click");
-			},
-			bindKey: { win: "f8", mac: "f8" },
-		},
-		{
-			name: "__typeset",
-			exec: function () {
-				$("#onTypeSetSplit").trigger("click");
-			},
-			bindKey: { win: "f9", mac: "f9" },
-		},
-		{
-			name: "__copydoc",
-			exec: function () {
-				$(".copy-content").trigger("click");
-			},
-			bindKey: { win: "f10", mac: "f10" },
-		},
-	]);
+	const _commands = [
+		['#SaveEditor', 'ctrl-alt-s'],
+		['#RestoreEditor', 'ctrl-alt-r'],
+		['#CreateEditor', 'ctrl-alt-n'],
+		['#onCleanUpEx', 'f7'],
+		['#onCleanUp', 'f8'],
+		['#onTypeSetSplit', 'f9'],
+		['.copy-content', 'f10']
+	].map((v, i) => {
+		return {
+			name: '__N_' + i,
+			exec: () => { $(`${v[0]}`).trigger("click"); },
+			bindKey: { win: v[1], mac: v[1] },
+		}
+	})
+	editor.commands.addCommands(_commands);
 });
