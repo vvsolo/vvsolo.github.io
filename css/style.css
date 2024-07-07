@@ -40,6 +40,10 @@ a {
 	height: 100%;
 }
 
+#AlertMsg {
+	font-size:13px;
+}
+
 .copy-title {
 	cursor: pointer;
 	font-weight: normal;
@@ -112,11 +116,12 @@ a {
 	}
 }
 .leWaterWave {
-	color: var(--bs-white);
-	animation: WaterWave 5s linear 3s infinite alternate;
+	box-sizing: border-box;
+	color: #F8D800;
+	animation: WaterWave 5s linear 5s infinite alternate;
 }
 @keyframes WaterWave {
-	0%   {color: var(--bs-white);}
-	50%  {color: var(--bs-yellow);}
-	100% {color: var(--bs-orange);}
+	0%   {color: #F55555;}
+	50%   {color: #FCCF31;}
+	100%   {color: #E96D71;}
 }

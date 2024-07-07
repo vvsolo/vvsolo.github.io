@@ -1,232 +1,43 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-bs-theme="dark">
+<html>
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="小说排版助手,小说排版,排版助手" />
   <meta name="author" content="vsolo" />
-  <link rel="preconnect" href="cdn.staticfile.org" />
-  <link rel="dns-prefetch" href="cdn.staticfile.org" />
   <title>小说排版助手（在线版）</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.staticfile.org/twitter-bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom CSS -->
-  <link href="./css/style.css" rel="stylesheet">
+<style>
+body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;font-weight:600;line-height:1.42857143;color:#fff;background-color:#212529;margin:0}
+*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+.box{left:50%;top:30%;width:600px;margin-left:-300px;height:300px;bottom:10px;padding:10px;word-break:break-all;position:fixed}
+.logo{text-align:center;margin-bottom:20px}
+.tip{text-align:center;margin-bottom:15px;letter-spacing:1px}
+.progress{height:20px;margin-bottom:20px;overflow:hidden;background-color:#f5f5f5;border-radius:4px;-webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1);height:8px}
+.progress-bar{float:left;width:0%;height:100%;font-size:12px;line-height:20px;color:#fff;text-align:center;background-color:#337ab7;-webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);-webkit-transition:width .6s ease;-o-transition:width .6s ease;transition:width .6s ease}
+.progress-bar-success{background-color:#5cb85c}
+</style>
 </head>
 <body>
-  <div class="bg-gradient hide-960" id="c-left">
-    <nav class="navbar mt-1 mb-2">
-      <div class="container-fluid">
-        <a class="fs-5 leWaterWave" href="https://github.com/vvsolo/vvsolo.github.io" title="View on GitHub"
-          target="_blank">小说排版助手<sup class="fs-9">2310</sup></a>
-        <a id="chinese" class="text-end" href="javascript:void(0);" data-default="简|繁">繁</a>
-      </div>
-    </nav>
-    <div class="container-fluid">
-      <div class="input-group mb-1">
-        <div class="input-group-text">书名</div>
-        <input type="text" class="form-control" id="inputBookName" placeholder="小说名称">
-      </div>
-      <div class="input-group mb-1">
-        <div class="input-group-text">章节</div>
-        <input type="text" class="form-control" id="inputChapter" placeholder="更新章节">
-      </div>
-      <div class="input-group mb-1">
-        <div class="input-group-text">作者</div>
-        <input type="text" class="form-control" id="inputAuthor" placeholder="作者名称">
-      </div>
-      <div class="input-group mb-1">
-        <div class="input-group-text">首发</div>
-        <input type="text" class="form-control" id="inputSite" placeholder="首发站点" aria-label="首发站点">
-      </div>
-      <div class="input-group mb-1 mt-2">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_0" checked>
-          <label class="form-check-label" for="Check_0">是否首发</label>
-        </div>
-        <div class="form-check ms-3">
-          <input class="form-check-input" type="checkbox" id="Check_AddTop" checked>
-          <label class="form-check-label" for="Check_AddTop">添加标头</label>
-        </div>
-      </div>
-      <hr />
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_1">
-          <label class="form-check-label" for="Check_1">修正 HTML 字符实体</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_2">
-          <label class="form-check-label" for="Check_2">修正 Unicode</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_3">
-          <label class="form-check-label" for="Check_3">修正变体字母</label>
-        </div>
-      </div>
-      <div class="input-group mb-2">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_4">
-          <label class="form-check-label" for="Check_4">修正变体序号</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_5" checked>
-          <label class="form-check-label" for="Check_5">全角标点符号</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_6" checked>
-          <label class="form-check-label" for="Check_6">半角字母数字</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_11" checked>
-          <label class="form-check-label" for="Check_11">修正英文排版</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_7" checked>
-          <label class="form-check-label" for="Check_7">修正章节标题</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_8" checked>
-          <label class="form-check-label" for="Check_8">修正汉字空格</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_9" checked>
-          <label class="form-check-label" for="Check_9">修正分隔符号</label>
-        </div>
-      </div>
-      <div class="input-group mb-0">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="Check_10" checked>
-          <label class="form-check-label" for="Check_10">修正引用符号</label>
-        </div>
-      </div>
-      <hr />
-      <div class="mb-2">
-        <button type="button" class="btn btn-success btn-sm" title="保存设置" id="SaveConfig" data-tip="设置已保存！">保存设置</button>
-        <button type="button" class="btn btn-success btn-sm" title="清除所有设置" id="CleanConfig" data-tip="所有设置已清除！">清除设置</button>
-      </div>
-      <hr />
-      <div class="mb-2">
-        <p class="mb-0">新建文档：<kbd>CA+N</kbd></p>
-        <p class="mb-0">缓存文档：<kbd>CA+S</kbd></p>
-        <p class="mb-2">还原文档：<kbd>CA+R</kbd></p>
-        <p class="mb-0">特殊整理：<kbd>F7</kbd></p>
-        <p class="mb-0">全局整理：<kbd>F8</kbd></p>
-        <p class="mb-0">分段排版：<kbd>F9</kbd></p>
-        <p class="mb-0">复制文档：<kbd>F10</kbd></p>
-        <hr />
-        <p class="mb-0"><a href="https://vvsolo.github.io/docs/#/" target="_blank">💡&nbsp;&nbsp;在线文档</a></p>
-        <hr />
-        <div id="cdn-links">
-          <div><a href="/"><span class="badge text-bg-success">0</span><span class="badge text-bg-success opacity-75">jsdelivr</span></a></div>
-          <br>
-          <div><a href="1.html"><span class="badge text-bg-primary">1</span><span class="badge text-bg-primary opacity-75">cloudflare</span></a></div>
-          <div><a href="2.html"><span class="badge text-bg-primary">2</span><span class="badge text-bg-primary opacity-75">unpkg</span></a></div>
-          <div><a href="3.html"><span class="badge text-bg-primary">3</span><span class="badge text-bg-primary opacity-75">staticfile</span></a></div>
-          <div><a href="4.html"><span class="badge text-bg-primary">4</span><span class="badge text-bg-primary opacity-75">bootcdn</span></a></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="c-right">
-    <div class="m-3" id="editor-title">
-      <div class="d-flex">
-        <div class="flex-grow-1 copy-title" data-clipboard-target="#TitleMsg" data-tip="标题已复制到剪贴板！" title="点击复制标题到剪贴板">
-            <h5 id="TitleMsg" data-tip="标题">标题</h5>
-        </div>
-        <div class="editor-message">
-          <div class="badge bg-warning text-dark" id="AlertMsg">填写作者等相关信息后，“整理” → “排版”.</div>
-        </div>
-      </div>
-      <hr class="mt-1 mb-2" />
-      <div class="d-flex">
-        <div class="flex-grow-1">
-          <button class="btn border-0 fs-5 p-0 pe-2 hide-960" title="隐藏或显示左侧栏" id="floatTool" data-tip="🌗|🌓">🌓</button>
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-warning" title="全局一键整理；快捷键: F8" id="onCleanUp">整<span
-                class="hide-480">理</span><sup class="fs-9">F8</sup></button>
-            <button type="button" class="btn btn-outline-warning" title="35 字分段排版；快捷键: F9" id="onTypeSetSplit"
-              data-tip="排版成功！重排请点击“还原 🧲”按钮！">排<span class="hide-480">版</span><sup class="fs-9">F9</sup></button>
-            <button type="button" class="btn btn-outline-warning copy-content" title="复制文档到剪贴板；快捷键: F10"
-              data-tip="文档已复制到剪贴板！">复<span class="hide-480">制</span><sup class="fs-9">F10</sup></button>
-          </div>
-          <div class="btn-group hide-960" role="group">
-            <button type="button" class="btn btn-outline-info" title="无排版文档整理；快捷键: F7" id="onCleanUpEx">特殊</button>
-            <button type="button" class="btn btn-outline-info" title="阅读样式排版" id="onTypeSetRead"
-              data-tip="排版成功！重排请点击“还原 🧲”按钮！">阅读</button>
-          </div>
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-info" title="转为简体" data-language="t2s">简</button>
-            <button type="button" class="btn btn-outline-info" title="转为繁体" data-language="s2t">繁</button>
-          </div>
-          <div class="btn-group hide-1200" role="group">
-            <button type="button" class="btn btn-outline-info" title="光标所在行·居左" data-align="left">左</button>
-            <button type="button" class="btn btn-outline-info" title="光标所在行·居中" data-align="center">中</button>
-            <button type="button" class="btn btn-outline-info" title="光标所在行·居右" data-align="right">右</button>
-          </div>
-          <div class="btn-group hide-1200" role="group">
-            <button type="button" class="btn btn-outline-info" title="插入待续" data-insert="（待续）">续</button>
-            <button type="button" class="btn btn-outline-info" title="插入全文完" data-insert="（全文完）">完</button>
-          </div>
-        </div>
-        <div class="text-end hide-960">
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-secondary" title="新建文档；快捷键: Ctrl+Alt+N"
-              id="CreateEditor">📄</button>
-            <button type="button" class="btn btn-outline-secondary" title="缓存临时文档；快捷键: Ctrl+Alt+S" id="SaveEditor"
-              data-tip="文档已保存！">💾</button>
-            <button type="button" class="btn btn-outline-secondary" title="还原临时文档；快捷键: Ctrl+Alt+R" id="RestoreEditor"
-              data-tip="文档已还原！">🧲</button>
-            <button type="button" class="btn btn-outline-secondary" title="清空临时文档" id="ClearEditor"
-              data-tip="文档已清空！">🗑</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="TextareaEditor" notran="true">载入中，请稍候……</div>
-    <div class="editor-status" id="statusBar"></div>
-  </div>
-
-  <!-- Core JavaScript -->
-  <script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/clipboard.js/2.0.11/clipboard.min.js"></script>
-  <script src="https://cdn.staticfile.org/ace/1.30.0/ace.min.js"></script>
-  <!-- Editor JavaScript -->
-  <script src="./ace/theme-novel.js?2310"></script>
-  <script src="./ace/mode-novel.js?2310"></script>
-  <script src="./ace/ext-statusbar.js?2310"></script>
-  <!-- Typo JavaScript -->
-  <script src="./js/cores.min.js?2310"></script>
-  <script src="./js/typeset.js?2310"></script>
-  <script src="./js/jquery.s2t.js?2310"></script>
-  <script src="./js/app.js?2310"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WREHYM254"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0WREHYM254');
-  </script>
-  <!-- 51.la -->
-  <script charset="UTF-8" id="LA_COLLECT" src="https://sdk.51.la/js-sdk-pro.min.js"></script>
-  <script>LA.init({id:"K45A2liu7wpR69dc",ck:"K45A2liu7wpR69dc",autoTrack:true,hashMode:true})</script>
+<div class="box">
+	<div class="tip">
+		<div>
+			cdn.staticfile.org/cdn.bootcdn.net 因被 uBlock 软件屏蔽
+		</div>
+		<div>
+			安全起见，暂时关闭访问！
+		</div>
+		<hr>
+	</div>
+	<div class="progress">
+		<div id="progress-bar" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+		</div>
+	</div>
+</div>
+<script>
+var url='https://vvsolo.github.io';
+function progress(p){document.getElementById("progress-bar").style.width=p+"%"}
+setTimeout(function(){progress("5");setTimeout(function(){progress("60");setTimeout(function(){progress("95");window.location.href=url;},600);},800);},600);
+</script>
 </body>
 </html>

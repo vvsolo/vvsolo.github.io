@@ -1,26 +1,33 @@
 /**** 截取分段 ****/
-String.prototype.doSplit = function() {
-	const str = '' + this;
-	const bm = '\n';
-	if (str.length < 1 || str.search(/^　　+/) > -1 || str.search(/^＊{5,}/) > -1) {
+var _safeStr = '\u2620';
+function doSplit(str) {
+	var bm = '\n';
+	if (str.length < 1 || ~str.search(/^　　+/) || ~str.search(/^＊{5,}/)) {
 		return str + bm;
 	}
-	const vNum = config.Linenum, cutNum = vNum * 2;
-	let linestr = '　　' + str;
+
+	var _safeReg = '^' + _safeStr;
+	if (~str.search(_safeReg.getReg(''))) {
+		return str.replace(_safeReg.getReg('g'), '')
+	}
+
+	// 分隔字数、实际分隔字数
+	var vNum = config.Linenum, cutNum = vNum * 2;
+	var linestr = '　　' + str;
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len()) {
 		return linestr + bm;
 	}
 
-	// 查询单字节总数
-	const findEngStr = linestr.findCount(/[\x00-\xff]/g),
+	var oNum = ~~(linestr.length / vNum) + 1,
+		// 查询单字节总数
+		findEngStr = linestr.findCount(/[\x00-\xff]/g),
 		// 如果全是单字节
-		findAllEngStr = str.search(/^[\x00-\xff]+$/) > -1,
+		findAllEngStr = ~str.search(/^[\x00-\xff]+$/),
 		text = [];
 
-	let oNum = ~~(linestr.length / vNum) + 1;
 	while (oNum--) {
-		let sublen = 0, FirstLine = true, sinBytes, tmp, i;
+		var sublen = 0, FirstLine = true, sinBytes, tmp, i;
 		// 如果全是单字节
 		if (findAllEngStr) {
 			// 如果是首次截取
@@ -60,10 +67,9 @@ String.prototype.doSplit = function() {
 			// ［〔【｛·‘『“「〈《
 			//.replace(/[［〔【｛『「〈《]{1,2}$|\b\w+$/, function(m) {
 			.replace(/[［〔【｛『「〈《]{1,2}$/, function(m) {
-				linestr += m;
-				return '';
+				linestr += m
+				return ''
 			});
-
 		// 剩下部分
 		linestr = linestr
 			.replace(tmp, '')
@@ -71,10 +77,9 @@ String.prototype.doSplit = function() {
 			// 处理两个字符，因为经过整理过的标点只留两个
 			// ，、。：；？！）］〕】｝·’』”」〉》
 			.replace(/^[，、。：；？！）］〕】｝』」〉》…～—]{1,2}/, function(m) {
-				tmp += m;
-				return '';
+				tmp += m
+				return ''
 			});
-
 		text.push(tmp);
 	}
 	return text.join('\n').replace(/\n+$/, '') + bm;
@@ -87,28 +92,25 @@ function onTypeSetSplit(str, author, site) {
 	str = '\n' + str
 		// 排版初始化，去空格空行
 		.convertInit()
-		// 引号替换
+		// 转直角引号
 		.convertCNQuote()
+		// 清除原标头
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
 		.convertNumberLetter()
 		// 修正分隔符号
 		.convertSeparator()
+		// 书名居中
+		.findCenter(/^《[^》]+》$/m)
 		// 分隔符居中
 		.findCenter(('^' + config.Separator + '$').getReg('gm'))
 		// 结尾居中
 		.findCenter(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'))
-		// 书名居中
-		.findCenter(/^《[^》]+》$/m)
-		// 作者类居左
-		.replace(config.novelAuthor, function(m) {
-			return m.trim();
-		})
 		// 标题居中
-		.convertChapter('', '', 'center')
-		.mapLine(v => v.doSplit())
-		.replace(/\n\n{3,}/g, '\n\n\n')
-		.convertEnd();
+		.convertChapter('center')
+		// 分割段落
+		.mapLine(doSplit)
+		.convertFinish();
 
 	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,
