@@ -1,14 +1,5 @@
-const $$ = {
-	lang: $("#chinese"),
-	editor: $("#TextareaEditor"),
-	msg: $("#AlertMsg"),
-	msgDiv: $("#AlertMsg").parent(),
-	title: $("#TitleMsg"),
-	links: $("#cdn-links"),
-	bookname: $("#inputBookName"),
-	chapter: $("#inputChapter"),
-};
 
+// localStorage
 const store = {
 	set: function (key, value) {
 		if (value !== null && value !== "") {
@@ -29,27 +20,31 @@ const store = {
 };
 
 // message
+const _msg = $("#AlertMsg");
+const _msgDiv = _msg.parent();
 const showMessage = (r) => {
 	const tip = $(r).attr("data-tip");
-	$$.msg.html(tip);
-	$$.msgDiv.hide().show().delay(5000).fadeOut(400);
+	_msg.html(tip);
+	_msgDiv.hide().show().delay(5000).fadeOut(400);
 };
-$$.msgDiv.delay(8000).fadeOut(400);
+_msgDiv.delay(8000).fadeOut(400);
 
 // title
 $(() => {
+	const _title = $("#TitleMsg");
+	const _bookname = $("#inputBookName");
+	const _chapter = $("#inputChapter");
 	const setTitle = () => {
 		const tmpReg = /^[（【“「<]|[）】”」>]$/g;
-		const _name = $$.bookname.val().trim();
-		const _chap = $$.chapter.val().trim();
+		const _name = _bookname.val().trim();
+		const _chap = _chapter.val().trim();
 
 		let str = "";
 		if (_name.length > 0) str += `【${_name.replace(tmpReg, "")}】`;
 		if (_chap.length > 0) str += `（${_chap.replace(tmpReg, "")}）`;
-		$$.title.html(str || $$.title.attr("data-tip"));
+		_title.html(str || _title.attr("data-tip"));
 	};
-	$$.bookname.on("keyup keydown change focus input propertychange", setTitle);
-	$$.chapter.on("keyup keydown change focus input propertychange", setTitle);
+	$("#inputBookName, #inputChapter").on("keyup keydown change focus input propertychange", setTitle);
 	setTitle();
 });
 
@@ -66,7 +61,7 @@ $(() => {
 				let i = -1;
 				while (++i < max) {
 					if (store.get(`Check_${i}`, "") === "checked") {
-						$(`#Check_${i}`).attr("checked", "checked");
+						$(`#Check_${i}`).prop("checked", true);
 					}
 				}
 			},
@@ -78,7 +73,7 @@ $(() => {
 				let i = -1;
 				while (++i < max) {
 					const tmp = `Check_${i}`;
-					$(`#${tmp}`).is(":checked") ? store.set(tmp, "checked") : store.remove(tmp);
+					$(`#${tmp}`).prop("checked") ? store.set(tmp, "checked") : store.remove(tmp);
 				}
 			}
 		}
@@ -100,52 +95,37 @@ $(() => {
 
 // body language
 (() => {
+	const _lang = $("#chinese");
 	const storeLang = store.get("language");
-	const currentLang = storeLang ? storeLang : ($$.lang.html() === "简" ? "繁" : "简");
+	const currentLang = storeLang ? storeLang : (_lang.html() === "简" ? "繁" : "简");
 	if (currentLang === "繁") {
 		$("body, title").s2t();
-		$$.lang.html("简");
+		_lang.html("简");
 	}
 	// 简繁互换
-	$$.lang.on("click", function () {
-		const tipVal = $$.lang.data("default").split("|");
-		if (tipVal[0] === $$.lang.html()) {
+	_lang.on("click", function () {
+		const tipVal = _lang.data("default").split("|");
+		if (tipVal[0] === _lang.html()) {
 			$("body, title").t2s();
-			$$.lang.html(tipVal[1]);
+			_lang.html(tipVal[1]);
 			store.set("language", tipVal[0]);
 		} else {
 			$("body, title").s2t();
-			$$.lang.html(tipVal[0]);
+			_lang.html(tipVal[0]);
 			store.set("language", tipVal[1]);
 		}
 	});
 })();
 
-// editor height
-/**
-(() => {
-	// 编辑区域全屏占，修正编辑器高度
-	function getEditorHeight() {
-		const th = $("#editor-title").eq(0).outerHeight();
-		$$.editor.height(parseInt($(this).outerHeight() - th));
-	}
-	getEditorHeight();
-	$(window).resize(getEditorHeight);
-})();
- */
-
 // cdn links
 (() => {
-	const $pathname = location.pathname;
-	$$.links.find("a").each(function(i) {
-		const $this = $(this);
-		const $span = $this.find("span");
-		let $url = $this.attr("href");
-		if ($pathname === $url || $pathname.endsWith("index.html") || $pathname.endsWith($url)) {
-			$span.removeClass("text-bg-primary").addClass("text-bg-success");
-			$span.unwrap();
-		} else {
-			$span.removeClass("text-bg-success").addClass("text-bg-primary");
+	const _pn = location.pathname;
+	$("#cdn-links").find("a").each(function(i) {
+		const that = $(this);
+		const _span = that.find("span").eq(0);
+		const _url = that.attr("href");
+		if (_pn === _url || _pn.endsWith("index.html") || _pn.endsWith(_url)) {
+			_span.html("🟡");
 		}
 	})
 })();
@@ -164,7 +144,7 @@ $(function () {
 		// 字体
 		//fontFamily: 'Consolas,Monaco,Source Han Serif,NSimSun,SimSun,Courier New,monospace,serif',
 		fontFamily: "Consolas,Monaco,Courier New,monospace,serif",
-		fontSize: "1.1rem",
+		fontSize: "1.2rem",
 		// 打印线
 		printMarginColumn: 70,
 		// 显示空格
@@ -182,6 +162,14 @@ $(function () {
 	const sEditor = editor.getSession();
 	sEditor.setValue(store.get("tmpContent", ""));
 
+	// 快捷分项图标点击
+	$("[data-method]").on("click", function () {
+		const sVal = sEditor.getValue();
+		if (sVal.length > 0) {
+			sEditor.setValue(sVal.conv($(this).data("method")));
+		}
+		editor.focus();
+	});
 	// 左侧收缩工具
 	$("#floatTool").on("click", function () {
 		const cLeft = $("#c-left").position().left === 0;
@@ -307,7 +295,7 @@ $(function () {
 	].map((v, i) => {
 		return {
 			name: '__N_' + i,
-			exec: () => { $(`${v[0]}`).trigger("click"); },
+			exec: () => { $(v[0]).trigger("click"); },
 			bindKey: { win: v[1], mac: v[1] },
 		}
 	})

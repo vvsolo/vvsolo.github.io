@@ -1,33 +1,34 @@
 /**** 截取分段 ****/
-var _safeStr = '\u2620';
+const _safeStr = '\u2620';
 function doSplit(str) {
-	var bm = '\n';
+	const bm = '\n';
 	if (str.length < 1 || str.startsWith('　　') || str.startsWith('＊＊＊＊＊')) {
 		return str + bm;
 	}
 
-	var _safeReg = '^' + _safeStr;
+	const _safeReg = '^' + _safeStr;
 	if (~str.search(_safeReg.getReg(''))) {
 		return str.replace(_safeReg.getReg('g'), '')
 	}
 
 	// 分隔字数、实际分隔字数
-	var vNum = config.Linenum, cutNum = vNum * 2;
-	var linestr = '　　' + str;
+	const vNum = config.Linenum;
+	const cutNum = vNum * 2;
+	let linestr = '　　' + str;
 	// 小于每行最大字数时直接返回
 	if (cutNum >= linestr.len()) {
 		return linestr + bm;
 	}
 
-	var oNum = ~~(linestr.length / vNum) + 1,
-		// 查询单字节总数
-		findEngStr = linestr.findCount(/[\x00-\xff]/g),
-		// 如果全是单字节
-		findAllEngStr = ~str.search(/^[\x00-\xff]+$/),
-		text = [];
+	let oNum = ~~(linestr.length / vNum) + 1;
+	// 查询单字节总数
+	const findEngStr = linestr.findCount(/[\x00-\xff]/g);
+	// 如果全是单字节
+	const findAllEngStr = ~str.search(/^[\x00-\xff]+$/);
+	const text = [];
 
 	while (oNum--) {
-		var sublen = 0, FirstLine = true, sinBytes, tmp, i;
+		let sublen = 0, FirstLine = true, sinBytes, tmp, i;
 		// 如果全是单字节
 		if (findAllEngStr) {
 			// 如果是首次截取
@@ -90,26 +91,24 @@ function onTypeSetSplit(str) {
 	// 执行整理
 	str = '\n' + str
 		// 排版初始化，去空格空行
-		.convertInit()
 		// 转直角引号
-		.convertCNQuote()
+		.conv('Init,CNQuote')
 		// 清除原标头
 		.replace(/作者：.*?\n[\d\/]*[发發]表[于於]：.*?\n是否首[发發]：.*?\n字[数數]：.*?\n/gm, '')
 		// 转换半角
-		.convertNumberLetter()
 		// 修正分隔符号
-		.convertSeparator()
+		.conv('NumberLetter,Separator')
 		// 书名居中
 		.findCenter(/^《[^》]+》$/m)
 		// 分隔符居中
 		.findCenter(config.Separator.getReg('gm'))
 		// 结尾居中
-		.findCenter(('^[（【“「<]?(?:' + config.endStrs + ')[）】”」>]?$').getReg('gm'))
+		.findCenter(config.endStrs)
 		// 标题居中
-		.convertChapter('center')
+		.conv('Chapter', 'center')
 		// 分割段落
 		.mapLine(doSplit)
-		.convertFinish();
+		.conv('Finish');
 
 	if ( !$('#Check_AddTop').is(':checked') )
 		return str;
@@ -129,15 +128,8 @@ function onTypeSetSplit(str) {
 // 阅读排版
 function onTypeSetRead(str) {
 	return str
-		// 排版初始化，去空格空行
-		.convertInit()
-		// 半角字母数字
-		.convertNumberLetter()
-		// 修正章节标题
-		.convertChapter('nofix')
-		// 修正分隔符号
-		.convertSeparator()
-		// 修正作者后面未空行
+		.conv('Init,Separator')
+		.conv('Chapter', 'nofix')
 		.replace(config.novelAuthor, '$1\n')
 		.replace(/^/gm, '　　')
 		.replace(/(^　　$\n)+/gm, '　　\n')
@@ -147,68 +139,50 @@ function onTypeSetRead(str) {
 
 // 一键整理
 function editorCleanUp(str) {
-	// 排版初始化，去空格空行
-	str = str.convertInit();
-	['HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
-	'Punctuation', 'NumberLetter', 'Chapter', 'Space',
-	'Separator', 'Quote', 'English'].forEach((v, i) => {
-		if ($('#Check_' + (i + 1)).is(':checked')) {
-			str = str.convert(v);
-		}
-	})
-	// 结束
-	return str.convertEnd();
+	var _met = [
+		'HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
+		'Punctuation', 'NumberLetter', 'Space', 'Chapter',
+		'Separator', 'Quote', 'English'
+	].filter((v, i) => $(`#Check_${i + 1}`).prop('checked'))
+	return str.conv(["Init"].concat(_met).concat("End"));
 }
 
 // 特殊整理
 function editorCleanUpEx(str) {
-	var safeStr = ['\n\u2620', '\u2620\n', '\u2620'],
-		endStr = ('^[\\(（【〖“「［<](?:' + config.endStrs + ')[>］」”〗】）\\)]$').getReg('gm'),
-		// 其他自定义修正
-		Others = [
-			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
-			[/([^。！？…”」\.\!\?\~\x22\x27\u2620；〗】]$)\n+([^\u2620])/gm, '$1$2'],
-			[/^((?!第[\d一二三四五六七八九十百千]+|\u2620).+[“「][\u4E00-\u9FA5]+[”」]$)\n+/gm, '$1'],
-			[/^([^\u2620]*[“「][^，。？！…~～\─]+[”」]$)\n+/gm, '$1'],
-			[/…\n([^”]+”)$/gm, '…$1'],
-			[/，”\n/g, '，”'],
-			// 修正被分隔的标点符号
-			[/…\n…/g, '……'],
-			[/\n”/g, '”'],
-			[/\n^“$/gm, '“'],
-			[/\u2620/g, '\n'],
-			// 文章中的书名换行
-			[/(?=[^。！？…”：\.\!\?\~\x22\x27\u2620；〗】])\n《/g, '《'],
-			[/第[\d一二三四五六七八九十百千]+章：/g, '\n$&'],
-			// 其他修正
-			[/：”/g, '：“'],
-			[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2']
-		];
+	const safeStr = ['\n\u2620', '\u2620\n', '\u2620'];
+	const Others = [
+		/[^。！？…”：\u2620；〗】]\n[^\u2620]/gm,
+		/[^。！？…”：\u2620；〗】]\n[^\u2620]/gm,
+		/^(?!第[\d一二三四五六七八九十百千]+|\u2620).+“[\u4E00-\u9FA5]+”\n+/gm,
+		/^[^\u2620\n]*“[^，：。？！…～\─\n]+”\n+/g,
+		/…\n[^”\n]+”$/gm,
+		/，”\n/g,
+		// 修正被分隔的标点符号
+		/…\n…/g,
+		/\n”/g,
+		/\n^“$/gm
+	];
 
 	str = str
 		// 排版初始化，去空格空行
-		.convertInit()
 		// 去除汉字间的空格
-		.convertSpace()
+		.conv('Init,Space')
 		// 保护无结尾标点的歌词类
 		.replace(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm, function(m) {
 			return safeStr[0] + m.replace(/\n/g, safeStr[1]) + safeStr[1];
 		})
-		// 修正章节外加括号
-		//.replace('^{$t80}({$e}|$)$'.chapReg(), '$1：$2')
-		//.replace('^{$t81}({$s}|{$s}{$e}|$)$'.chapReg(), '$1：$2')
 		// 修正章节最后是句号的
 		.replace(/章[节節]$/g, '章')
 		.replace('^({$t91}[{$c.2}]{$sn}.{$en})。$'.chapReg(), '$1')
 		// 修正章节前面是 `正文` 的
 		.replace('^正文 *({$t91}[{$crt}]{$sn}.{$en})$'.chapReg(), '$1')
 		// 修正章节标题，加标题保护码
-		.convertChapter('fix', safeStr[0], safeStr[1])
+		.conv('Chapter', 'fix', safeStr[0], safeStr[1])
 		// 修正引号
-		.convertQuote()
+		.conv('Quote')
 		// 其他自定义修正
 		.replaces(Others)
-		.replace(endStr, '');
+		.replace(config.endStrs, '');
 
 	return editorCleanUp(str);
 }

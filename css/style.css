@@ -1,127 +1,140 @@
 html {
-	font-size: 0.85rem;
-	margin: 0;
-	padding: 0;
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 0;
 }
 
 a {
-	text-decoration: none;
+  text-decoration: none;
 }
-
+label + a {
+  margin-right: 2px;
+}
 #c-left,
 #c-right {
-	margin: 0;
-	padding: 0;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
 }
 #c-left {
-	width: 220px;
+  width: 220px;
 }
 #c-right {
-	left: 220px;
-	margin: 0;
+  left: 220px;
+  margin: 0;
 }
 #c-right {
-	display: grid;
-	grid-template-rows: auto 1fr;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 #TextareaEditor {
-	margin: 0;
-	padding: 0;
-	line-height: 1.6;
-	min-height: 500px;
-	width: 100%;
-	height: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  min-height: 500px;
+  width: 100%;
+  height: 100%;
 }
 
 #AlertMsg {
-	font-size:13px;
+  font-size: 13px;
 }
 
 .copy-title {
-	cursor: pointer;
-	font-weight: normal;
+  cursor: pointer;
+  font-weight: normal;
 }
 
 .ace_status-indicator {
-	position: fixed;
-	right: 10px;
-	bottom: 3px;
-	display: block;
-	font-size: 0.7rem;
-	color: #888;
-	text-align: right;
-	min-width: 300px;
-	line-height: 20px;
-	padding-right: 10px;
-	background-color: none;
-	z-index: 1001;
+  position: fixed;
+  right: 10px;
+  bottom: 3px;
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  text-align: right;
+  min-width: 300px;
+  line-height: 20px;
+  padding-right: 10px;
+  background-color: none;
+  z-index: 1001;
 }
 
 #cdn-links {
-	display: grid;
-	grid-template-columns: 50% 50%;
+  /*display: grid;
+  grid-template-columns: 50% 50%;*/
+  margin: 5px;
 }
 #cdn-links div {
-	padding: 3px 0;
+  padding: 2px;
+  font-size: 1.1rem;
 }
 #cdn-links div .badge:first-child {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 #cdn-links div .badge:last-child {
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .form-control::placeholder {
-	opacity: 0.3;
-	font-weight: 400;
+  opacity: 0.3;
+  font-weight: 400;
 }
 .fs-9 {
-	font-size: 11px;
-	font-family: Consolas;
-	top: -9px;
-	padding-left: 3px;
+  font-size: 11px;
+  font-family: Consolas;
+  top: -9px;
+  padding-left: 3px;
 }
 .btn {
-	font-weight: 400;
-	transition: all 0.3s;
-	-webkit-transition: all 0.3s;
+  font-weight: 400;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
 }
 
 @media screen and (max-width: 1200px) {
-	.hide-1200 {
-		display: none;
-	}
+  .hide-1200 {
+    display: none;
+  }
 }
 @media screen and (max-width: 960px) {
-	.btn sup,
-	.hide-960 {
-		display: none;
-	}
-	#c-right {
-		left: 0px;
-	}
+  .btn sup,
+  .hide-960 {
+    display: none;
+  }
+  #c-right {
+    left: 0px;
+  }
 }
 @media screen and (max-width: 480px) {
-	.hide-480 {
-		display: none;
-	}
+  .hide-480 {
+    display: none;
+  }
 }
+
 .leWaterWave {
-	box-sizing: border-box;
-	color: #F8D800;
-	animation: WaterWave 5s linear 5s infinite alternate;
+  color: #ffc107;
+  animation: huxi 3s linear infinite alternate;
 }
-@keyframes WaterWave {
-	0%   {color: #F55555;}
-	50%   {color: #FCCF31;}
-	100%   {color: #E96D71;}
+@keyframes huxi {
+  0% {
+    opacity: 0.8;
+    text-shadow: 2px 2px 5px #ffc107;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 2px 2px 5px #f55555;
+  }
+  100% {
+    opacity: 0.8;
+    text-shadow: 2px 2px 5px #4A0095;
+  }
 }
