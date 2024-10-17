@@ -1,5 +1,5 @@
 /**** 截取分段 ****/
-const _safeStr = '\u2620';
+const _safeStr = common.sf;
 function doSplit(str) {
 	const bm = '\n';
 	if (str.length < 1 || str.startsWith('　　') || str.startsWith('＊＊＊＊＊')) {
