@@ -50,31 +50,29 @@ $(() => {
 
 // options
 (() => {
+	const inputs = ["inputBookName", "inputAuthor", "inputSite"].map(v => $(`#${v}`));
+	const checks = Array.from({ length: 5 }).map((v, i) => $(`#Check_${i}`));
 	const inputVal = (() => {
-		const inputs = ["inputBookName", "inputAuthor", "inputSite"];
-		const max = 5;
 		return {
 			get: () => {
 				inputs.forEach((v) => {
-					$(`#${v}`).val(store.get(v, ""));
+					v.val(store.get(v, ""));
 				});
-				let i = -1;
-				while (++i < max) {
+				checks.forEach((v, i) => {
 					if (store.get(`Check_${i}`, "") === "checked") {
-						$(`#Check_${i}`).prop("checked", true);
+						v.prop("checked", true);
 					}
-				}
+				});
 			},
 			set: () => {
 				inputs.forEach((v) => {
-					const tmp = $(`#${v}`).val();
+					const tmp = v.val();
 					tmp !== "" ? store.set(v, tmp) : store.remove(v);
 				});
-				let i = -1;
-				while (++i < max) {
+				checks.forEach((v, i) => {
 					const tmp = `Check_${i}`;
-					$(`#${tmp}`).prop("checked") ? store.set(tmp, "checked") : store.remove(tmp);
-				}
+					v.prop("checked") ? store.set(tmp, "checked") : store.remove(tmp);
+				});
 			}
 		}
 
