@@ -149,40 +149,58 @@ function editorCleanUp(str) {
 
 // 特殊整理
 function editorCleanUpEx(str) {
-	const safeStr = ['\n\u2620', '\u2620\n', '\u2620'];
-	const Others = [
-		/[^。！？…”：\u2620；〗】]\n[^\u2620]/gm,
-		/[^。！？…”：\u2620；〗】]\n[^\u2620]/gm,
-		/^(?!第[\d一二三四五六七八九十百千]+|\u2620).+“[\u4E00-\u9FA5]+”\n+/gm,
-		/^[^\u2620\n]*“[^，：。？！…～\─\n]+”\n+/g,
+	/****** 修正错误换行 ******/
+	const _break = [
+		'[^。！？…”：；〗】{$sf}]\\n[^{$sf}]'.commReg('gm'),
+		'[^。！？…”：；〗】{$sf}]\\n[^{$sf}]'.commReg('gm'),
+		'^(?!第[\\d一二三四五六七八九十百千]+|{$sf}).+“[{$han}]+”\n+'.commReg('gm'),
+		'^[^{$sf}\\n]*“[^，：。？！…～\\─\\n]+”\\n+'.commReg('gm'),
 		/…\n[^”\n]+”$/gm,
 		/，”\n/g,
 		// 修正被分隔的标点符号
 		/…\n…/g,
 		/\n”/g,
 		/\n^“$/gm
+	].map(v => [v, (m) => m.replace(/\n/g, '')]);
+	/****** 其他自定义修正 ******/
+	const _other = [
+		// 去除标题保护
+		['[{$sf}]+'.commReg('g'), '\n'],
+		// 文章中的书名换行
+		['(?=[^。！？…”：；〗】{$sf}])\n《'.commReg('g'), '《'],
+		[/第[\d一二三四五六七八九十百千]+章：/g, '\n$&'],
+		// 其他修正
+		[config.endStrs, ''],
+		[/“$/gm, '”'],
+		[/^“”$/gm, '“……”'],
+		[/：”/g, '：“'],
+		[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
+		[/分卷阅读\d+/g, '']
 	];
 
-	str = str
+	return str
 		// 排版初始化，去空格空行
 		// 去除汉字间的空格
 		.conv('Init,Space')
 		// 保护无结尾标点的歌词类
-		.replace(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm, function(m) {
-			return safeStr[0] + m.replace(/\n/g, safeStr[1]) + safeStr[1];
-		})
+		.maskSafe(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm)
 		// 修正章节最后是句号的
 		.replace(/章[节節]$/g, '章')
 		.replace('^({$t91}[{$c.2}]{$sn}.{$en})。$'.chapReg(), '$1')
 		// 修正章节前面是 `正文` 的
 		.replace('^正文 *({$t91}[{$crt}]{$sn}.{$en})$'.chapReg(), '$1')
 		// 修正章节标题，加标题保护码
-		.conv('Chapter', 'fix', safeStr[0], safeStr[1])
+		.conv('Chapter', 'fix', 'safe')
 		// 修正引号
 		.conv('Quote')
+		// 修正错误换行
+		.replaces(_break)
 		// 其他自定义修正
-		.replaces(Others)
-		.replace(config.endStrs, '');
-
-	return editorCleanUp(str);
+		.replaces(_other)
+		// 去除汉字间的空格
+		.conv('Init,Space,Punctuation,Separator')
+		// 修正章节标题
+		.conv('Chapter', 'nofix')
+		// 修正引号
+		.conv('Quote,End');
 }
