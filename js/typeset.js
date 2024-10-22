@@ -172,16 +172,13 @@ function editorCleanUpEx(str) {
 		// 其他修正
 		[config.endStrs, ''],
 		[/“$/gm, '”'],
-		[/^“”$/gm, '“……”'],
-		[/：”/g, '：“'],
-		[/(.$)\n+[）\)]([^，。…！？])/gm, '$1）\n$2'],
-		[/分卷阅读\d+/g, '']
+		[/^“”$/gm, '“……”']
 	];
 
 	return str
 		// 排版初始化，去空格空行
 		// 去除汉字间的空格
-		.conv('Init,Space')
+		.conv('Init,Space,NumberLetter')
 		// 保护无结尾标点的歌词类
 		.maskSafe(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm)
 		// 修正章节最后是句号的
