@@ -179,8 +179,12 @@ function editorCleanUpEx(str) {
 		// 排版初始化，去空格空行
 		// 去除汉字间的空格
 		.conv('Init,Space,NumberLetter')
+		// 保护引用作者
+		.maskSafe(/^——.{1,10}[^，。…！？]$/gm)
+		// 保护以 —— 开头的一组对话
+		.maskSafe(/^(?:——.+\n){2,10}/g)
 		// 保护无结尾标点的歌词类
-		.maskSafe(/(?:^[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm)
+		.maskSafe(/^(?:[\u4E00-\u9FA5]+[^，：;。…！？:;\,\.\!\?]\n){3,16}/gm)
 		// 修正章节最后是句号的
 		.replace(/章[节節]$/g, '章')
 		.replace('^({$t91}[{$c.2}]{$sn}.{$en})。$'.chapReg(), '$1')
