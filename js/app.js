@@ -75,7 +75,6 @@ $(() => {
 				});
 			}
 		}
-
 	})();
 	// 读取默认值
 	inputVal.get();
@@ -122,8 +121,10 @@ $(() => {
 		const that = $(this);
 		const _span = that.find("span").eq(0);
 		const _url = that.attr("href");
+		_span.removeClass("text-warning");
 		if (_pn === _url || _pn.endsWith("index.html") || _pn.endsWith(_url)) {
-			_span.html("🟡");
+			_span.addClass("text-warning");
+			//_span.html("🟡");
 		}
 	})
 })();

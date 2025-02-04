@@ -5,7 +5,7 @@
 
 ### 标准
 
-> 排版遵循以下标准，对中英文标点符号、全半角、段落和章节标题进行规范处理
+> 排版遵循以下标准，对标点符号、字母数字、章节标题，以及段落缩进等进行规范处理
 
 - [《标点符号用法》2011年版本](https://baike.baidu.com/item/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7%E7%94%A8%E6%B3%95)
 - [中文文案排版指北](https://github.com/mzlogin/chinese-copywriting-guidelines)

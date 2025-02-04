@@ -141,8 +141,8 @@ function onTypeSetRead(str) {
 function editorCleanUp(str) {
 	var _met = [
 		'HtmlEntity', 'Unicode', 'Variant', 'SerialNumber',
-		'Punctuation', 'NumberLetter', 'Space', 'Chapter',
-		'Separator', 'Quote', 'English'
+		'Punctuation', 'NumberLetter', 'Chapter',
+		'Space', 'Separator', 'Quote', 'English'
 	].filter((v, i) => $(`#Check_${i + 1}`).prop('checked'))
 	return str.conv(["Init"].concat(_met).concat("End"));
 }
@@ -195,9 +195,9 @@ function editorCleanUpEx(str) {
 		// 修正引号
 		.conv('Quote')
 		// 修正错误换行
-		.replaces(_break)
+		.rps(_break)
 		// 其他自定义修正
-		.replaces(_other)
+		.rps(_other)
 		// 去除汉字间的空格
 		.conv('Init,Space,Punctuation,Separator')
 		// 修正章节标题
