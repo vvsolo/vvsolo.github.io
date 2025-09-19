@@ -167,7 +167,7 @@ const resList = [
 		file: {
 			npm: 'ace-builds@:version/src-min/ace.min.js',
 			ajax: 'ace/:version/ace.min.js',
-			unpkg: 'ace-builds@:version/src-min/ace.min.js'
+			unpkg: 'ace-builds@:version/src-min/ace.js'
 		}
 	}
 ];
