@@ -110,7 +110,8 @@ function onTypeSetSplit(str, author, site) {
 		.conv('Chapter', 'center')
 		// 分割段落
 		.mapLine(doSplit)
-		.conv('Finish');
+		.conv('Finish')
+		.rpAt(['‘’“”', '『』「」']);
 
 	return '作者：{$w}\n{$d}发表于：{$b}\n是否首发：{$y}\n字数：{$n} 字\n'.fmt({
 		'w': author,

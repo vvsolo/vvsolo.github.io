@@ -108,7 +108,8 @@ function onTypeSetSplit(str) {
 		.conv('Chapter', 'center')
 		// 分割段落
 		.mapLine(doSplit)
-		.conv('Finish');
+		.conv('Finish')
+		.rpAt(['‘’“”', '『』「」']);
 
 	if ( !$('#Check_AddTop').is(':checked') )
 		return str;
