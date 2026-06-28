@@ -133,6 +133,7 @@ $(() => {
 $(function () {
 	// 初始化编辑器
 	const editor = ace.edit("TextareaEditor");
+	// https://github.com/ajaxorg/ace/wiki/Configuring-Ace/
 	editor.setOptions({
 		theme: "ace/theme/novel",
 		mode: "ace/mode/novel",
