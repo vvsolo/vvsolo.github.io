@@ -120,10 +120,6 @@ const cdnList = [
 	},
 	{
 		type: 'ajax',
-		prefix: 'https://cdnjs.onmicrosoft.cn/ajax/libs/:file'
-	},
-	{
-		type: 'ajax',
 		prefix: 'https://s4.zstatic.net/ajax/libs/:file'
 	},
 	{
